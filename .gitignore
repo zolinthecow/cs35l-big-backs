@@ -19,6 +19,9 @@
 # misc
 .DS_Store
 *.pem
+.vscode
+.idea
+.eslintcache
 
 # debug
 npm-debug.log*
