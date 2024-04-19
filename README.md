@@ -17,7 +17,23 @@ touch .env.local
 ```
 Ask someone for the variables and just paste them into the file
 
-## Getting Started
+## Setup
+
+Start the database:
+
+```bash
+docker-compose up
+```
+
+Make sure you have a populated `.env.local` file before continuing.
+
+Run the database migrations:
+
+```bash
+pnpm exec prisma migrate dev
+```
+
+## Development
 
 First, run the development server:
 
@@ -32,4 +48,7 @@ docker-compose up
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+If you want to make database changes, make any changes you have in `prisma/schema.prisma`, then run `pnpm exec prisma db push`.
+When you're ready to make a PR, finalize the database schema changes by doing `pnpm exec prisma migrate --dev`.
 
