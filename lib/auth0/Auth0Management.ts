@@ -5,6 +5,8 @@ import prisma from '~/prisma';
 import { DateTime } from 'luxon';
 import { ManagementClient } from 'auth0';
 
+const DB_AUTH0_TOKEN_ID = 'AUTH0_MANAGEMENT_TOKEN';
+
 class _Auth0ManagementService implements IAuth0ManagementService {
   private _accessToken: { accessToken: string; expiresAt: Date } | null;
 
@@ -12,17 +14,30 @@ class _Auth0ManagementService implements IAuth0ManagementService {
     this._accessToken = null;
   }
 
-  private async fetchTokenFromDatabase(): Promise<Auth0ManagementApiToken | null> {
-    const tokenResp = await prisma.auth0ManagementApiToken.findUnique({
-      where: {
-        id: 'AUTH0_MANAGEMENT_TOKEN',
-      },
-    });
-    if (tokenResp == null) return null;
-    return tokenResp;
+  private checkIfTokenIsExpired(expiresAt: Date): boolean {
+    return DateTime.now() > DateTime.fromJSDate(expiresAt);
   }
 
-  private async fetchTokenFromAuth0(): Promise<string> {
+  private async fetchTokenFromDatabase(): Promise<boolean> {
+    let tokenResp = await prisma.auth0ManagementApiToken.findUnique({
+      where: {
+        id: DB_AUTH0_TOKEN_ID,
+      },
+    });
+    if (tokenResp == null) return false;
+
+    if (this.checkIfTokenIsExpired(tokenResp.expiresAt)) {
+      await this.fetchTokenFromAuth0();
+    } else {
+      this._accessToken = {
+        accessToken: tokenResp.token,
+        expiresAt: tokenResp.expiresAt,
+      };
+    }
+    return true;
+  }
+
+  private async fetchTokenFromAuth0(): Promise<boolean> {
     const options = {
       method: 'POST',
       headers: {
@@ -49,10 +64,10 @@ class _Auth0ManagementService implements IAuth0ManagementService {
 
     await prisma.auth0ManagementApiToken.upsert({
       where: {
-        id: 'AUTH0_MANAGEMENT_TOKEN',
+        id: DB_AUTH0_TOKEN_ID,
       },
       create: {
-        id: 'AUTH0_MANAGEMENT_TOKEN',
+        id: DB_AUTH0_TOKEN_ID,
         token: accessToken,
         expiresAt,
       },
@@ -66,27 +81,29 @@ class _Auth0ManagementService implements IAuth0ManagementService {
       expiresAt,
     };
 
-    return accessToken;
+    return true;
   }
 
   public async getAccessToken(refetch?: boolean): Promise<string> {
     if (
       refetch ||
       (this._accessToken &&
-        DateTime.now() > DateTime.fromJSDate(this._accessToken.expiresAt))
+        this.checkIfTokenIsExpired(this._accessToken.expiresAt))
     ) {
-      return await this.fetchTokenFromAuth0();
+      await this.fetchTokenFromAuth0();
     }
 
-    if (this._accessToken) {
-      return this._accessToken.accessToken;
-    } else {
-      let token = (await this.fetchTokenFromDatabase())?.token;
-      if (!token) {
-        token = await this.fetchTokenFromAuth0();
+    if (!this._accessToken) {
+      if (!(await this.fetchTokenFromDatabase())) {
+        await this.fetchTokenFromAuth0();
       }
-      return token;
     }
+
+    if (!this._accessToken) {
+      throw new Error('COULD NOT GET ACCESS TOKEN BAD BAD');
+    }
+
+    return this._accessToken.accessToken;
   }
 }
 
