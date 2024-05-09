@@ -3,7 +3,9 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 
-const inter = Inter({ subsets: ['latin'] });
+import { cn } from '~/lib/utils';
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -17,7 +19,12 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body
+        className={cn(
+          'min-h-screen bg-background font-sans antialiased',
+          inter.variable,
+        )}
+      >
         <UserProvider>{children}</UserProvider>
       </body>
     </html>
