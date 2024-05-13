@@ -1,7 +1,7 @@
 import { Auth0ManagementApiToken } from '@prisma/client';
 import IAuth0ManagementService from './Auth0Management.interface';
 
-import prisma from '~/prisma';
+import prisma from '@/prisma';
 import { DateTime } from 'luxon';
 import { ManagementClient } from 'auth0';
 

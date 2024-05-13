@@ -1,6 +1,6 @@
 import { getSession, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import Image from 'next/image';
-import getSpotifyClient from '~/lib/spotify';
+import getSpotifyClient from '@/lib/spotify';
 
 export default withPageAuthRequired(
   async function Home() {

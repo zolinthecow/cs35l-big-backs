@@ -3,7 +3,7 @@ import {
   handleAuth,
   handleCallback,
 } from '@auth0/nextjs-auth0';
-import createUserIfNotExisting from '~/actions/createUserIfNotExisting';
+import createUserIfNotExisting from '@/actions/createUserIfNotExisting';
 
 const afterCallback: AfterCallbackAppRoute = async (req, session, state) => {
   const { user } = session;
