@@ -52,7 +52,7 @@ export function NavBar() {
         </div>
       </form>
       <div className='flex  justify-between space-x-3'>
-        <Button variant="ghost" size="sm" className="px-2">
+        <Button variant="ghost" size="sm" className="px-2 hidden sm:block">
           <a className="flex items-center space-x-2 transition-colors hover:text-blue-500" href="/notifications">
             <NotificationIcon count={98} />
           </a>
