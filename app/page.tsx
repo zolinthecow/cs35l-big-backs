@@ -5,7 +5,7 @@ import getSpotifyClient from '@/lib/spotify';
 export default withPageAuthRequired(
   async function Home() {
     const spotifyClient = await getSpotifyClient();
-    const playlists = await spotifyClient.currentUser.playlists.playlists();
+    // const playlists = await spotifyClient.currentUser.playlists.playlists();
 
     return (
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
