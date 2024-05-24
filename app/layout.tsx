@@ -30,15 +30,3 @@ export default async function RootLayout({
     </html>
   );
 }
-
-// ADDED CHANGE: Layout for fonts?
-const cabin = Cabin({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-cabin',
-});
-const dm_sans = DM_Sans({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-dm_sans',
-});
