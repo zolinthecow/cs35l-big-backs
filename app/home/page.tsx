@@ -9,8 +9,15 @@ const HomePage: React.FC = () => {
       <NavBar />
       <div className='grid gird-cols-[auto,1fr] flex-grow-1 overflow-auto'>
         <div>Sidebar</div>
-        <div>
-          <AirbudsInterface />
+        <div className='h-full'>
+        <AirbudsInterface 
+          profileImage="/profile-page.webp"
+          profileName="Caroline Xin"
+          profileTime="39 minutes ago"
+          albumImage="/album.jpeg"
+          albumTitle="m.A.A.d City"
+          albumArtist="Kendrick Lamar"
+        />
         </div>
       </div>
     </div>

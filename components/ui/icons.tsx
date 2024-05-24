@@ -61,12 +61,17 @@ export const IconArrowDown: React.FC<{ color?: string, size?: number }> = ({ col
 
 export const IconSend: React.FC<{color?: string, size?: number}> = ({ color = '#000000', size = 50 }) => (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      stroke={color}
-      width={size}
+      fill="none"
       height={size}
+      viewBox="0 0 48 48"
+      width={size}
+      xmlns="http://www.w3.org/2000/svg"
     >
-    <path d="m43 5-13.3 38-7.6-17.1-17.1-7.6z"/><path d="m43.0001 5-20.9 20.9" stroke-linecap="round"/>    </svg>
+      <rect width="48" height="48" fill="#fff" fillOpacity="0.01" />
+      <g stroke={color} strokeLinejoin="round" strokeWidth="4">
+        <path d="M43 5L29.7 43 22.1 25.9 5 18.3z" />
+        <path d="M43 5L22.1 25.9" strokeLinecap="round" />
+      </g>
+    </svg>
   );
 
