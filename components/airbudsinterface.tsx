@@ -18,7 +18,7 @@ const ReplyInput: FC<ReplyInputProps> = ({ value, onChange, onKeyDown }) => (
     onChange={onChange}
     onKeyDown={onKeyDown}
     placeholder="Write a reply..."
-    className="flex-1 p-2 rounded-l-full rounded-r-full border border-gray-300 bg-black text-white placeholder-gray-400"
+    className="flex-1 p-2 rounded-l-full rounded-r-full border border-gray-300 bg-white text-black placeholder-gray-400"
   />
 );
 
@@ -30,10 +30,10 @@ const SendButton: FC<SendButtonProps> = ({ onClick }) => (
     <Button
       variant="ghost"
       size='sm'
-      className="p-2 bg-black text-white hover:bg-black hover:text-white"
+      className="p-2 bg-gray-100 text-black hover:bg-black hover:text-white"
       onClick={onClick}
     >
-      <IconSend color='white' size={20} />
+      <IconSend color='black' size={20} />
     </Button>
   );
 
@@ -79,7 +79,7 @@ interface AirbudsInterfaceProps {
     albumArtist,
   }) => {
     return (
-      <div className="h-full bg-black text-white flex flex-col items-center overflow-hidden">
+      <div className="h-full bg-gray-100 text-black flex flex-col items-center overflow-hidden">
         <div className="h-full w-full max-w-md flex flex-col justify-between overflow-hidden">
           <div className="flex flex-col items-center justify-center w-full px-4 py-2">
             <Image src={profileImage} alt="Profile" width={40} height={40} className="rounded-full" />
@@ -95,14 +95,14 @@ interface AirbudsInterfaceProps {
           </div>
           <div className="flex items-center space-x-4 mt-6 justify-center">
             <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-              <IconMute color="white" size={24} />
+              <IconMute color="black" size={24} />
             </Button>
             <Button variant="default" size="sm" className="text-white bg-green-600 px-4 py-2 rounded-full">
               <Image src="/spotify-icon.png" alt="Spotify" width={20} height={20} />
               <span className="ml-2">Play on Spotify</span>
             </Button>
             <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-              <IconAdd color='white' size={24} />
+              <IconAdd color='black' size={24} />
             </Button>
           </div>
           <div className="flex justify-around w-full mt-6 px-8">
@@ -122,7 +122,7 @@ interface AirbudsInterfaceProps {
         <Reply />
         <div className="flex items-center justify-center mt-6">
           <p className="text-gray-400">SCROLL DOWN</p>
-          <IconArrowDown color='white' size={15} />
+          <IconArrowDown color='black' size={15} />
         </div>
       </div>
     </div>

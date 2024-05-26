@@ -1,7 +1,7 @@
 "use client";
 
 import Image from 'next/image';
-import { NotificationIcon } from '@/components/notification';
+import { NotificationIcon } from '@/components/ui/notification';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
