@@ -1,6 +1,6 @@
 @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
+    @tailwind components;
+    @tailwind utilities;
 
   @layer base {
     :root {
@@ -66,23 +66,11 @@
     }
   }
 
- /* Apply border to all elements */
-* {
-  border: 1px solid #e2e8f0; /* Replace with preferred border color */
-}
-
-/* Apply background color and text color to the body */
-body {
-  background-color: #f7fafc; /* Replace with preferred background color */
-  color: #1a202c; /* Replace with preferred text color */
-}
-
-/* Font families */
-body {
-  font-family: var(--font-dm_sans), sans-serif;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-cabin), sans-serif;
-}
- 
+  @layer base {
+    * {
+      @apply border-border;
+    }
+    body {
+      @apply bg-background text-foreground;
+    }
+  }
