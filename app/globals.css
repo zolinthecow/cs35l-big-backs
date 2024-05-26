@@ -1,8 +1,6 @@
 @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
-  @tailwind components;
-  @tailwind utilities;
+    @tailwind components;
+    @tailwind utilities;
 
   @layer base {
     :root {
@@ -75,4 +73,8 @@
     body {
       @apply bg-background text-foreground;
     }
+  }
+
+  .hover-effect:hover {
+    filter: brightness(1.2); /* Increase brightness on hover */
   }
