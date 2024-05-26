@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 
 export function ChevronLeftIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -40,6 +41,7 @@ export function ClapperboardIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
+      className="text-green-500"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
@@ -81,6 +83,7 @@ export function FrownIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
+      className="text-red-500" // Added class to make the icon blue
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
@@ -180,6 +183,26 @@ export function NotebookIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function PaperclipIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+    </svg>
+  );
+}
+
 export function PlayIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -238,6 +261,27 @@ export function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function SendIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m22 2-7 20-4-9-9-4Z" />
+      <path d="M22 2 11 13" />
+    </svg>
+  );
+}
+
 export function ShuffleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -264,6 +308,7 @@ export function SmileIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
+      className="text-yellow-500"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
@@ -299,10 +344,12 @@ export function StarIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
 export function ThumbsDownIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
+      className="text-red-500"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
@@ -318,10 +365,12 @@ export function ThumbsDownIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
 export function ThumbsUpIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
+      className="text-blue-500"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
@@ -335,5 +384,75 @@ export function ThumbsUpIcon(props: React.SVGProps<SVGSVGElement>) {
       <path d="M7 10v12" />
       <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z" />
     </svg>
+  );
+}
+
+interface IconWithCounterProps {
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  initialCount?: number;
+}
+
+export function IconWithCounter({
+  icon: Icon,
+  initialCount = 0,
+}: IconWithCounterProps) {
+  const [count, setCount] = useState(initialCount);
+
+  const handleClick = () => {
+    // Toggle count: increment by 1 if count is even, decrement by 1 if count is odd
+    setCount((prevCount) =>
+      prevCount % 2 === 0 ? prevCount + 1 : prevCount - 1,
+    );
+  };
+
+  return (
+    <Button className="flex items-center gap-1" onClick={handleClick}>
+      <Icon className="w-5 h-5 hover-effect" />
+      <span className="text-sm text-gray-400">{count}</span>
+    </Button>
+  );
+}
+
+export function StarRating() {
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
+  const [averageRating, setAverageRating] = useState<number | null>(null);
+
+  const getAverageRating = async () => {
+    // Replace with ratings fetched from database
+    const ratings = [5, 4, 3, 4, 5]; // Replace this with the rating from first click
+    const total = ratings.reduce((sum, rating) => sum + rating, 0);
+    const average = total / ratings.length;
+    return average;
+  };
+
+  useEffect(() => {
+    const fetchAverageRating = async () => {
+      const average = await getAverageRating();
+      setAverageRating(average);
+    };
+
+    fetchAverageRating();
+  }, []);
+
+  return (
+    <div className="flex items-center gap-1">
+      <div className="star-rating flex gap-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <StarIcon
+            key={star}
+            className={`w-5 h-5 cursor-pointer ${star <= (hover || rating) ? 'text-yellow-500' : 'text-gray-400'}`}
+            onClick={() => setRating(star)}
+            onMouseEnter={() => setHover(star)}
+            onMouseLeave={() => setHover(0)}
+          />
+        ))}
+      </div>
+      {averageRating !== null && (
+        <span className="text-sm font-medium text-gray-400 ml-2">
+          {averageRating.toFixed(1)}
+        </span>
+      )}
+    </div>
   );
 }
