@@ -19,9 +19,6 @@ export function NavBar() {
   return (
     <div className="flex gap-7 justify-between items-center py-4 px-6 bg-white">
       <div className="flex gap-4 items-center space-x-8 flex-shrink-0">
-        <Button variant="ghost" size="icon">
-          <Menu size={30} />
-        </Button>
         <a className="flex items-center space-x-2" href="/home">
           <Image src="/image.png" alt="Logo" width={36} height={36} />
         </a>

@@ -3,6 +3,7 @@ import React, { ChangeEvent, KeyboardEvent, FC, useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { IconMute, IconAdd, IconArrowDown, IconSend } from '@/components/ui/icons';
+import Link from 'next/link';
 
 
 interface ReplyInputProps {
@@ -61,46 +62,52 @@ const Reply = () => {
 };
 
 interface AirbudsInterfaceProps {
+    key: string
     profileImage: string;
     profileName: string;
     profileTime: string;
     albumImage: string;
-    albumTitle: string;
-    albumArtist: string;
+    songTitle: string;
+    songArtist: string;
+    songLink: string;
   }
 
   
   const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
+    key,
     profileImage,
     profileName,
     profileTime,
     albumImage,
-    albumTitle,
-    albumArtist,
+    songTitle,
+    songArtist,
+    songLink
   }) => {
     return (
-      <div className="h-full bg-gray-100 text-black flex flex-col items-center overflow-hidden">
+      <div className="h-screen bg-gray-100 text-black flex flex-col items-center overflow-hidden">
         <div className="h-full w-full max-w-md flex flex-col justify-between overflow-hidden">
-          <div className="flex flex-col items-center justify-center w-full px-4 py-2">
-            <Image src={profileImage} alt="Profile" width={40} height={40} className="rounded-full" />
+          <div className="flex flex-col items-center justify-center w-full px-4 py-4">
+            <img src={profileImage} alt="Profile" width={40} height={40} className="rounded-full" />
             <div className="mt-2 text-center">
               <h2 className="text-lg font-semibold">{profileName}</h2>
               <p className="text-sm text-gray-400">{profileTime}</p>
             </div>
           </div>
-          <div className="flex flex-col items-center mt-6 flex-grow">
-            <Image src={albumImage} alt="Album Art" width={500} height={500} className="rounded-lg" />
-            <h3 className="text-xl font-bold mt-4">{albumTitle}</h3>
-            <p className="text-sm text-gray-400">{albumArtist}</p>
+          <div className="flex flex-col items-center flex-grow">
+            <img src={albumImage} alt="Album Art" className="w-2/3 max-w-xs rounded-lg" />
+            <h3 className="text-xl font-bold mt-4 text-center">{songTitle}</h3>
+            <p className="text-sm text-gray-400">{songArtist}</p>
           </div>
           <div className="flex items-center space-x-4 mt-6 justify-center">
             <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
               <IconMute color="black" size={24} />
             </Button>
-            <Button variant="default" size="sm" className="text-white bg-green-600 px-4 py-2 rounded-full">
-              <Image src="/spotify-icon.png" alt="Spotify" width={20} height={20} />
-              <span className="ml-2">Play on Spotify</span>
-            </Button>
+            <Link href={songLink}>
+              <Button variant="default" size="sm" className="text-white bg-green-600 px-4 py-2 rounded-full flex items-center">
+                <Image src="/spotify-icon.png" alt="Spotify" width={20} height={20} />
+                <span className="ml-2">Play on Spotify</span>
+              </Button>
+            </Link>
             <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
               <IconAdd color='black' size={24} />
             </Button>
@@ -119,14 +126,14 @@ interface AirbudsInterfaceProps {
               <span style={{ fontSize: '24px' }}>😍</span>
             </Button>
           </div>
-        <Reply />
-        <div className="flex items-center justify-center mt-6">
-          <p className="text-gray-400">SCROLL DOWN</p>
-          <IconArrowDown color='black' size={15} />
+          <Reply />
+          <div className="flex items-center justify-center mt-6">
+            <p className="text-gray-400">SCROLL DOWN</p>
+            <IconArrowDown color='black' size={15} />
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 export default AirbudsInterface;

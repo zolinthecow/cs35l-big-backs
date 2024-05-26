@@ -27,7 +27,7 @@ const LeftSidebar: FC<LeftSidebarProps> = ({
 }) => {
   return (
     <div className="h-full w-84 bg-gray-100 overflow-y-auto scrollbar-hide p-4 text-black">
-      <div className="mt-8">
+      <div className="mt-4">
         <h1 className="text-xl font-bold mb-4">Pinned Songs</h1>
         <div className="space-y-4">
           {mockSongData.map((song) => (
@@ -35,7 +35,7 @@ const LeftSidebar: FC<LeftSidebarProps> = ({
           ))}
         </div>
       </div>
-      <div className="mt-10">
+      <div className="mt-8">
         <h1 className="text-xl font-bold mb-4">Pinned Artists</h1>
         <div className="space-y-4">
           {mockArtistData.map((artist) => (
@@ -43,7 +43,7 @@ const LeftSidebar: FC<LeftSidebarProps> = ({
           ))}
         </div>
       </div>
-      <div className="mt-10">
+      <div className="mt-8">
         <h1 className="text-xl font-bold mb-4">Pinned Playlists</h1>
         <div className="space-y-4">
           {mockPlaylistData.map((playlist) => (
