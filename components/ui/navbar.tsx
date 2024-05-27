@@ -6,6 +6,7 @@ import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
+import Link from 'next/link';
 
 
 const handleSearchSubmit = (event: React.FormEvent) => {
@@ -54,9 +55,11 @@ export function NavBar() {
             <NotificationIcon count={98} />
           </a>
         </Button>
-        <Button variant="ghost" className="text-base font-medium transition-colors hover:text-blue-500 px-2">
-          Sign In
-        </Button>
+        <Link href="/profile">
+            <Button variant="ghost" className="text-base font-medium transition-colors hover:text-blue-500 px-2">
+              <img src="https://avatar.iran.liara.run/public/39" alt="Profile" width={36} height={36} />
+            </Button>
+        </Link>
       </div>
     </div>
   );
