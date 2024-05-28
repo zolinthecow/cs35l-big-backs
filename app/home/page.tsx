@@ -36,7 +36,7 @@ const HomePage: React.FC = () => {
           albumTitle="m.A.A.d City"
           albumArtist="Kendrick Lamar"
         />
-        <div className='h-full flex-1 overflow-y-auto'>
+        <div className='h-full flex-1 overflow-y-auto border-t border-gray-100 border-b rounded bg-gray-100'>
             <SnappingScrollContainer />
         </div>
         <RightSidebar

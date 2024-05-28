@@ -14,4 +14,14 @@ export const mockArtistData = [
         artist: "Hozier",
         artist_url: "https://variety.com/wp-content/uploads/2023/08/Hozier-Press-3_Barry-McCall-e1692483483514.jpg",
     },
+    {
+        id:"4",
+        artist: "Drake",
+        artist_url: "https://variety.com/wp-content/uploads/2023/08/Hozier-Press-3_Barry-McCall-e1692483483514.jpg"
+    },
+    {
+        id:"5",
+        artist: "Vince Staples",
+        artist_url: "https://variety.com/wp-content/uploads/2023/08/Hozier-Press-3_Barry-McCall-e1692483483514.jpg"
+    }
   ];

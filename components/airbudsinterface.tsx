@@ -132,7 +132,7 @@ interface AirbudsInterfaceProps {
 
   const SnappingScrollContainer = () => {
     return (
-      <div className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide">
+      <div className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide border border-gray-100 rounded-md">
         {mockAirbudsData.map((item) => (
           <AirbudsInterface 
           key={item.key}
