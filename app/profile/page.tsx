@@ -20,28 +20,11 @@ const userData = {
     "Ethan is a freaky frontend enthusiast who has a passion for music and mathematics. He loves to grind, to run around Bel Air and admire the beautiful mansions, and to debone chicken wings. When he has free time he also loves to show his friends his special sauce.",
     "Other hobbies include: pregaming din tai fung with shake shack, being nonCHALANT, and celebrating the month of May.",
   ],
-  ratingValue: 5,
-  songs: [
-    { title: "Too Sweet", artist: "Hozier", cover: "/too-sweet.jpg" },
-    { title: "Too Sweet", artist: "Hozier", cover: "/too-sweet.jpg" },
-    { title: "Too Sweet", artist: "Hozier", cover: "/too-sweet.jpg" },
-  ],
-  playlists: [
-    { title: "Money", songs: 32, cover: "/money.jpg" },
-    { title: "Rated R", songs: 64, cover: "/rated-r.jpg" },
-    { title: "Sweat", songs: 25, cover: "/sweat.jpg" },
-  ],
-  artists: [
-    { name: "Kendrick Lamar", cover: "/kendrick-lamar.jpg" },
-    { name: "Billie Eilish", cover: "/billie-eilish.jpg" },
-    { name: "Arctic Monkeys", cover: "/arctic-monkeys.jpg" },
-    { name: "Drake", cover:"/drake.jpg"},
-    { name: "Vince Staples", cover:"vince-staples.jpg"}
-  ],
+  ratingValue: 4.5,
   friendsCount: 107,
 };
 const Page: FC = () => {
-  const { name, username, profilePicture, bio, ratingValue, songs, playlists, artists, friendsCount } = userData;
+  const { name, username, profilePicture, bio, ratingValue, friendsCount } = userData;
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -107,14 +90,14 @@ const Page: FC = () => {
 const Section: FC<{ title: string; scrollable?: boolean; children: React.ReactNode }> = ({ title, scrollable, children }) => (
   <div className="flex flex-col gap-4 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
     <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
-    <div className={`flex gap-4 ${scrollable ? 'overflow-x-auto justify-center' : ''}`}>
+    <div className={`flex gap-4 ${scrollable ? 'overflow-x-auto' : ''}`}>
       {children}
     </div>
   </div>
 );
 
 const ArtistItem: FC<{ name: string; cover: string }> = ({ name, cover }) => (
-  <div className="flex flex-col items-center gap-2 p-4 bg-gray-50 dark:bg-gray-700 rounded-md transition-all duration-200 ease-in-out hover:bg-gray-100 hover:shadow-xl">
+  <div className="flex flex-col items-center gap-2 p-4 bg-gray-50 dark:bg-gray-700 rounded-md transition-all duration-200 ease-in-out hover:bg-gray-100 hover:shadow-xl h-50 w-50">
     <img
       alt={`${name} cover`}
       className="rounded-md"
@@ -123,26 +106,26 @@ const ArtistItem: FC<{ name: string; cover: string }> = ({ name, cover }) => (
       style={{ aspectRatio: "1/1", objectFit: "cover" }}
       width={150}
     />
-    <div className="text-center">
+    <div className="text-center w-35">
       <h3 className="font-bold text-[15px] text-gray-900 truncate">{name}</h3>
     </div>
   </div>
 );
 
 const FriendItem: FC<{ name: string; username: string; cover_url: string; profile_link: string}> = ({name, username, cover_url, profile_link}) => (
-  <div className="flex flex-col w-200 items-center gap-2 p-4 rounded-md transition-all duration-200 ease-in-out hover:bg-gray-100 hover:shadow-xl">
+  <div className="flex flex-col items-center gap-2 p-4 rounded-md transition-all duration-200 ease-in-out hover:bg-gray-100 hover:shadow-xl">
     <img
       alt={`${name} cover`}
-      className="rounded-full"
+      className="rounded-full h-20 w-20"
       height={150}
+      width={150}
       src={cover_url}
-      style={{aspectRatio: "1/1"}}
     />
-    <div className="text-center">
+    <div className="text-center w-40">
       <Link href={profile_link}>
-        <h3 className="font-bold text-[15px] text-gray-900 truncate">{name}</h3>
+        <h3 className="font-bold text-[15px] text-gray-900 truncate text-ellipsis">{name}</h3>
       </Link>
-      <h3 className="font-light text-[13px] text-gray-900 truncate">@{username}</h3>
+      <h3 className="font-light text-[13px] text-gray-900 truncate text-ellipsis">@{username}</h3>
     </div>
   </div>
 )

@@ -17,11 +17,11 @@ export const mockArtistData = [
     {
         id:"4",
         artist: "Drake",
-        artist_url: "https://variety.com/wp-content/uploads/2023/08/Hozier-Press-3_Barry-McCall-e1692483483514.jpg"
+        artist_url: "https://imageio.forbes.com/specials-images/imageserve/5ed578988b3c370006234c35/0x0.jpg?format=jpg&crop=1031,1031,x43,y49,safe&height=416&width=416&fit=bounds"
     },
     {
         id:"5",
         artist: "Vince Staples",
-        artist_url: "https://variety.com/wp-content/uploads/2023/08/Hozier-Press-3_Barry-McCall-e1692483483514.jpg"
+        artist_url: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQ8D-bs9fLxcWcx3Y-eFmtb4jEcj87ypFFiuEsVul26qlOTOX9i"
     }
   ];
