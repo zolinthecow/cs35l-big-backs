@@ -3,6 +3,10 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 
+// ADDED CHANGE
+import { Cabin } from 'next/font/google';
+import { DM_Sans } from 'next/font/google';
+
 import { cn } from '@/lib/utils';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
