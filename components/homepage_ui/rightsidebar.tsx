@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import { SongLayout } from './ui/song-layout';
-import { ArtistLayout } from './ui/artist-layout';
+import { SongLayout } from '../ui/song-layout';
+import { ArtistLayout } from '../ui/artist-layout';
 
 interface SongDataProps {
   id: string;
