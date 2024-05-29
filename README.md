@@ -52,3 +52,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 If you want to make database changes, make any changes you have in `prisma/schema.prisma`, then run `pnpm exec prisma db push`.
 When you're ready to make a PR, finalize the database schema changes by doing `pnpm exec prisma migrate --dev`.
 
+For shadcn components, use the following command to add them:
+
+```bash
+pnpm dlx shadcn-ui@latest add [component name]
+```

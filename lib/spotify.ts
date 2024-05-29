@@ -1,8 +1,9 @@
 import { getSession } from '@auth0/nextjs-auth0';
 import { AccessToken, SpotifyApi } from '@spotify/web-api-ts-sdk';
 import { Auth0ManagementService } from './auth0';
+import axios, { AxiosInstance } from 'axios';
 
-const getSpotifyClient = async (): Promise<SpotifyApi> => {
+const getSpotifyClient = async (): Promise<AxiosInstance> => {
   const session = await getSession();
   if (!session) {
     throw new Error('NO SESSION');
@@ -51,11 +52,16 @@ const getSpotifyClient = async (): Promise<SpotifyApi> => {
   const accessToken = (await refreshBody.json()) as AccessToken;
   accessToken.refresh_token = spotifyRefreshToken;
 
-  const spotifyClient = SpotifyApi.withAccessToken(
-    process.env['SPOTIFY_CLIENT_ID'],
-    accessToken,
-  );
-  return spotifyClient;
+  const spotifyInstance = axios.create({
+    headers: {
+      Authorization: `Bearer ${accessToken.access_token}`,
+    },
+  });
+
+  // Optional: You can also set other default configurations here
+  spotifyInstance.defaults.baseURL = 'https://api.spotify.com/v1/';
+
+  return spotifyInstance;
 };
 
 export default getSpotifyClient;
