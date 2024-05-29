@@ -24,7 +24,7 @@ export function NavBar({ className }: NavBarProps) {
       className={`flex gap-7 justify-between items-center py-4 px-6 bg-white ${className}`}
     >
       <div className="flex gap-4 items-center space-x-8 flex-shrink-0">
-        <a className="flex items-center space-x-2" href="/home">
+        <a className="flex items-center space-x-2" href="/">
           <Image src="/image.png" alt="Logo" width={36} height={36} />
         </a>
         <nav className="hidden md:flex space-x-8">
