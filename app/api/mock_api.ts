@@ -1,5 +1,4 @@
 import fs from 'fs';
-import path from 'path';
 
 export function fetchAirbudsFromServer(): Promise<any> {
   return new Promise((resolve, reject) => {

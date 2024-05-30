@@ -1,22 +1,23 @@
 'use client';
-import { Button } from './button';
+import { Button } from '../button';
 import Image from 'next/image';
 import Link from 'next/link';
-type PlaylistLayoutProps = {
+
+type SongLayoutProps = {
   title: string;
+  artist: string;
   album_url: string;
-  playlist_url: string;
-  numberOfSongs: number;
+  song_url: string;
   className?: string;
 };
 
-export function PlaylistLayout({
+export function SongLayout({
   title,
+  artist,
   album_url,
-  playlist_url,
-  numberOfSongs,
+  song_url,
   className,
-}: PlaylistLayoutProps) {
+}: SongLayoutProps) {
   return (
     <div
       className={`relative flex items-center space-x-4 p-4 bg-white rounded-lg shadow-lg ${className}`}
@@ -30,11 +31,9 @@ export function PlaylistLayout({
         <h1 className="font-bold text-[15px] text-gray-900 truncate">
           {title}
         </h1>
-        <p className="text-[13px] text-gray-500">
-          {numberOfSongs ? numberOfSongs.toString() : '0'} songs
-        </p>
+        <p className="text-[12px] text-gray-600">{artist}</p>
       </div>
-      <Link href={playlist_url} passHref>
+      <Link href={song_url} passHref>
         <Button
           variant="default"
           size="sm"

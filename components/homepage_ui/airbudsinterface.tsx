@@ -86,7 +86,7 @@ const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
   return (
     <div className="flex flex-col items-center justify-between h-full w-full p-4 snap-center">
       <div className="flex flex-col items-center mt-4">
-        <img
+        <Image
           src={profileImage}
           alt="Profile"
           width={50}
@@ -99,10 +99,13 @@ const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
         </div>
       </div>
       <div className="flex flex-col items-center">
-        <img
+        <Image
           src={albumImage}
           alt="Album Art"
-          className="w-full max-w-xs rounded-lg"
+          width={300} // Initial width
+          height={300} // Initial height
+          layout="intrinsic"
+          className="rounded-lg"
         />
         <h3 className="text-xl font-bold mt-4 text-center">{songTitle}</h3>
         <p className="text-sm text-gray-400">{songArtist}</p>

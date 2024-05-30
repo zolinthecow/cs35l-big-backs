@@ -85,7 +85,7 @@ export function NavBar({ className }: NavBarProps) {
             variant="ghost"
             className="text-base font-medium transition-colors hover:text-blue-500 px-2"
           >
-            <img
+            <Image
               src="https://avatar.iran.liara.run/public/39"
               alt="Profile"
               width={36}

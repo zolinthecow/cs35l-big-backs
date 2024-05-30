@@ -21,7 +21,7 @@ import {
   RightSidebarSkeleton,
   AirbudsInterfaceSkeleton,
 } from '@/components/skeleton_loader'; // Adjust the path as needed
-import { NavBar } from '@/components/ui/navbar';
+import { NavBar } from '@/components/navbar';
 
 const Page: React.FC = () => {
   return (

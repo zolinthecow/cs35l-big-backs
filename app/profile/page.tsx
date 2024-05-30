@@ -1,32 +1,31 @@
-"use client";
-import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Rating } from "@/components/ui/rating";
-import { FC } from "react";
-import { NavBar } from "@/components/ui/navbar";
-import { SongLayout } from "@/components/ui/song-layout";
-import { mockSongData } from "@/components/mock_data/song_data";
-import { PlaylistLayout } from "@/components/ui/playlist-layout";
-import { mockPlaylistData } from "@/components/mock_data/playlist_data";
-import { mockArtistData } from "@/components/mock_data/artist_data";
-import { mockAirbudsData } from "@/components/mock_data/airbuds_data";
-import Link from "next/link";
-import { useRouter } from 'next/router';
+'use server';
+import { AvatarImage, AvatarFallback, Avatar } from '@/components/ui/avatar';
+import { Rating } from '@/components/ui/rating';
+import { FC } from 'react';
+import { NavBar } from '@/components/navbar';
+import { SongLayout } from '@/components/ui/layouts/song-layout';
+import { mockSongData } from '@/components/mock_data/song_data';
+import { PlaylistLayout } from '@/components/ui/layouts/playlist-layout';
+import { mockPlaylistData } from '@/components/mock_data/playlist_data';
+import { mockArtistData } from '@/components/mock_data/artist_data';
+import { mockAirbudsData } from '@/components/mock_data/airbuds_data';
+import Link from 'next/link';
 
 const userData = {
-  name: "Joe Bryant",
-  username: "@joe_bryant",
-  profilePicture: "/profile.jpg",
+  name: 'Joe Bryant',
+  username: '@joe_bryant',
+  profilePicture: '/profile.jpg',
   bio: [
-    "Ethan is a freaky frontend enthusiast who has a passion for music and mathematics. He loves to grind, to run around Bel Air and admire the beautiful mansions, and to debone chicken wings. When he has free time he also loves to show his friends his special sauce.",
-    "Other hobbies include: pregaming din tai fung with shake shack, being nonCHALANT, and celebrating the month of May.",
+    'Ethan is a freaky frontend enthusiast who has a passion for music and mathematics. He loves to grind, to run around Bel Air and admire the beautiful mansions, and to debone chicken wings. When he has free time he also loves to show his friends his special sauce.',
+    'Other hobbies include: pregaming din tai fung with shake shack, being nonCHALANT, and celebrating the month of May.',
   ],
   ratingValue: 4.5,
   friendsCount: 107,
 };
 
 const Page: FC = () => {
-  const { name, username, profilePicture, bio, ratingValue, friendsCount } = userData;
+  const { name, username, profilePicture, bio, ratingValue, friendsCount } =
+    userData;
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -47,7 +46,9 @@ const Page: FC = () => {
               <div className="flex items-center space-x-2">
                 <p className="text-gray-500 dark:text-gray-400">{username}</p>
                 <span className="text-xl">·</span>
-                <p className="text-gray-500 dark:text-gray-400">{friendsCount} friends</p>
+                <p className="text-gray-500 dark:text-gray-400">
+                  {friendsCount} friends
+                </p>
               </div>
             </div>
           </div>
@@ -64,11 +65,17 @@ const Page: FC = () => {
           <div className="flex flex-col bg-white p-6 rounded-lg shadow-md space-y-4">
             <h2 className="text-2xl font-bold text-gray-800">Pinned Songs</h2>
             {mockSongData.map((song) => (
-              <SongLayout key={song.id} {...song} className="transition-all duration-200 ease-in-out hover:bg-gray-100 hover:shadow-xl"/>
+              <SongLayout
+                key={song.id}
+                {...song}
+                className="transition-all duration-200 ease-in-out hover:bg-gray-100 hover:shadow-xl"
+              />
             ))}
           </div>
           <div className="flex flex-col bg-white p-6 rounded-lg shadow-md space-y-4">
-            <h2 className="text-2xl font-bold text-gray-800">Pinned Playlists</h2>
+            <h2 className="text-2xl font-bold text-gray-800">
+              Pinned Playlists
+            </h2>
             {mockPlaylistData.map((playlist) => (
               <PlaylistLayout
                 key={playlist.id}
@@ -79,7 +86,11 @@ const Page: FC = () => {
           </div>
           <Section title="Pinned Artists" scrollable>
             {mockArtistData.map((artist) => (
-              <ArtistItem key={artist.id} name={artist.artist} cover={artist.artist_url} />
+              <ArtistItem
+                key={artist.id}
+                name={artist.artist}
+                cover={artist.artist_url}
+              />
             ))}
           </Section>
           <Section title="Friends" scrollable>
@@ -99,14 +110,16 @@ const Page: FC = () => {
   );
 };
 
-const Section: FC<{ title: string; scrollable?: boolean; children: React.ReactNode }> = ({
-  title,
-  scrollable,
-  children,
-}) => (
+const Section: FC<{
+  title: string;
+  scrollable?: boolean;
+  children: React.ReactNode;
+}> = ({ title, scrollable, children }) => (
   <div className="flex flex-col gap-4 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">{title}</h2>
-    <div className={`flex gap-4 ${scrollable ? "overflow-x-auto" : ""}`}>
+    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+      {title}
+    </h2>
+    <div className={`flex gap-4 ${scrollable ? 'overflow-x-auto' : ''}`}>
       {children}
     </div>
   </div>
@@ -120,17 +133,19 @@ const ArtistItem: FC<{ name: string; cover: string }> = ({ name, cover }) => (
       src={cover}
     />
     <div className="text-center w-40">
-      <h3 className="font-bold text-[15px] text-gray-900 dark:text-gray-200 truncate text-ellipsis">{name}</h3>
+      <h3 className="font-bold text-[15px] text-gray-900 dark:text-gray-200 truncate text-ellipsis">
+        {name}
+      </h3>
     </div>
   </div>
 );
 
-const FriendItem: FC<{ name: string; username: string; cover_url: string; profile_link: string }> = ({
-  name,
-  username,
-  cover_url,
-  profile_link,
-}) => (
+const FriendItem: FC<{
+  name: string;
+  username: string;
+  cover_url: string;
+  profile_link: string;
+}> = ({ name, username, cover_url, profile_link }) => (
   <div className="flex flex-col items-center gap-2 p-4 rounded-md transition-all duration-200 ease-in-out hover:bg-gray-100 hover:shadow-xl">
     <img
       alt={`${name} cover`}
@@ -139,9 +154,13 @@ const FriendItem: FC<{ name: string; username: string; cover_url: string; profil
     />
     <div className="text-center w-40">
       <Link href={profile_link}>
-        <h3 className="font-bold text-[15px] text-gray-900 dark:text-gray-200 truncate text-ellipsis">{name}</h3>
+        <h3 className="font-bold text-[15px] text-gray-900 dark:text-gray-200 truncate text-ellipsis">
+          {name}
+        </h3>
       </Link>
-      <h3 className="font-light text-[13px] text-gray-900 dark:text-gray-400 truncate text-ellipsis">@{username}</h3>
+      <h3 className="font-light text-[13px] text-gray-900 dark:text-gray-400 truncate text-ellipsis">
+        @{username}
+      </h3>
     </div>
   </div>
 );
