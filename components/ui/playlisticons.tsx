@@ -390,11 +390,13 @@ export function ThumbsUpIcon(props: React.SVGProps<SVGSVGElement>) {
 interface IconWithCounterProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   initialCount?: number;
+  className?: string;
 }
 
 export function IconWithCounter({
   icon: Icon,
   initialCount = 0,
+  className = 'text-gray-400',
 }: IconWithCounterProps) {
   const [count, setCount] = useState(initialCount);
 
@@ -407,8 +409,8 @@ export function IconWithCounter({
 
   return (
     <Button className="flex items-center gap-1" onClick={handleClick}>
-      <Icon className="w-5 h-5 hover-effect" />
-      <span className="text-sm text-gray-400">{count}</span>
+      <Icon className={`w-5 h-5 hover-effect ${className}`} />
+      <span className={`text-sm ${className}`}>{count}</span>
     </Button>
   );
 }

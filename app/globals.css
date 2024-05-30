@@ -86,3 +86,12 @@
   .snap-center {
     scroll-snap-align: center;
   }
+
+  .custom-bg-cream {
+    background-color: whitesmoke;
+  }
+
+  .custom-bg-cream2 {
+    background-color: snow;
+  }
+  
