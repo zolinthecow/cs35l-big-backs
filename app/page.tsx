@@ -22,6 +22,7 @@ import {
   AirbudsInterfaceSkeleton,
 } from '@/components/skeleton_loader'; // Adjust the path as needed
 import { NavBar } from '@/components/navbar';
+import { getSession, withPageAuthRequired } from '@auth0/nextjs-auth0';
 
 const Page: React.FC = () => {
   return (
