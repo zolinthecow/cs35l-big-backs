@@ -1,20 +1,9 @@
-import { getSession } from '@auth0/nextjs-auth0';
+import { getSession, Session } from '@auth0/nextjs-auth0';
 import { AccessToken } from '@spotify/web-api-ts-sdk';
 import { Auth0ManagementService } from './auth0';
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 
-export async function getSpotifyAccessToken() {
-  const session = await getSession();
-  if (!session) {
-    throw new Error('NO SESSION');
-  }
-  if (
-    !process.env['SPOTIFY_CLIENT_ID'] ||
-    !process.env['SPOTIFY_CLIENT_SECRET']
-  ) {
-    throw new Error('NO CLIENT ENV VARS');
-  }
-
+export async function getSpotifyAccessTokenWithSession(session: Session) {
   const apiToken = await Auth0ManagementService.getAccessToken();
   const auth0Url = new URL(
     session.user.sub,
@@ -29,30 +18,17 @@ export async function getSpotifyAccessToken() {
   };
   const userResp = await fetch(auth0Url, auth0Options);
   const user = await userResp.json();
-  const spotifyRefreshToken = user.identities[0].refresh_token as string;
+  const spotifyAccessToken = user.identities[0].access_token as string;
+  return spotifyAccessToken;
+}
 
-  const refreshUrl = `https://accounts.spotify.com/api/token`;
-  const secretAndId =
-    process.env['SPOTIFY_CLIENT_ID'] +
-    ':' +
-    process.env['SPOTIFY_CLIENT_SECRET'];
-  const refreshPaylod = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      // @ts-expect-error its fine
-      Authorization: 'Basic ' + new Buffer.from(secretAndId).toString('base64'),
-    },
-    body: new URLSearchParams({
-      grant_type: 'refresh_token',
-      refresh_token: spotifyRefreshToken,
-    }),
-  };
-  const refreshBody = await fetch(refreshUrl, refreshPaylod);
-  const accessToken = (await refreshBody.json()) as AccessToken;
-  accessToken.refresh_token = spotifyRefreshToken;
+export async function getSpotifyAccessToken() {
+  const session = await getSession();
+  if (!session) {
+    throw new Error('NO SESSION');
+  }
 
-  return accessToken;
+  return getSpotifyAccessTokenWithSession(session);
 }
 
 const getSpotifyClient = async (
@@ -66,7 +42,41 @@ const getSpotifyClient = async (
 
   // Optional: You can also set other default configurations here
   spotifyInstance.defaults.baseURL = 'https://api.spotify.com/v1/';
+  //
+  // Response interceptor
+  spotifyInstance.interceptors.response.use(
+    (response: AxiosResponse) => {
+      return response;
+    },
+    async (error: AxiosError) => {
+      console.log('HANDLING ERROR');
+      const originalRequest = error.config as any;
+      if (
+        error.response?.status === 401 &&
+        // @ts-expect-error It should be fine?
+        error.response?.data?.error?.message === 'The access token expired' &&
+        !originalRequest._retry
+      ) {
+        originalRequest._retry = true;
+        originalRequest._retryCount = originalRequest._retryCount || 0;
 
+        if (originalRequest._retryCount < 3) {
+          originalRequest._retryCount += 1;
+
+          // Get a new access token
+          const newAccessTokenResp = await fetch(`/api/auth/get-spotify-token`);
+          const newAccessTokenData = await newAccessTokenResp.json();
+          const newAccessToken = newAccessTokenData.apiToken as string;
+          spotifyInstance.defaults.headers.Authorization = `Bearer ${newAccessToken}`;
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+          // Retry the original request with the new access token
+          return spotifyInstance(originalRequest);
+        }
+      }
+      return Promise.reject(error);
+    },
+  );
   return spotifyInstance;
 };
 
