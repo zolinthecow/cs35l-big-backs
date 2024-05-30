@@ -6,31 +6,78 @@ import {
   fetchSongsFromServer,
 } from './api/mock_api';
 import React, { Suspense } from 'react';
-import HomePage, { HomePageProps } from '@/components/homepage'; // Adjust the path as needed
-import SkeletonLoader from '@/components/skeleton_loader'; // Adjust the path as needed
+import RightSidebar, {
+  RightSidebarProps,
+} from '@/components/homepage_ui/rightsidebar';
+import LeftSidebar, {
+  LeftSidebarProps,
+} from '@/components/homepage_ui/leftsidebar';
+import SnappingScrollContainer, {
+  SnappingScrollContainerProps,
+} from '@/components/homepage_ui/airbudsinterface';
+import {
+  SkeletonLoader,
+  LeftSidebarSkeleton,
+  RightSidebarSkeleton,
+  AirbudsInterfaceSkeleton,
+} from '@/components/skeleton_loader'; // Adjust the path as needed
+import { NavBar } from '@/components/ui/navbar';
 
 const Page: React.FC = () => {
   return (
-    <Suspense fallback={<SkeletonLoader />}>
-      <ServerComponent />
-    </Suspense>
+    <div className="h-screen w-screen flex flex-col">
+      <NavBar />
+      <div className="flex flex-1 overflow-hidden">
+        <Suspense fallback={<LeftSidebarSkeleton />}>
+          <LeftSideBarComponent />
+        </Suspense>
+        <div className="h-full flex-1 overflow-y-auto border-t border-gray-100 border-b rounded bg-gray-100">
+          <Suspense fallback={<AirbudsInterfaceSkeleton />}>
+            <AirbudsComponents />
+          </Suspense>
+        </div>
+        <Suspense fallback={<RightSidebarSkeleton />}>
+          <RightSideBarComponent />
+        </Suspense>
+      </div>
+    </div>
   );
 };
 
-const ServerComponent = async (): Promise<JSX.Element> => {
-  const songData = await fetchSongsFromServer();
-  const playlistData = await fetchPlaylistsFromServer();
-  const artistData = await fetchArtistsFromServer();
+const AirbudsComponents = async (): Promise<JSX.Element> => {
   const airbudsData = await fetchAirbudsFromServer();
 
-  const props: HomePageProps = {
-    songData,
-    playlistData,
-    artistData,
+  const props: SnappingScrollContainerProps = {
     airbudsData,
   };
 
-  return <HomePage {...props} />;
+  return <SnappingScrollContainer {...props} />;
+};
+
+const LeftSideBarComponent = async (): Promise<JSX.Element> => {
+  const songData = await fetchSongsFromServer();
+  const artistData = await fetchArtistsFromServer();
+  const playlistData = await fetchPlaylistsFromServer();
+
+  const props: LeftSidebarProps = {
+    songData,
+    artistData,
+    playlistData,
+  };
+
+  return <LeftSidebar {...props} />;
+};
+
+const RightSideBarComponent = async (): Promise<JSX.Element> => {
+  const songData = await fetchSongsFromServer();
+  const artistData = await fetchArtistsFromServer();
+
+  const props: RightSidebarProps = {
+    songData,
+    artistData,
+  };
+
+  return <RightSidebar {...props} />;
 };
 
 export default Page;

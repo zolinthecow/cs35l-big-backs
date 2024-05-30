@@ -9,7 +9,9 @@ export function fetchAirbudsFromServer(): Promise<any> {
       if (err) {
         reject(err);
       } else {
-        resolve(JSON.parse(data));
+        setTimeout(() => {
+          resolve(JSON.parse(data));
+        }, 3000);
       }
     });
   });
@@ -25,7 +27,7 @@ export function fetchArtistsFromServer(): Promise<any> {
       } else {
         setTimeout(() => {
           resolve(JSON.parse(data));
-        }, 5000);
+        }, 2000);
       }
     });
   });
@@ -39,7 +41,9 @@ export function fetchPlaylistsFromServer(): Promise<any> {
       if (err) {
         reject(err);
       } else {
-        resolve(JSON.parse(data));
+        setTimeout(() => {
+          resolve(JSON.parse(data));
+        }, 5000);
       }
     });
   });

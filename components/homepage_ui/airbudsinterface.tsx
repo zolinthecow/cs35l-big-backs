@@ -184,25 +184,25 @@ interface DataProps {
   songLink: string;
 }
 
-interface SnappingScrollContainerProps {
-  items: DataProps[];
+export interface SnappingScrollContainerProps {
+  airbudsData: DataProps[];
 }
 
 const SnappingScrollContainer: React.FC<SnappingScrollContainerProps> = ({
-  items,
+  airbudsData,
 }) => {
   return (
     <div className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide border border-gray-100 rounded-md">
-      {items.map((item) => (
+      {airbudsData.map((airbudsData) => (
         <AirbudsInterface
-          key={item.key}
-          profileImage={item.profileImage}
-          profileName={item.profileName}
-          profileTime={item.profileTime}
-          albumImage={item.albumImage}
-          songTitle={item.songTitle}
-          songArtist={item.songArtist}
-          songLink={item.songLink}
+          key={airbudsData.key}
+          profileImage={airbudsData.profileImage}
+          profileName={airbudsData.profileName}
+          profileTime={airbudsData.profileTime}
+          albumImage={airbudsData.albumImage}
+          songTitle={airbudsData.songTitle}
+          songArtist={airbudsData.songArtist}
+          songLink={airbudsData.songLink}
         />
       ))}
     </div>
