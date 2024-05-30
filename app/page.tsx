@@ -1,10 +1,4 @@
 // app/page.tsx
-import {
-  fetchAirbudsFromServer,
-  fetchArtistsFromServer,
-  fetchPlaylistsFromServer,
-  fetchSongsFromServer,
-} from './api/mock_api';
 import React, { Suspense } from 'react';
 import RightSidebar, {
   RightSidebarProps,
@@ -16,15 +10,23 @@ import SnappingScrollContainer, {
   SnappingScrollContainerProps,
 } from '@/components/homepage_ui/airbudsinterface';
 import {
-  SkeletonLoader,
   LeftSidebarSkeleton,
   RightSidebarSkeleton,
   AirbudsInterfaceSkeleton,
-} from '@/components/skeleton_loader'; // Adjust the path as needed
+} from '@/components/skeleton_loader';
 import { NavBar } from '@/components/navbar';
-import { getSession, withPageAuthRequired } from '@auth0/nextjs-auth0';
 
-const Page: React.FC = () => {
+//This is the basic function to get the mock data for now
+async function fetchData(endpoint: string) {
+  const res = await fetch(`http://localhost:3000/api/${endpoint}`);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch ${endpoint}`);
+  }
+  return res.json();
+}
+
+//server side rendering with a skeleton
+const Page: React.FC = async () => {
   return (
     <div className="h-screen w-screen flex flex-col">
       <NavBar />
@@ -45,8 +47,9 @@ const Page: React.FC = () => {
   );
 };
 
+//Each of these functions renders the elements client side so that way people can interact with them
 const AirbudsComponents = async (): Promise<JSX.Element> => {
-  const airbudsData = await fetchAirbudsFromServer();
+  const airbudsData = await fetchData('airbuds');
 
   const props: SnappingScrollContainerProps = {
     airbudsData,
@@ -56,9 +59,9 @@ const AirbudsComponents = async (): Promise<JSX.Element> => {
 };
 
 const LeftSideBarComponent = async (): Promise<JSX.Element> => {
-  const songData = await fetchSongsFromServer();
-  const artistData = await fetchArtistsFromServer();
-  const playlistData = await fetchPlaylistsFromServer();
+  const songData = await fetchData('songs');
+  const artistData = await fetchData('artists');
+  const playlistData = await fetchData('playlists');
 
   const props: LeftSidebarProps = {
     songData,
@@ -70,8 +73,8 @@ const LeftSideBarComponent = async (): Promise<JSX.Element> => {
 };
 
 const RightSideBarComponent = async (): Promise<JSX.Element> => {
-  const songData = await fetchSongsFromServer();
-  const artistData = await fetchArtistsFromServer();
+  const songData = await fetchData('songs');
+  const artistData = await fetchData('artists');
 
   const props: RightSidebarProps = {
     songData,
