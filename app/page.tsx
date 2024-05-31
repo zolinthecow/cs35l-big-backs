@@ -1,5 +1,5 @@
 // app/page.tsx
-import React, { Suspense } from 'react';
+import React, { FC, Suspense } from 'react';
 import RightSidebar, {
   RightSidebarProps,
 } from '@/components/homepage_ui/rightsidebar';
@@ -26,7 +26,7 @@ async function fetchData(endpoint: string) {
 }
 
 //server side rendering with a skeleton
-const Page: React.FC = async () => {
+const Page: FC = async () => {
   return (
     <div className="h-screen w-screen flex flex-col">
       <NavBar />

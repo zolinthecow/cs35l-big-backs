@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import getSpotifyClient from '@/lib/spotify';
-import { NavBar } from '@/components/ui/navbar';
+import { NavBar } from '@/components/navbar';
 
 interface Track {
   id: string;

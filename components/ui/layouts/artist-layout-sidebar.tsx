@@ -1,4 +1,6 @@
 'use client';
+import Image from 'next/image';
+
 type ArtistLayoutProps = {
   artist: string;
   artist_url: string;
@@ -14,9 +16,11 @@ export function ArtistLayout({
     <div
       className={`relative flex items-center space-x-4 p-4 bg-white rounded-lg shadow-lg ${className}`}
     >
-      <img
+      <Image
         alt="Album Cover"
-        className="w-20 h-20 rounded-lg object-cover"
+        className="rounded-lg object-cover"
+        width={80}
+        height={80}
         src={artist_url}
       />
       <div className="flex flex-col justify-center flex-1 min-w-0">

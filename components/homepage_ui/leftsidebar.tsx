@@ -1,7 +1,8 @@
+'use client';
 import React, { FC } from 'react';
 import { SongLayout } from '../ui/layouts/song-layout';
 import { PlaylistLayout } from '../ui/layouts/playlist-layout';
-import { ArtistLayout } from '../ui/layouts/artist-layout';
+import { ArtistLayout } from '../ui/layouts/artist-layout-sidebar';
 
 interface SongDataProps {
   id: string;
