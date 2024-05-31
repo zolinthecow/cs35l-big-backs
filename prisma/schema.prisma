@@ -15,8 +15,10 @@ datasource db {
 }
 
 model User {
-  id       String @id
-  nickname String
+  id                  String  @id
+  nickname            String
+  spotifyAccessToken  String?
+  spotifyRefreshToken String?
 }
 
 model Auth0ManagementApiToken {
