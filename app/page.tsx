@@ -18,7 +18,7 @@ import { NavBar } from '@/components/navbar';
 
 //This is the basic function to get the mock data for now
 async function fetchData(endpoint: string) {
-  const res = await fetch(`http://localhost:3000/api/${endpoint}`);
+  const res = await fetch(`/api/${endpoint}`);
   if (!res.ok) {
     throw new Error(`Failed to fetch ${endpoint}`);
   }
