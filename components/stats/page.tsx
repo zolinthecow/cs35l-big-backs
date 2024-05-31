@@ -22,11 +22,7 @@ interface RecentlyPlayed {
   played_at: string;
 }
 
-interface Props {
-  accessToken: string;
-}
-
-const StatsPage: React.FC<Props> = ({ accessToken }) => {
+const StatsPage: React.FC = () => {
   const [topTracks, setTopTracks] = useState<Track[]>([]);
   const [topArtists, setTopArtists] = useState<Artist[]>([]);
   const [recentlyPlayed, setRecentlyPlayed] = useState<RecentlyPlayed[]>([]);
@@ -40,7 +36,7 @@ const StatsPage: React.FC<Props> = ({ accessToken }) => {
   useEffect(() => {
     const fetchTopTracks = async () => {
       try {
-        const spotifyInstance = await getSpotifyClient(accessToken);
+        const spotifyInstance = await getSpotifyClient();
         const resp = await spotifyInstance.get('/me/top/tracks', {
           params: {
             time_range: timeRange,
@@ -56,42 +52,42 @@ const StatsPage: React.FC<Props> = ({ accessToken }) => {
 
     fetchTopTracks();
     /* const fetchTopArtists = async () => {
-            try {
-                const { accessToken } = await getSpotifyClient();
-                const response = await fetch(`https://api.spotify.com/v1/me/top/artists?time_range=${timeRange}&limit=20`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                });
-                const data = await response.json();
-                setTopArtists(data.items);
-            } catch (error) {
-                console.error('Error fetching top artists:', error);
-            }
-        };
-
-        const fetchRecentlyPlayed = async () => {
-            try {
-                const { accessToken } = await getSpotifyClient();
-                const response = await fetch(`https://api.spotify.com/v1/me/player/recently-played?limit=20`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                });
-                const data = await response.json();
-                setRecentlyPlayed(data.items);
-            } catch (error) {
-                console.error('Error fetching recently played tracks:', error);
-            }
-        };
-
-        if (currentView === 'tracks') {
-            fetchTopTracks();
-        } else if (currentView === 'artists') {
-            fetchTopArtists();
-        } else if (currentView === 'recent') {
-            fetchRecentlyPlayed();
-        } */
+                try {
+                    const { accessToken } = await getSpotifyClient();
+                    const response = await fetch(`https://api.spotify.com/v1/me/top/artists?time_range=${timeRange}&limit=20`, {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    });
+                    const data = await response.json();
+                    setTopArtists(data.items);
+                } catch (error) {
+                    console.error('Error fetching top artists:', error);
+                }
+            };
+    
+            const fetchRecentlyPlayed = async () => {
+                try {
+                    const { accessToken } = await getSpotifyClient();
+                    const response = await fetch(`https://api.spotify.com/v1/me/player/recently-played?limit=20`, {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    });
+                    const data = await response.json();
+                    setRecentlyPlayed(data.items);
+                } catch (error) {
+                    console.error('Error fetching recently played tracks:', error);
+                }
+            };
+    
+            if (currentView === 'tracks') {
+                fetchTopTracks();
+            } else if (currentView === 'artists') {
+                fetchTopArtists();
+            } else if (currentView === 'recent') {
+                fetchRecentlyPlayed();
+            } */
   }, [timeRange, currentView]);
 
   return (
