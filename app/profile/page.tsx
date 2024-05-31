@@ -11,6 +11,7 @@ import { mockPlaylistData } from "@/components/mock_data/playlist_data";
 import { mockArtistData } from "@/components/mock_data/artist_data";
 import { mockAirbudsData } from "@/components/mock_data/airbuds_data";
 import Link from "next/link";
+import { useRouter } from 'next/router';
 
 const userData = {
   name: "Joe Bryant",
