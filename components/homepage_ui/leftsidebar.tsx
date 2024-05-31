@@ -38,7 +38,7 @@ const LeftSidebar: FC<LeftSidebarProps> = ({
   artistData,
 }) => {
   return (
-    <div className="h-full w-84 bg-gray-100 overflow-y-auto scrollbar-hide p-4 text-black">
+    <div className="h-full w-full bg-gray-100 overflow-y-auto p-4 text-black flex flex-col">
       <div className="mt-4">
         <h1 className="text-xl font-bold mb-4">Pinned Songs</h1>
         <div className="space-y-4">
@@ -49,6 +49,7 @@ const LeftSidebar: FC<LeftSidebarProps> = ({
               artist={song.artist}
               album_url={song.album_url}
               song_url={song.song_url}
+              className="hover:bg-gray-200 transition-colors duration-200"
             />
           ))}
         </div>
@@ -61,6 +62,7 @@ const LeftSidebar: FC<LeftSidebarProps> = ({
               key={artist.id}
               artist={artist.artist}
               artist_url={artist.artist_url}
+              className="hover:bg-gray-200 transition-colors duration-200"
             />
           ))}
         </div>
@@ -75,6 +77,7 @@ const LeftSidebar: FC<LeftSidebarProps> = ({
               album_url={playlist.album_url}
               playlist_url={playlist.playlist_url}
               numberOfSongs={playlist.numberOfSongs}
+              className="hover:bg-gray-200 transition-colors duration-200"
             />
           ))}
         </div>

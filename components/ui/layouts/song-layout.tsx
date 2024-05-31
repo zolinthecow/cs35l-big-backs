@@ -20,7 +20,7 @@ export function SongLayout({
 }: SongLayoutProps) {
   return (
     <div
-      className={`relative flex items-center space-x-4 p-4 bg-white rounded-lg shadow-lg ${className}`}
+      className={`relative flex items-center space-x-4 p-4 bg-white rounded-lg shadow-lg w-full ${className}`}
     >
       <img
         alt="Album Cover"
@@ -28,10 +28,12 @@ export function SongLayout({
         src={album_url}
       />
       <div className="flex flex-col justify-center flex-1 min-w-0">
-        <h1 className="font-bold text-[15px] text-gray-900 truncate">
+        <h1 className="font-bold text-[15px] text-gray-900 truncate text-ellipsis">
           {title}
         </h1>
-        <p className="text-[12px] text-gray-600">{artist}</p>
+        <p className="text-[12px] text-gray-600 truncate text-ellipsis">
+          {artist}
+        </p>
       </div>
       <Link href={song_url} passHref>
         <Button
