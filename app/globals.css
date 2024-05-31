@@ -86,3 +86,8 @@
   .snap-center {
     scroll-snap-align: center;
   }
+
+  .custom-bg-cream {
+    background-color: whitesmoke;
+  }
+  
