@@ -13,11 +13,14 @@ import { SkeletonLoader } from '@/components/skeleton_loader';
 
 //This is the basic function to get the mock data for now
 async function fetchData(endpoint: string) {
-  const res = await fetch(`/api/${endpoint}`);
-  if (!res.ok) {
+  try {
+    const data = await import(
+      `../../components/mock_data/${endpoint}_data.json`
+    );
+    return data.default;
+  } catch (error) {
     throw new Error(`Failed to fetch ${endpoint}`);
   }
-  return res.json();
 }
 
 const Page: FC = async () => {
@@ -37,7 +40,7 @@ const Page: FC = async () => {
 };
 
 const ProfileSideBarComponent = async (): Promise<JSX.Element> => {
-  const userData = await fetchData('userData');
+  const userData = await fetchData('user');
   const props: ProfileProps = {
     name: userData.name,
     username: userData.username,
@@ -51,9 +54,9 @@ const ProfileSideBarComponent = async (): Promise<JSX.Element> => {
 };
 
 const PinnedSideBarComponent = async (): Promise<JSX.Element> => {
-  const songData = await fetchData('songs');
-  const artistData = await fetchData('artists');
-  const playlistData = await fetchData('playlists');
+  const songData = await fetchData('song');
+  const artistData = await fetchData('artist');
+  const playlistData = await fetchData('playlist');
   const friendData = await fetchData('airbuds');
 
   const props: SectionProps = {

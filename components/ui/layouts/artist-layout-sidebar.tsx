@@ -16,13 +16,15 @@ export function ArtistLayout({
     <div
       className={`relative flex items-center space-x-4 p-4 bg-white rounded-lg shadow-lg ${className}`}
     >
-      <Image
-        alt="Album Cover"
-        className="rounded-lg object-cover"
-        width={80}
-        height={80}
-        src={artist_url}
-      />
+      <div style={{ width: '80px', height: '80px', position: 'relative' }}>
+        <Image
+          alt="Album Cover"
+          className="rounded-md"
+          objectFit="cover"
+          src={artist_url}
+          layout="fill"
+        />
+      </div>
       <div className="flex flex-col justify-center flex-1 min-w-0">
         <h1 className="font-bold text-[18px] text-gray-900 truncate">
           {artist}

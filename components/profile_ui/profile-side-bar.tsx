@@ -48,9 +48,7 @@ const ProfileSideBar: FC<ProfileProps> = ({
       <div className="w-full text-left mb-1">
         <h2 className="text-xl font-bold mb-0">Bio</h2>
         <div className="text-gray-700 dark:text-gray-300">
-          {bio.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
+          {bio?.map((paragraph, index) => <p key={index}>{paragraph}</p>) || []}
         </div>
       </div>
     </div>
