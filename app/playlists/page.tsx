@@ -37,7 +37,7 @@ export default function Component() {
 
   return (
     <div className="grid grid-rows-[auto_1fr] h-screen w-full">
-      <NavBar className="custom-bg-cream2" />
+      <NavBar />
       <div className="grid grid-cols-[240px_1fr]">
         <div className="custom-bg-cream text-gray-700 p-6 overflow-y-auto">
           <nav className="space-y-4">

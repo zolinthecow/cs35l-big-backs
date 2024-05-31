@@ -408,7 +408,10 @@ export function IconWithCounter({
   };
 
   return (
-    <Button className="flex items-center gap-1" onClick={handleClick}>
+    <Button
+      className="flex items-center gap-1 custom-bg-cream"
+      onClick={handleClick}
+    >
       <Icon className={`w-5 h-5 hover-effect ${className}`} />
       <span className={`text-sm ${className}`}>{count}</span>
     </Button>
