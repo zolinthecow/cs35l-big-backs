@@ -4,8 +4,11 @@ import React, { useState, useEffect } from 'react';
 //import { useRouter } from 'next/router';
 import { NavBar } from '@/components/ui/navbar';
 
+
 async function fetchWebApi(endpoint: string, method: string, body: any = null): Promise<any> {
-  const token = "BQBYJZqcEYDY3GHrNTE9gtoOiiT-Z4MwvLkZjVx-3uag_QFKUx10gqsH8hkbth47Sv7uJKE2q9hWXO9IMeHf78uI5zewUGpCvOBCHM5P3aAQKIihs93OP0_FRHrBISTWoS1FZEICzN-wpgRbCdTIFI4qIbFnR5cGJ7mptR7OXjq_Sk1xDBSNuDIwKATSzzncsO6A2dD4YxmS9wkhAe6u8FcVTwBLOHhsu_T7r4tjCLik9cjjdYoF0r7ulTDd37rxnpAOsYI";
+  //const token = "BQDLxB8M0wqUNy6ue2oLuxBXG3NUB9ASdLMzdrv_C15xX1ySwzDjV4_nDyOzcGx2pdqjnZEaWD_AGbIcOCLu2kqJUF-pMSlvIByCVKUKeaZe5LdFTomqEns69LCDku2Vhc4vkCUeLyMwdO2CbckQd_foQRm0dQIuRzhjLYPVRrY7WVwIDU2n-ACCaU81-z23cTB4lefWObtwEa15n7SD3JrzMY-OfxVz89dvfkqfNiJ6g4HFtE7bfHlGuYaDIhLcdtIyelg";
+  const token = 'BQDtUKkfEwuvDZtpBTk-nnzdimauW5aHaO-aqc3voRE4jRwwXdNFJ_kdHnnpULugIYcJiD-_jqlO3TMDfcU5HAnEwcyukesqlFr3s1CuJb200qUmsKCFRCfJvMrsHpxqXErdaF_nHKI-IIA279SkEc1beljCQn9B-RuxtyOvek3ecTkBTmcQEzz7vfi3x05qQjIMEQebYTHqV7vuKgMFz5UMvUM3heJdYCzWtVDFTaJL4wTMsNGLB53eCw6OE3EUERccoA';
+  
   const res = await fetch(`https://api.spotify.com/${endpoint}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -31,12 +34,27 @@ interface Track {
   };
 }
 
+/*
 async function getTopTracks(timeRange: string): Promise<Track[]> {
   const response = await fetchWebApi(
     `v1/me/top/tracks?time_range=${timeRange}&limit=5`, 'GET'
   );
   return response.items;
 }
+*/
+async function getTopTracks(timeRange: string): Promise<Track[]> {
+  try {
+    const response = await fetchWebApi(
+      `v1/me/top/tracks?time_range=${timeRange}&limit=20`, 'GET'
+    );
+    console.log('Top Tracks Response:', response); // Log the response
+    return response.items;
+  } catch (error) {
+    console.error('Error fetching top tracks:', error);
+    return [];
+  }
+}
+
 
 export default function Page() {
   const [topTracks, setTopTracks] = useState<Track[] | null>(null);
@@ -46,7 +64,7 @@ export default function Page() {
   useEffect(() => {
     getTopTracks(timeRange).then(setTopTracks);
   }, [timeRange]);
-
+  
   return (
     <div className="h-screen w-screen flex flex-col">
       <NavBar />
@@ -119,3 +137,4 @@ export default function Page() {
     </div>
   );
 }
+

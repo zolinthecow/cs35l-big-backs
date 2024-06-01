@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { NavBar } from '@/components/ui/navbar';
 
 async function fetchWebApi(endpoint: string, method: string, body: any = null): Promise<any> {
-  const token = "BQBYJZqcEYDY3GHrNTE9gtoOiiT-Z4MwvLkZjVx-3uag_QFKUx10gqsH8hkbth47Sv7uJKE2q9hWXO9IMeHf78uI5zewUGpCvOBCHM5P3aAQKIihs93OP0_FRHrBISTWoS1FZEICzN-wpgRbCdTIFI4qIbFnR5cGJ7mptR7OXjq_Sk1xDBSNuDIwKATSzzncsO6A2dD4YxmS9wkhAe6u8FcVTwBLOHhsu_T7r4tjCLik9cjjdYoF0r7ulTDd37rxnpAOsYI";
+  const token = 'BQDtUKkfEwuvDZtpBTk-nnzdimauW5aHaO-aqc3voRE4jRwwXdNFJ_kdHnnpULugIYcJiD-_jqlO3TMDfcU5HAnEwcyukesqlFr3s1CuJb200qUmsKCFRCfJvMrsHpxqXErdaF_nHKI-IIA279SkEc1beljCQn9B-RuxtyOvek3ecTkBTmcQEzz7vfi3x05qQjIMEQebYTHqV7vuKgMFz5UMvUM3heJdYCzWtVDFTaJL4wTMsNGLB53eCw6OE3EUERccoA';
   const res = await fetch(`https://api.spotify.com/${endpoint}`, {
     headers: {
       Authorization: `Bearer ${token}`,
