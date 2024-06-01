@@ -7,6 +7,7 @@ export const mockPlaylistData = [
     playlist_url:
       'https://open.spotify.com/playlist/5muhyCU9XwDmyZ9gweTZlf?si=990df0fbb116495d',
     rating: 4.8,
+    numberOfSongs: 10,
   },
   {
     id: '2',
@@ -16,6 +17,7 @@ export const mockPlaylistData = [
     playlist_url:
       'https://open.spotify.com/playlist/4l9uFoTBzs4sy3PzYV0v64?si=1d4ed4c6d8fd42ea',
     rating: 4.1,
+    numberOfSongs: 60,
   },
   {
     id: '3',
@@ -25,5 +27,6 @@ export const mockPlaylistData = [
     playlist_url:
       'https://open.spotify.com/playlist/6VhuLuIexF9EYAwokhkRDs?si=c361ba704ffa4b6e',
     rating: 3.7,
+    numberOfSongs: 20,
   },
 ];

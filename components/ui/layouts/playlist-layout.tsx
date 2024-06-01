@@ -1,21 +1,20 @@
 'use client';
-import { Button } from './button';
+import { Button } from '../button';
 import Image from 'next/image';
 import Link from 'next/link';
-
 type PlaylistLayoutProps = {
-  id: string;
   title: string;
   album_url: string;
   playlist_url: string;
+  numberOfSongs: number;
   className?: string;
 };
 
 export function PlaylistLayout({
-  id,
   title,
   album_url,
   playlist_url,
+  numberOfSongs,
   className,
 }: PlaylistLayoutProps) {
   return (
@@ -31,6 +30,9 @@ export function PlaylistLayout({
         <h1 className="font-bold text-[15px] text-gray-900 truncate">
           {title}
         </h1>
+        <p className="text-[13px] text-gray-500">
+          {numberOfSongs ? numberOfSongs.toString() : '0'} songs
+        </p>
       </div>
       <Link href={playlist_url} passHref>
         <Button

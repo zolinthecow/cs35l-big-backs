@@ -66,7 +66,7 @@ export function SongLayout({
             className="p-2 text-white bg-transparent rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75"
           >
             <Image
-              src="/spotify-icon.png"
+              src="https://static-00.iconduck.com/assets.00/spotify-icon-2048x2048-n3imyp8e.png"
               alt="Spotify"
               width={24}
               height={24}
