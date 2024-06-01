@@ -125,7 +125,7 @@ const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
             className="text-white bg-green-600 px-4 py-2 rounded-full flex items-center"
           >
             <Image
-              src="/spotify-icon.png"
+              src="https://static-00.iconduck.com/assets.00/spotify-icon-2048x2048-n3imyp8e.png"
               alt="Spotify"
               width={20}
               height={20}

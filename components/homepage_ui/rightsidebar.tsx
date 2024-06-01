@@ -84,7 +84,7 @@ const RightSidebar: FC<RightSidebarProps> = ({
       </div>
       <div className="mt-8">
         <h1 className="text-xl font-bold mb-4">Recently Played</h1>
-        <div className="space-y-4 w-20">
+        <div className="space-y-4 w-30">
           {recentlyPlayed?.map(({ track }, index) => (
             <SongLayout
               key={index}

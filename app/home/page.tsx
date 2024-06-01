@@ -15,7 +15,7 @@ import {
   AirbudsInterfaceSkeleton,
 } from '@/components/skeleton_loader';
 import { NavBar } from '@/components/navbar';
-import { getSpotifyAccessToken } from '@/lib/spotify/actions';
+import getSpotifyClient from '@/lib/spotify';
 
 //This is the basic function to get the mock data for now
 async function fetchData(endpoint: string) {
@@ -90,34 +90,15 @@ const RightSideBarComponent = async (): Promise<JSX.Element> => {
     artistData,
     recentlyPlayed,
   };
-
   return <RightSidebar {...props} />;
 };
 
-async function fetchWebApi(
-  endpoint: string,
-  method: string,
-  body: any = null,
-): Promise<any> {
-  let accessToken;
-  try {
-    accessToken = await getSpotifyAccessToken();
-  } catch (error) {
-    console.error('Failed to get access token:', error);
-    return {
-      notFound: true, // Optionally handle the error by returning a 404 page
-    };
-  }
-  console.log(accessToken);
-
-  const res = await fetch(`https://api.spotify.com/${endpoint}`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-    method,
-    body: body ? JSON.stringify(body) : null,
-  });
-  return await res.json();
+async function fetchData2(endpoint: string) {
+  const spotifyClient = await getSpotifyClient();
+  console.log('HI PLEASE WORK', spotifyClient);
+  const resp = await spotifyClient.get(endpoint);
+  console.log('HI PLEASE WORK', resp.data.items);
+  return resp.data.items;
 }
 
 interface Artist {
@@ -162,29 +143,29 @@ interface RecentlyPlayed {
 
 async function getTopTracks(): Promise<Track[]> {
   // Endpoint reference : https://developer.spotify.com/documentation/web-api/reference/get-users-top-artists-and-tracks
-  const response = await fetchWebApi(
-    'v1/me/top/tracks?time_range=short_term&limit=5',
-    'GET',
+  const response = await fetchData2(
+    '/me/top/tracks?time_range=short_term&limit=5',
   );
-  return response.items;
+  console.log(response);
+  return response;
 }
 
 async function getTopArtists(): Promise<TopArtist[]> {
-  const response = await fetchWebApi(
-    'v1/me/top/artists?time_range=short_term&limit=5',
-    'GET',
+  const response = await fetchData2(
+    '/me/top/artists?time_range=short_term&limit=5',
   );
-  console.log(process.env['AUTH0_MANAGEMENT_API_SCOPES']);
-  return response.items;
+  return response;
 }
 
 async function getRecentlyPlayed(): Promise<RecentlyPlayed[]> {
-  const response = await fetchWebApi(
-    'v1/me/player/recently-played?before=1717138548800&limit=5',
-    'GET',
+  const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
+  const unixTimestamp = Math.floor(oneMinuteAgo.getTime() / 1000);
+  console.log(unixTimestamp);
+  const response = await fetchData2(
+    `/me/player/recently-played?after=${unixTimestamp}&limit=50`,
   );
-  console.log(response);
-  return response.items;
+  console.log('WHERE', response);
+  return response.slice(0, 5);
 }
 
 export default Page;
