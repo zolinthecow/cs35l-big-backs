@@ -15,8 +15,8 @@ import {
   AirbudsInterfaceSkeleton,
 } from '@/components/skeleton_loader';
 import { NavBar } from '@/components/navbar';
-let ACCESSTOKEN =
-  'BQAXTPaaVg1bdan8TPqvOqICOqkDb2GkOvLdlnXTutK3L0jnhJwcz0_Wj0OAad-i7hLL9r50wc2_ztVrVor0E36bc8p03G8KAi0XsQWbiPOVFSVkXUVIzAk84HemJ0i-i5yWGXG3hGfndkUURGe8oZPYHBXqsWvxiXb7qk2Gczx6lTwxbTmu5z7o6p_AgCIP1rhq';
+import { getSpotifyAccessToken } from '@/lib/spotify/actions';
+
 //This is the basic function to get the mock data for now
 async function fetchData(endpoint: string) {
   try {
@@ -99,16 +99,29 @@ async function fetchWebApi(
   method: string,
   body: any = null,
 ): Promise<any> {
-  const token =
-    'BQBQvz1F3KpXf8cLcHm4-AA4eKMXK7RSkljS8_kE6ByV0o3ZzzXxW3wmCXE8hC3rtPHowEyb3vnxWb7XSSE-WnJaUrGW3RUVdU_nfy5ju9G8SEA1uGCQl33dG3cNB6gjpjh5stEHejdeweZYucbCtXgov7QwCYRJLrhyYkxZjl58q0OLP4O9liksN1foh-A-UxlvduxPd5cSnU1QffXpxZKzHVR-QNpX0cZkRtf_Yex3tK0NuuDytzzi45nHEuu7wZK9q_k';
+  let accessToken;
+  try {
+    accessToken = await getSpotifyAccessToken();
+  } catch (error) {
+    console.error('Failed to get access token:', error);
+    return {
+      notFound: true, // Optionally handle the error by returning a 404 page
+    };
+  }
+  console.log(accessToken);
+
   const res = await fetch(`https://api.spotify.com/${endpoint}`, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${accessToken}`,
     },
     method,
     body: body ? JSON.stringify(body) : null,
   });
   return await res.json();
+}
+
+interface Artist {
+  name: string;
 }
 
 interface Artist {
@@ -161,6 +174,7 @@ async function getTopArtists(): Promise<TopArtist[]> {
     'v1/me/top/artists?time_range=short_term&limit=5',
     'GET',
   );
+  console.log(process.env['AUTH0_MANAGEMENT_API_SCOPES']);
   return response.items;
 }
 
