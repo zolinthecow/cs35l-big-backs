@@ -81,7 +81,6 @@ export async function refreshSpotifyToken(): Promise<
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      // @ts-expect-error its fine
       Authorization: 'Basic ' + Buffer.from(secretAndId).toString('base64'),
     },
     body: new URLSearchParams({
