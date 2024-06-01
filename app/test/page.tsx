@@ -7,7 +7,7 @@ async function fetchWebApi(
   body: any = null,
 ): Promise<any> {
   const token =
-    'BQBYJZqcEYDY3GHrNTE9gtoOiiT-Z4MwvLkZjVx-3uag_QFKUx10gqsH8hkbth47Sv7uJKE2q9hWXO9IMeHf78uI5zewUGpCvOBCHM5P3aAQKIihs93OP0_FRHrBISTWoS1FZEICzN-wpgRbCdTIFI4qIbFnR5cGJ7mptR7OXjq_Sk1xDBSNuDIwKATSzzncsO6A2dD4YxmS9wkhAe6u8FcVTwBLOHhsu_T7r4tjCLik9cjjdYoF0r7ulTDd37rxnpAOsYI';
+    'BQAXTPaaVg1bdan8TPqvOqICOqkDb2GkOvLdlnXTutK3L0jnhJwcz0_Wj0OAad-i7hLL9r50wc2_ztVrVor0E36bc8p03G8KAi0XsQWbiPOVFSVkXUVIzAk84HemJ0i-i5yWGXG3hGfndkUURGe8oZPYHBXqsWvxiXb7qk2Gczx6lTwxbTmu5z7o6p_AgCIP1rhq';
   const res = await fetch(`https://api.spotify.com/${endpoint}`, {
     headers: {
       Authorization: `Bearer ${token}`,
