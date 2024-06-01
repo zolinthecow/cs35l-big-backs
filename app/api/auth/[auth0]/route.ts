@@ -4,12 +4,11 @@ import {
   handleCallback,
   handleLogin,
 } from '@auth0/nextjs-auth0';
+import { NextApiRequest, NextApiResponse } from 'next';
 import createUserIfNotExisting from '@/actions/createUserIfNotExisting';
+import { getSpotifyAccessTokenFromSession } from '@/lib/spotify/actions';
 
 const scopes = [
-  'openid',
-  'profile',
-  'email',
   'user-read-private',
   'user-read-email',
   'user-top-read',
@@ -24,16 +23,16 @@ const afterCallback: AfterCallbackAppRoute = async (req, session, state) => {
     console.log(user);
 
     await createUserIfNotExisting(user.sub, user.nickname);
+    await getSpotifyAccessTokenFromSession(session);
   }
 
   return session;
 };
 export const GET = handleAuth({
-  // @ts-expect-error whatever
-  async login(req, res) {
+  async login(req: NextApiRequest, res: NextApiResponse) {
     return await handleLogin(req, res, {
       authorizationParams: {
-        scope: scopes.join(' '),
+        connection_scope: scopes.join(' '),
       },
     });
   },

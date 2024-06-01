@@ -4,7 +4,7 @@ import { getSession, Session } from '@auth0/nextjs-auth0';
 import prisma from '@/prisma';
 import { Auth0ManagementService } from '../auth0';
 
-async function getSpotifyAccessTokenFromSession(
+export async function getSpotifyAccessTokenFromSession(
   session: Session,
 ): Promise<string> {
   const apiToken = await Auth0ManagementService.getAccessToken();
@@ -57,6 +57,7 @@ export async function refreshSpotifyToken(): Promise<
   string | 'REAUTHENTICATE'
 > {
   const session = await getSession();
+  console.log(session);
   if (!session) {
     return 'REAUTHENTICATE';
   }
@@ -72,20 +73,20 @@ export async function refreshSpotifyToken(): Promise<
   const refreshToken = userResp.spotifyRefreshToken;
 
   const refreshUrl = `https://accounts.spotify.com/api/token`;
-  const clientId = process.env['SPOTIFY_CLIENT_ID'];
-  if (!clientId) {
-    throw new Error('NO CLIENT ID??');
-  }
-
+  const secretAndId =
+    process.env['SPOTIFY_CLIENT_ID'] +
+    ':' +
+    process.env['SPOTIFY_CLIENT_SECRET'];
   const refreshPaylod = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
+      // @ts-expect-error its fine
+      Authorization: 'Basic ' + Buffer.from(secretAndId).toString('base64'),
     },
     body: new URLSearchParams({
       grant_type: 'refresh_token',
       refresh_token: refreshToken,
-      client_id: clientId,
     }),
   };
   const refreshBody = await fetch(refreshUrl, refreshPaylod);
