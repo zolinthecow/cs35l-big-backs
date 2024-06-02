@@ -20,6 +20,9 @@ dependencies:
   '@radix-ui/react-slot':
     specifier: ^1.0.2
     version: 1.0.2(@types/react@18.3.3)(react@18.0.0)
+  '@sendbird/uikit-react':
+    specifier: ^3.14.8
+    version: 3.14.8(react-dom@18.0.0)(react@18.0.0)
   '@spotify/web-api-ts-sdk':
     specifier: ^1.2.0
     version: 1.2.0
@@ -951,6 +954,68 @@ packages:
     resolution: {integrity: sha512-hw437iINopmQuxWPSUEvqE56NCPsiU8N4AYtfHmJFckclktzK9YQJieD3XkDCDH4OjL+C7zgPUh73R/nrcHrqw==}
     dev: true
 
+  /@sendbird/chat@4.12.6:
+    resolution: {integrity: sha512-uk3elvSqbbLbVz7fRqPe5ngDyY2+9PGdq4PpEY1p3hzaIajAclET8kJIdjz2ZrYjKy6tbH3uYTUaGcUj34VTqA==}
+    peerDependencies:
+      '@react-native-async-storage/async-storage': ^1.17.6
+      react-native-mmkv: ^2.12.2
+    peerDependenciesMeta:
+      '@react-native-async-storage/async-storage':
+        optional: true
+      react-native-mmkv:
+        optional: true
+    dev: false
+
+  /@sendbird/react-uikit-message-template-view@0.0.1-alpha.73(@sendbird/chat@4.12.6)(react-dom@18.0.0)(react@18.0.0):
+    resolution: {integrity: sha512-2cCbHu6xdb+UGIcUVGTdVw6Vcw+wcJ5D4UG6Wnt4CRviTlRCBEW5x7M8vaAGlSP89XwTdewn7quf2waZMWMnTQ==}
+    peerDependencies:
+      '@sendbird/chat': '>=4.3.0 <5'
+      react: '>=16.8.6'
+      react-dom: '>=16.8.6'
+    dependencies:
+      '@sendbird/chat': 4.12.6
+      '@sendbird/uikit-message-template': 0.0.1-alpha.74(react@18.0.0)
+      react: 18.0.0
+      react-dom: 18.0.0(react@18.0.0)
+    dev: false
+
+  /@sendbird/uikit-message-template@0.0.1-alpha.74(react@18.0.0):
+    resolution: {integrity: sha512-kxOfgVVwrWgzfrewuPzKl7BFa3J6SFWZIlClGJSXy9hTIWYGlyxHAWL1OS/NJtUF86RfHtzagyyaAVTHiGioWA==}
+    peerDependencies:
+      react: '>=16.8.6'
+    dependencies:
+      react: 18.0.0
+    dev: false
+
+  /@sendbird/uikit-react@3.14.8(react-dom@18.0.0)(react@18.0.0):
+    resolution: {integrity: sha512-3Synt7BKJ/w3jHS9Gc3KWtiWpXpF0OEwv2L0KEZvFpXv2Rplr9du8CqlYeJHSA9SjU9Oi3I1xxvpNeIpNsObsA==}
+    peerDependencies:
+      react: ^16.8.6 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.6 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@sendbird/chat': 4.12.6
+      '@sendbird/react-uikit-message-template-view': 0.0.1-alpha.73(@sendbird/chat@4.12.6)(react-dom@18.0.0)(react@18.0.0)
+      '@sendbird/uikit-tools': 0.0.1-alpha.73(@sendbird/chat@4.12.6)(react@18.0.0)
+      css-vars-ponyfill: 2.4.9
+      date-fns: 2.30.0
+      dompurify: 3.1.5
+      react: 18.0.0
+      react-dom: 18.0.0(react@18.0.0)
+    transitivePeerDependencies:
+      - '@react-native-async-storage/async-storage'
+      - react-native-mmkv
+    dev: false
+
+  /@sendbird/uikit-tools@0.0.1-alpha.73(@sendbird/chat@4.12.6)(react@18.0.0):
+    resolution: {integrity: sha512-p++CCvjPcsFgghWvyfKrerS3artxhG6w5J46S5kqH4X1crr8a47tCsf+8/w7zlNY9YU7deXmDyf3EtQIX0cCAw==}
+    peerDependencies:
+      '@sendbird/chat': '>=4.10.5 <5'
+      react: '>=16.8.6'
+    dependencies:
+      '@sendbird/chat': 4.12.6
+      react: 18.0.0
+    dev: false
+
   /@sideway/address@4.1.5:
     resolution: {integrity: sha512-IqO/DUQHUkPeixNQ8n0JA6102hT9CmaljNTPmQ1u8MEhBo/R4Q8eKLN/vGZxuebwOroDB4cbpjheD4+/sKFK4Q==}
     dependencies:
@@ -1663,6 +1728,13 @@ packages:
       shebang-command: 2.0.0
       which: 2.0.2
 
+  /css-vars-ponyfill@2.4.9:
+    resolution: {integrity: sha512-aZyLue5bdiGVNCiCclNjo123D8I7kyoYNUaAvz+H1JalX1ye4Ilz7jNRRH5YbM+dYD6ucejiydGwk7lol/GCXQ==}
+    dependencies:
+      balanced-match: 1.0.2
+      get-css-data: 2.1.1
+    dev: false
+
   /cssesc@3.0.0:
     resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
     engines: {node: '>=4'}
@@ -1701,6 +1773,13 @@ packages:
       es-errors: 1.3.0
       is-data-view: 1.0.1
     dev: true
+
+  /date-fns@2.30.0:
+    resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
+    engines: {node: '>=0.11'}
+    dependencies:
+      '@babel/runtime': 7.24.4
+    dev: false
 
   /debug@3.2.7:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
@@ -1790,6 +1869,10 @@ packages:
     dependencies:
       esutils: 2.0.3
     dev: true
+
+  /dompurify@3.1.5:
+    resolution: {integrity: sha512-lwG+n5h8QNpxtyrJW/gJWckL+1/DQiYMX8f7t8Z2AZTPw1esVrqjI63i7Zc2Gz0aKzLVMYC1V1PL/ky+aY/NgA==}
+    dev: false
 
   /eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
@@ -2385,6 +2468,10 @@ packages:
   /functions-have-names@1.2.3:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
     dev: true
+
+  /get-css-data@2.1.1:
+    resolution: {integrity: sha512-JpMa/f5P4mDXKg6l5/2cHL5xNY77Jap7tHyduMa6BF0E2a7bQ6Tvaz2BIMjeVYZYLcmOZ5w2Ro0yVJEI41tMbw==}
+    dev: false
 
   /get-east-asian-width@1.2.0:
     resolution: {integrity: sha512-2nk+7SIVb14QrgXFHcm84tD4bKQz0RxPuMT8Ag5KPOq7J5fEmAg0UbXdTOSHqNuHSU28k55qnceesxXRZGzKWA==}

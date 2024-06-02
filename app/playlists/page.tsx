@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { AvatarImage, AvatarFallback, Avatar } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { NavBar } from '@/components/ui/navbar';
+import { NavBar } from '@/components/navbar';
 import { useState } from 'react';
 import { mockPlaylistData } from '@/components/mock_data/playlist_data';
 import { PlaylistLayout } from '@/components/ui/playlists/playlist-layout';
