@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { MusicIcon } from '@/components/ui/playlisticons';
 
 type PlaylistLayoutProps = {
@@ -24,11 +25,13 @@ export function PlaylistLayout({
       className={`flex items-center gap-2 hover:text-gray-900 ${className}`}
       href={playlist_url}
     >
-      <div className="w-10 h-10 bg-gray-200 rounded-md flex items-center justify-center">
-        <img
+      <div className="w-40 h-40 bg-gray-200 rounded-md flex items-center justify-center">
+        <Image
           src={album_url}
           alt={title}
           className="w-full h-full object-cover rounded-md"
+          height={30}
+          width={30}
         />
       </div>
       <div>
