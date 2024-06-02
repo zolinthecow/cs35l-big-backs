@@ -94,15 +94,17 @@ const RightSideBarComponent = async (): Promise<JSX.Element> => {
 };
 
 async function fetchData2(endpoint: string) {
-  const spotifyClient = await getSpotifyClient();
-  console.log('HI PLEASE WORK', spotifyClient);
-  const resp = await spotifyClient.get(endpoint);
-  console.log('HI PLEASE WORK', resp.data.items);
-  return resp.data.items;
-}
-
-interface Artist {
-  name: string;
+  try {
+    const spotifyClient = await getSpotifyClient();
+    console.log('HI PLEASE WORK', spotifyClient);
+    const resp = await spotifyClient.get(endpoint);
+    console.log('HI PLEASE WORK', resp.data.items);
+    return resp.data.items;
+  } catch (error) {
+    console.error('An error occurred while fetching data:', error);
+    // You can decide what to return in case of error
+    throw new Error(`Failed to fetch data from ${endpoint}`);
+  }
 }
 
 interface Artist {
