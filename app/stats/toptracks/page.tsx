@@ -102,7 +102,13 @@ export default function Page() {
                 <div key={index} className="flex items-center justify-between space-x-4 bg-white p-4 rounded-lg shadow-md">
                   <div className="flex items-center space-x-4">
                     <span className="text-lg font-medium">{index + 1}.</span>
-                    <img src={album.images[0].url} alt={name} width="50" height="50" className="rounded-md" />
+                    {album.images[0] ? (
+                      <img src={album.images[0].url} alt={name} width="50" height="50" className="rounded-md" />
+                    ) : (
+                      <div className="w-16 h-16 flex items-center justify-center rounded-md bg-gray-300 text-gray-600 text-xs text-center">
+                        No Album Cover
+                      </div>
+                    )}
                     <div>
                       <div className="font-medium text-lg text-gray-900">{name}</div>
                       <div className="text-sm text-gray-500">{artists.map(artist => artist.name).join(', ')}</div>

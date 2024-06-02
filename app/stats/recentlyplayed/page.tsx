@@ -93,7 +93,9 @@ export default function Page() {
                     {track.album.images[0] ? (
                       <img src={track.album.images[0].url} alt={track.name} className="w-16 h-16 rounded-md object-cover" />
                     ) : (
-                      <div className="w-16 h-16 rounded-md bg-gray-300"></div>
+                      <div className="w-16 h-16 flex items-center justify-center rounded-md bg-gray-300 text-gray-600 text-xs text-center">
+                        No Album Cover
+                      </div>
                     )}
                     <div>
                       <div className="font-medium text-lg text-gray-900">{track.name}</div>
