@@ -69,7 +69,7 @@ export default function Page() {
                   </a>
                 </button>
                 <button
-                  className={`text-base font-medium text-gray-500 hover:text-gray-900 ${currentView === 'recent' ? 'text-black' : ''}`}
+                  className={`text-base font-medium ${currentView === 'recent' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
                   onClick={() => setCurrentView('recent')}
                 >
                   Recently Played

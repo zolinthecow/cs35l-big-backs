@@ -53,7 +53,7 @@ export default function Page() {
             <div className="flex items-center justify-center border-b-2 border-gray-200 py-6 md:justify-center md:space-x-10">
               <nav className="hidden md:flex space-x-10">
                 <button
-                  className={`text-base font-medium text-gray-500 hover:text-gray-900 ${currentView === 'tracks' ? 'text-black' : ''}`}
+                  className={`text-base font-medium ${currentView === 'tracks' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
                   onClick={() => setCurrentView('tracks')}
                 >
                   Top Tracks
