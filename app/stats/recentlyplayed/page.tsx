@@ -90,10 +90,14 @@ export default function Page() {
                 <div key={index} className="flex items-center justify-between space-x-4 bg-white p-4 rounded-lg shadow-md">
                   <div className="flex items-center space-x-4">
                     <span className="text-lg font-medium">{index + 1}.</span>
-                    <img src={track.album.images[0].url} alt={track.name} className="w-16 h-16 rounded-md object-cover" />
+                    {track.album.images[0] ? (
+                      <img src={track.album.images[0].url} alt={track.name} className="w-16 h-16 rounded-md object-cover" />
+                    ) : (
+                      <div className="w-16 h-16 rounded-md bg-gray-300"></div>
+                    )}
                     <div>
                       <div className="font-medium text-lg text-gray-900">{track.name}</div>
-                      <div className="font-medium text-sm text-gray-900">{track.artists.map(artist => artist.name).join(', ')}</div>
+                      <div className="text-sm text-gray-500">{track.artists.map(artist => artist.name).join(', ')}</div>
                     </div>
                   </div>
                   <div className="flex flex-col items-end space-y-2">
