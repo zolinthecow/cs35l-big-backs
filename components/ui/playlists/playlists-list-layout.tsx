@@ -11,14 +11,14 @@ interface PlaylistItemLayoutProps {
 
 function PlaylistLayout({ id, name, url }: PlaylistItemLayoutProps) {
   return (
-    <Link className={`flex items-center gap-2 hover:text-gray-900`} href={id}>
+    <Link className={`flex items-center gap-4 hover:text-gray-900`} href={id}>
       <div className="w-30 h-30 bg-gray-200 rounded-md flex items-center justify-center">
         <Image
           src={url}
           alt={name}
-          className="w-full h-full object-cover rounded-md"
-          height={30}
-          width={30}
+          className="object-cover rounded-md"
+          height={50}
+          width={50}
         />
       </div>
       <div>
@@ -34,7 +34,7 @@ interface PlaylistItem {
   name: string;
   images: {
     url: string;
-  };
+  }[];
 }
 
 // List of playlists props
@@ -46,9 +46,9 @@ export function ListofPlaylistsLayout({
   playlists,
 }: ListofPlaylistsLayoutProps) {
   return (
-    <div className="space-y-1">
+    <div className="space-y-4">
       <h3 className="text-sm font-medium text-gray-600">Playlists</h3>
-      <div className="grid gap-5">
+      <div className="grid gap-6">
         {playlists?.map(({ id, name, images }, index) => (
           <PlaylistLayout key={index} id={id} name={name} url={images[0].url} />
         ))}

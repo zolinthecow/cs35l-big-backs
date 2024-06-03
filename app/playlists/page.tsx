@@ -10,7 +10,7 @@ interface PlaylistItem {
   name: string;
   images: {
     url: string;
-  };
+  }[];
 }
 
 interface PlaylistResponse {
