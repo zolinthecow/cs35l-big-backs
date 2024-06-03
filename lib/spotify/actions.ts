@@ -107,16 +107,19 @@ export async function refreshSpotifyToken(): Promise<
   return newAccessToken;
 }
 
-export async function getSpotifyAccessToken() {
-  const session = await getSession();
-
+export async function getSpotifyAccessToken(session?: Session) {
+  let _session: Session | null | undefined = session;
   if (!session) {
+    _session = await getSession();
+  }
+
+  if (!_session) {
     throw new Error('NO SESSION');
   }
 
-  let accessToken = await getSpotifyAccessTokenFromDB(session);
+  let accessToken = await getSpotifyAccessTokenFromDB(_session);
   if (accessToken === 'NONE') {
-    accessToken = await getSpotifyAccessTokenFromSession(session);
+    accessToken = await getSpotifyAccessTokenFromSession(_session);
   }
   return accessToken;
 }
