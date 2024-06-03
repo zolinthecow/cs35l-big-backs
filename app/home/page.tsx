@@ -105,10 +105,6 @@ interface Artist {
   name: string;
 }
 
-interface Artist {
-  name: string;
-}
-
 interface Track {
   name: string;
   artists: Artist[];
