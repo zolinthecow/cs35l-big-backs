@@ -2,8 +2,8 @@
 
 import getSpotifyClient from '@/lib/spotify';
 import { ListofPlaylistsLayout } from '@/components/ui/playlists/playlists-list-layout';
-import Component  from '@/components/playlists_ui/playlist_ui';
-import React, { FC } from 'react'
+import Component from '@/components/playlists_ui/playlist_ui';
+import React, { FC } from 'react';
 
 interface PlaylistItem {
   id: string;
@@ -27,30 +27,21 @@ async function fetchData2(endpoint: string) {
 
 async function getPlaylists(): Promise<PlaylistItem[]> {
   // Endpoint reference: https://developer.spotify.com/documentation/web-api/reference/get-current-users-profile
-  const response = await fetchData2(
-    '/me/playlists?limit=20&offset=10',
-  );
-  console.log(response);
-  return response.items;
+  const response = await fetchData2('/me/playlists?limit=20&offset=0');
+  return response;
 }
-
 
 interface PageProps {
   listOfPlaylists: PlaylistResponse;
 }
 
-
 const Page: FC = async () => {
   const listOfPlaylists = await getPlaylists();
   return (
     <div>
-      <Component listOfPlaylists={listOfPlaylists}/>
+      <Component listOfPlaylists={listOfPlaylists} />
     </div>
-  )
-}
-
-
+  );
+};
 
 export default Page;
-
-
