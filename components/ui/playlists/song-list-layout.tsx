@@ -17,6 +17,14 @@ type SongItemLayoutProps = {
   song_length: string;
 };
 
+function formatDuration(ms: string): string {
+  // Turn the string into a number
+  const duration = parseInt(ms, 10);
+  const minutes = Math.floor(duration / 60000);
+  const seconds = Math.floor((duration % 60000) / 1000);
+  return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+}
+
 export function SongItemLayout({
   title,
   artist,
@@ -117,7 +125,7 @@ export function ListofSongsLayout({ songs }: ListofSongsLayoutProps) {
           album={track.album.name}
           album_url={track.album.images[0].url}
           song_url={track.external_urls.spotify}
-          song_length={track.duration_ms}
+          song_length={formatDuration(track.duration_ms)}
         />
       ))}
     </div>
