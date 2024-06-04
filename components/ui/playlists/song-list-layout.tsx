@@ -7,7 +7,7 @@ import {
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
-type SongItemProps = {
+type SongItemLayoutProps = {
   id: string;
   title: string;
   artist: string;
@@ -24,7 +24,7 @@ export function SongItemLayout({
   album_url,
   song_url,
   song_length,
-}: SongItemProps) {
+}: SongItemLayoutProps) {
   return (
     <div className="grid grid-cols-[48px_1fr_1fr_0.4fr_auto] items-center gap-7">
       <div className="w-14 h-14 bg-gray-200 rounded-md flex items-center justify-center">
@@ -74,6 +74,52 @@ export function SongItemLayout({
           </Button>
         </Link>
       </div>
+    </div>
+  );
+}
+
+interface SongItem {
+  track: {
+    id: string;
+    name: string;
+    artists: Artist[];
+    duration_ms: string;
+    album: {
+      name: string;
+      images: {
+        url: string;
+      }[];
+    };
+    external_urls: {
+      spotify: string;
+    };
+  };
+}
+
+interface Artist {
+  name: string;
+}
+
+// List of songs props
+type ListofSongsLayoutProps = {
+  songs: SongItem[];
+};
+
+export function ListofSongsLayout({ songs }: ListofSongsLayoutProps) {
+  return (
+    <div className="grid gap-6">
+      {songs?.map(({ track }, index) => (
+        <SongItemLayout
+          key={index}
+          id={track.id}
+          title={track.name}
+          artist={track.artists.map((artist) => artist.name).join(', ')}
+          album={track.album.name}
+          album_url={track.album.images[0].url}
+          song_url={track.external_urls.spotify}
+          song_length={track.duration_ms}
+        />
+      ))}
     </div>
   );
 }
