@@ -6,11 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import axios from 'axios';
 import getSpotifyClient from '@/lib/spotify';
+import { Pin } from 'lucide-react'; // import the pin icon
 
 interface NavBarProps {
   className?: string;
 }
+
 interface SearchResult {
   artists: {
     items: { id: string; name: string; images: { url: string }[] }[];
@@ -36,7 +39,7 @@ export function NavBar({ className }: NavBarProps) {
         params: {
           q: searchQuery,
           type: 'artist,track',
-          market: 'US', // or other market code
+          market: 'US', 
           limit: 10,
           offset: 0,
         },
@@ -79,6 +82,11 @@ export function NavBar({ className }: NavBarProps) {
     };
   }, []);
 
+  const handlePinClick = (item: any) => {
+    // handle the pin action here
+    console.log('Pinned:', item);
+  };
+
   return (
     <div className={`flex gap-7 justify-between items-center py-4 px-6 bg-white ${className}`}>
       <div className="flex gap-4 items-center space-x-8 flex-shrink-0">
@@ -117,8 +125,17 @@ export function NavBar({ className }: NavBarProps) {
               <div className="px-4 py-2">
                 <h3 className="text-gray-500 font-semibold border-b-2 border-gray-300 pb-1 mb-2">Tracks</h3>
                 {searchResults.tracks.items.map((track) => (
-                  <div key={track.id} className="p-2 border-b border-gray-200 hover:bg-gray-100 transition-colors">
-                    {track.name} by {track.artists.map((artist) => artist.name).join(', ')}
+                  <div key={track.id} className="flex justify-between items-center p-2 border-b border-gray-200 hover:bg-gray-100 transition-colors">
+                    <span>{track.name} by {track.artists.map((artist) => artist.name).join(', ')}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex items-center space-x-1"
+                      onClick={() => handlePinClick(track)}
+                    >
+                      <Pin className="w-4 h-4" />
+                      <span>Pin</span>
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -127,8 +144,17 @@ export function NavBar({ className }: NavBarProps) {
               <div className="px-4 py-2">
                 <h3 className="text-gray-500 font-semibold border-b-2 border-gray-300 pb-1 mb-2">Artists</h3>
                 {searchResults.artists.items.map((artist) => (
-                  <div key={artist.id} className="p-2 border-b border-gray-200 hover:bg-gray-100 transition-colors">
-                    {artist.name}
+                  <div key={artist.id} className="flex justify-between items-center p-2 border-b border-gray-200 hover:bg-gray-100 transition-colors">
+                    <span>{artist.name}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex items-center space-x-1"
+                      onClick={() => handlePinClick(artist)}
+                    >
+                      <Pin className="w-4 h-4" />
+                      <span>Pin</span>
+                    </Button>
                   </div>
                 ))}
               </div>
