@@ -27,6 +27,7 @@ export async function getSpotifyAccessTokenFromSession(
     return 'NONE';
   }
 
+  console.log('GOT USER WITH IDENTITIES', JSON.stringify(user, null, 2));
   const spotifyAccessToken = user.identities[0].access_token as string;
   const spotifyRefreshToken = user.identities[0].refresh_token as string;
 
