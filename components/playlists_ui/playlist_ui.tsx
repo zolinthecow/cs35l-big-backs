@@ -82,6 +82,11 @@ const Component: FC<PlaylistPageProps> = ({
   title,
 }) => {
   const [commentsCollapsed, setCommentsCollapsed] = useState(false);
+  const [notes, setNotes] = useState<{ [id: string]: string }>({});
+
+  const handleAddNote = (id: string, note: string) => {
+    setNotes((prevNotes) => ({ ...prevNotes, [id]: note }));
+  };
 
   return (
     <div className="grid grid-rows-[auto_1fr] h-screen w-full">
@@ -97,7 +102,11 @@ const Component: FC<PlaylistPageProps> = ({
         >
           <TitleLayout name={title.name} images={title.images}></TitleLayout>
           <div className="px-5">
-            <ListofSongsLayout songs={listOfSongs}></ListofSongsLayout>
+            <ListofSongsLayout
+              songs={listOfSongs}
+              notes={notes}
+              onAddNote={handleAddNote}
+            ></ListofSongsLayout>
           </div>
         </div>
       </div>

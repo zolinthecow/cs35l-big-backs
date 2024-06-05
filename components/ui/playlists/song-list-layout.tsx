@@ -6,6 +6,7 @@ import {
 } from '@/components/ui/playlisticons';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import React, { useState } from 'react';
 
 type SongItemLayoutProps = {
   id: string;
@@ -15,6 +16,8 @@ type SongItemLayoutProps = {
   album_url: string;
   song_url: string;
   song_length: string;
+  note: string;
+  onAddNote: (id: string, note: string) => void;
 };
 
 function formatDuration(ms: string): string {
@@ -26,15 +29,51 @@ function formatDuration(ms: string): string {
 }
 
 export function SongItemLayout({
+  id,
   title,
   artist,
   album,
   album_url,
   song_url,
   song_length,
+  note,
+  onAddNote,
 }: SongItemLayoutProps) {
+  const [showNotebox, setShowNotebox] = useState(false);
+  const [newNote, setNewNote] = useState(note);
+
+  const toggleNotebox = () => {
+    setShowNotebox(!showNotebox);
+  };
+
+  const handleSendNote = () => {
+    onAddNote(id, newNote);
+    setShowNotebox(false);
+  };
+
+  const handleDeleteNote = () => {
+    onAddNote(id, ''); // Call onAddNote with empty string to delete the note
+    setNewNote(''); // Clear the local state
+  };
+
   return (
-    <div className="grid grid-cols-[48px_1fr_1fr_0.4fr_auto] items-center gap-7">
+    <div className="grid grid-cols-[48px_1fr_1fr_0.4fr_0.4fr_auto] items-center gap-7">
+      {note && (
+        <div className="col-span-full mb-0 text-gray-500 pl-1 py-0 relative group">
+          {note}
+          <button
+            className="opacity-0 absolute right-9 top-4 transition-opacity duration-300 ease-in-out group-hover:opacity-50 focus:opacity-100"
+            onClick={handleDeleteNote}
+            title="Delete Note"
+          >
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/2891/2891491.png"
+              alt="Delete"
+              className="w-4 h-4"
+            />
+          </button>
+        </div>
+      )}
       <div className="w-14 h-14 bg-gray-200 rounded-md flex items-center justify-center">
         <img
           src={album_url}
@@ -56,16 +95,10 @@ export function SongItemLayout({
         {album}
       </div>
       <div className="text-sm text-gray-600">{song_length}</div>
-      <div className="flex items-right gap-2">
-        <Button size="icon" variant="ghost">
-          {' '}
-          {/* Notebook Icon Button; not showing up? */}
-          <NotebookIcon className="w-5 h-5" />
+      <div className="flex items-right gap-2 pl-9">
+        <Button size="icon" variant="ghost" onClick={toggleNotebox}>
+          <NotebookIcon className="w-6.5 h-6.5" />
           <span className="sr-only">Add note</span>
-        </Button>
-        <Button size="icon" variant="ghost">
-          <ImageIcon className="w-5 h-5" />
-          <span className="sr-only">Add image</span>
         </Button>
         <Link href={song_url} passHref>
           <Button
@@ -82,6 +115,23 @@ export function SongItemLayout({
           </Button>
         </Link>
       </div>
+      {showNotebox && (
+        <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50">
+          <div className="p-4 bg-white rounded-md shadow-lg">
+            <textarea
+              rows={4}
+              cols={50}
+              value={newNote}
+              onChange={(e) => setNewNote(e.target.value)}
+              placeholder="Add your note..."
+            />
+            <div className="flex justify-end gap-2 mt-2">
+              <Button onClick={toggleNotebox}>Close</Button>
+              <Button onClick={handleSendNote}>Send</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -111,9 +161,15 @@ interface Artist {
 // List of songs props
 type ListofSongsLayoutProps = {
   songs: SongItem[];
+  notes: { [id: string]: string };
+  onAddNote: (id: string, note: string) => void;
 };
 
-export function ListofSongsLayout({ songs }: ListofSongsLayoutProps) {
+export function ListofSongsLayout({
+  songs,
+  notes,
+  onAddNote,
+}: ListofSongsLayoutProps) {
   return (
     <div className="grid gap-6">
       {songs?.map(({ track }, index) => (
@@ -126,6 +182,8 @@ export function ListofSongsLayout({ songs }: ListofSongsLayoutProps) {
           album_url={track.album.images[0].url}
           song_url={track.external_urls.spotify}
           song_length={formatDuration(track.duration_ms)}
+          note={notes[track.id] || ''}
+          onAddNote={onAddNote}
         />
       ))}
     </div>
