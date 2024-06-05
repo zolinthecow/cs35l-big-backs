@@ -4,6 +4,7 @@ import IAuth0ManagementService from './Auth0Management.interface';
 import prisma from '@/prisma';
 import { DateTime } from 'luxon';
 import { ManagementClient } from 'auth0';
+import axios from 'axios';
 
 const DB_AUTH0_TOKEN_ID = 'AUTH0_MANAGEMENT_TOKEN';
 
@@ -44,27 +45,31 @@ class _Auth0ManagementService implements IAuth0ManagementService {
   }
 
   public async fetchTokenFromAuth0(): Promise<boolean> {
-    const options = {
-      method: 'POST',
+    const postBody = {
+      grant_type: 'client_credentials',
+      client_id: process.env['AUTH0_MANAGEMENT_CLIENT_ID'] ?? '',
+      client_secret: process.env['AUTH0_MANAGEMENT_CLIENT_SECRET'] ?? '',
+      audience: `${process.env['AUTH0_ISSUER_BASE_URL']}/api/v2/`,
+    };
+    const postOptions = {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        grant_type: 'client_credentials',
-        client_id: process.env['AUTH0_MANAGEMENT_CLIENT_ID'] ?? '',
-        client_secret: process.env['AUTH0_MANAGEMENT_CLIENT_SECRET'] ?? '',
-        audience: `${process.env['AUTH0_ISSUER_BASE_URL']}/api/v2/`,
-      }),
     };
 
     console.log('QUERYING AUTH0');
-    console.log(`${process.env['AUTH0_ISSUER_BASE_URL']}/oauth/token`, options);
-    const resp = await fetch(
+    console.log(
       `${process.env['AUTH0_ISSUER_BASE_URL']}/oauth/token`,
-      options,
+      postBody,
+      postOptions,
+    );
+    const resp = await axios.post(
+      `${process.env['AUTH0_ISSUER_BASE_URL']}/oauth/token`,
+      postBody,
+      postOptions,
     );
     console.log(resp);
-    const data = await resp.json();
+    const data = await resp.data;
     console.log('GOT ACCESS TOKEN');
     console.log(data);
     const accessToken = data.access_token as string;
