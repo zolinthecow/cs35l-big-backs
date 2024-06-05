@@ -60,7 +60,7 @@ const LeftSidebar: FC<LeftSidebarProps> = ({
               key={index}
               artist={name}
               artistImage={artistImage}
-              artistUrl={'espn.com'}
+              artistUrl={artistURL}
               className="hover:bg-gray-200 transition-colors duration-200"
             />
           ))}

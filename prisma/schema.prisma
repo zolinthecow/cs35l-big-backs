@@ -27,26 +27,30 @@ model Auth0ManagementApiToken {
   expiresAt DateTime
 }
 
-model PlaylistPinned {
+model playlistPinned {
   id                Int    @id @default(autoincrement())
   userId            String
   playlistID        String
   playlistName      String
-  PlaylistImageLink String
-  PlaylistLink      String
-  NumbeOfTracks     Int
+  playlistImageLink String
+  playlistLink      String
+  numberOfTracks    Int
+
+  @@unique([userId, playlistID])
 }
 
-model ArtistPinned {
+model artistPinned {
   id                Int    @id @default(autoincrement())
   userId            String
   artistID          String
   artistName        String
-  ArtistImageLink   String
-  ArtistLink        String
+  artistImageLink   String
+  artistLink        String
+
+  @@unique([userId, artistID])
 }
 
-model SongPinned {
+model songPinned {
   id                Int    @id @default(autoincrement())
   userId            String
   songID            String
@@ -54,4 +58,6 @@ model SongPinned {
   artistName        String
   songImageLink     String
   songLink          String
+
+  @@unique([userId, songID])
 }
