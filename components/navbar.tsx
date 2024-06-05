@@ -27,6 +27,7 @@ export function NavBar({ className }: NavBarProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult | null>(null);
+  const [activeTab, setActiveTab] = useState('tracks'); // New state for active tab
   const searchResultsRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -87,6 +88,79 @@ export function NavBar({ className }: NavBarProps) {
     console.log('Pinned:', item);
   };
 
+  const renderResults = () => {
+    if (!searchResults) return null;
+
+    const { tracks, artists } = searchResults;
+
+    switch (activeTab) {
+      case 'tracks':
+        return (
+          tracks.items.length > 0 && (
+            <div className="px-4 py-2">
+              {tracks.items.map((track) => (
+                <div key={track.id} className="flex justify-between items-center p-2 border-b border-gray-200 hover:bg-gray-100 transition-colors">
+                  <span>{track.name} by {track.artists.map((artist) => artist.name).join(', ')}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center space-x-1"
+                    onClick={() => handlePinClick(track)}
+                  >
+                    <Pin className="w-4 h-4" />
+                    <span>Pin</span>
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )
+        );
+      case 'artists':
+        return (
+          artists.items.length > 0 && (
+            <div className="px-4 py-2">
+              {artists.items.map((artist) => (
+                <div key={artist.id} className="flex justify-between items-center p-2 border-b border-gray-200 hover:bg-gray-100 transition-colors">
+                  <span>{artist.name}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center space-x-1"
+                    onClick={() => handlePinClick(artist)}
+                  >
+                    <Pin className="w-4 h-4" />
+                    <span>Pin</span>
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )
+        );
+      case 'friends':
+        // Assuming there is a separate search result for friends which is not included in SearchResult interface
+        return (
+          <div className="px-4 py-2">
+            {/* Map through friends search results here */}
+            {/* Example placeholder content */}
+            <div className="flex justify-between items-center p-2 border-b border-gray-200 hover:bg-gray-100 transition-colors">
+              <span>John Doe</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center space-x-1"
+                onClick={() => handlePinClick({ id: 'john_doe', name: 'John Doe' })}
+              >
+                <Pin className="w-4 h-4" />
+                <span>Pin</span>
+              </Button>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className={`flex gap-7 justify-between items-center py-4 px-6 bg-white ${className}`}>
       <div className="flex gap-4 items-center space-x-8 flex-shrink-0">
@@ -121,44 +195,27 @@ export function NavBar({ className }: NavBarProps) {
         </div>
         {isFocused && searchResults && (
           <div ref={searchResultsRef} className="absolute top-14 left-0 w-full bg-white shadow-lg mt-1 max-h-96 overflow-y-auto z-10 rounded-lg">
-            {searchResults.tracks.items.length > 0 && (
-              <div className="px-4 py-2">
-                <h3 className="text-gray-500 font-semibold border-b-2 border-gray-300 pb-1 mb-2">Tracks</h3>
-                {searchResults.tracks.items.map((track) => (
-                  <div key={track.id} className="flex justify-between items-center p-2 border-b border-gray-200 hover:bg-gray-100 transition-colors">
-                    <span>{track.name} by {track.artists.map((artist) => artist.name).join(', ')}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="flex items-center space-x-1"
-                      onClick={() => handlePinClick(track)}
-                    >
-                      <Pin className="w-4 h-4" />
-                      <span>Pin</span>
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
-            {searchResults.artists.items.length > 0 && (
-              <div className="px-4 py-2">
-                <h3 className="text-gray-500 font-semibold border-b-2 border-gray-300 pb-1 mb-2">Artists</h3>
-                {searchResults.artists.items.map((artist) => (
-                  <div key={artist.id} className="flex justify-between items-center p-2 border-b border-gray-200 hover:bg-gray-100 transition-colors">
-                    <span>{artist.name}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="flex items-center space-x-1"
-                      onClick={() => handlePinClick(artist)}
-                    >
-                      <Pin className="w-4 h-4" />
-                      <span>Pin</span>
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className="flex space-x-4 border-b border-gray-200 p-2">
+              <button
+                className={`px-4 py-2 ${activeTab === 'tracks' ? 'text-gray-800 border-b-2 border-gray-800' : 'text-gray-500'}`}
+                onClick={() => setActiveTab('tracks')}
+              >
+                Tracks
+              </button>
+              <button
+                className={`px-4 py-2 ${activeTab === 'artists' ? 'text-gray-800 border-b-2 border-gray-800' : 'text-gray-500'}`}
+                onClick={() => setActiveTab('artists')}
+              >
+                Artists
+              </button>
+              <button
+                className={`px-4 py-2 ${activeTab === 'friends' ? 'text-gray-800 border-b-2 border-gray-800' : 'text-gray-500'}`}
+                onClick={() => setActiveTab('friends')}
+              >
+                Friends
+              </button>
+            </div>
+            {renderResults()}
           </div>
         )}
       </div>
