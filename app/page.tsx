@@ -2,9 +2,11 @@ import { getSession, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import Image from 'next/image';
 import getSpotifyClient from '@/lib/spotify';
 import TestComponent from '@/components/test';
+import { refreshSpotifyToken } from '@/lib/spotify/actions';
 
 /* export default withPageAuthRequired( */
 export default async function Home() {
+  await refreshSpotifyToken();
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
