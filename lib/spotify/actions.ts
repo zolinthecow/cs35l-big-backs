@@ -21,6 +21,12 @@ export async function getSpotifyAccessTokenFromSession(
   };
   const userResp = await fetch(auth0Url, auth0Options);
   const user = await userResp.json();
+
+  if (user?.identities?.length === 0) {
+    console.log('NO IDENTITIES, HOPE THIS IS FIRST LOGIN');
+    return 'NONE';
+  }
+
   const spotifyAccessToken = user.identities[0].access_token as string;
   const spotifyRefreshToken = user.identities[0].refresh_token as string;
 
