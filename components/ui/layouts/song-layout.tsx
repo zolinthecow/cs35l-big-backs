@@ -22,10 +22,12 @@ export function SongLayout({
     <div
       className={`relative flex items-center space-x-4 p-4 bg-white rounded-lg shadow-lg w-full ${className}`}
     >
-      <img
+      <Image
         alt="Album Cover"
-        className="w-20 h-20 rounded-lg object-cover"
+        className="rounded-lg object-cover"
         src={album_url}
+        height={80}
+        width={80}
       />
       <div className="flex flex-col justify-center flex-1 min-w-0">
         <h1 className="font-bold text-[15px] text-gray-900 truncate text-ellipsis">

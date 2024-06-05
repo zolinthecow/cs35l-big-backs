@@ -16,6 +16,9 @@ import {
 } from '@/components/skeleton_loader';
 import { NavBar } from '@/components/navbar';
 import getSpotifyClient from '@/lib/spotify';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 //This is the basic function to get the mock data for now
 async function fetchData(endpoint: string) {
@@ -67,9 +70,9 @@ const AirbudsComponents = async (): Promise<JSX.Element> => {
 };
 
 const LeftSideBarComponent = async (): Promise<JSX.Element> => {
-  const songData = await fetchData('song');
-  const artistData = await fetchData('artist');
-  const playlistData = await fetchData('playlist');
+  const songData = await getPinnedSong('23');
+  const artistData = await getPinnedArtist('23');
+  const playlistData = await getPinnedPlaylists('23');
 
   const props: LeftSidebarProps = {
     songData,
@@ -96,15 +99,91 @@ const RightSideBarComponent = async (): Promise<JSX.Element> => {
 async function fetchData2(endpoint: string) {
   try {
     const spotifyClient = await getSpotifyClient();
-    console.log('HI PLEASE WORK', spotifyClient);
     const resp = await spotifyClient.get(endpoint);
-    console.log('HI PLEASE WORK', resp.data.items);
     return resp.data.items;
   } catch (error) {
     console.error('An error occurred while fetching data:', error);
     // You can decide what to return in case of error
     throw new Error(`Failed to fetch data from ${endpoint}`);
   }
+}
+
+interface pinnedPlaylist {
+  name: string;
+  playlistImage: string;
+  playlistURL: string;
+  numberOfSongs: number;
+}
+
+interface pinnedArtist {
+  name: string;
+  artistImage: string;
+  artistURL: string;
+}
+
+interface pinnedSong {
+  name: string;
+  artistName: string;
+  songImage: string;
+  songURL: string;
+}
+
+async function getPinnedPlaylists(UserID: string): Promise<pinnedPlaylist[]> {
+  const pinnedPlaylists = await prisma.playlistPinned.findMany({
+    where: {
+      userId: UserID,
+    },
+  });
+
+  // Transform the data into the correct structure
+  const transformedPinnedPlaylists: pinnedPlaylist[] = pinnedPlaylists.map(
+    (playlist) => ({
+      name: playlist.playlistName,
+      playlistImage: playlist.PlaylistImageLink,
+      playlistURL: playlist.PlaylistLink,
+      numberOfSongs: playlist.NumbeOfTracks,
+    }),
+  );
+
+  return transformedPinnedPlaylists;
+}
+
+async function getPinnedArtist(UserID: string): Promise<pinnedArtist[]> {
+  const pinnedArtist = await prisma.ArtistPinned.findMany({
+    where: {
+      userId: UserID,
+    },
+  });
+
+  // Transform the data into the correct structure
+  const transformedPinnedArtists: pinnedArtist[] = pinnedArtist.map(
+    (artist) => ({
+      name: artist.artistName,
+      artistName: artist.artistName,
+      artistImage: artist.ArtistImageLink,
+      artistURL: artist.ArtistLink,
+    }),
+  );
+  console.log('PINNED ARTISTS', transformedPinnedArtists);
+  return transformedPinnedArtists;
+}
+
+async function getPinnedSong(UserID: string): Promise<pinnedSong[]> {
+  const pinnedArtist = await prisma.SongPinned.findMany({
+    where: {
+      userId: UserID,
+    },
+  });
+
+  // Transform the data into the correct structure
+  const transformedPinnedSongs: pinnedSong[] = pinnedArtist.map((song) => ({
+    name: song.songName,
+    artistName: song.artistName,
+    songImage: song.songImageLink,
+    songURL: song.songLink,
+  }));
+  console.log('PINNED SONGS', transformedPinnedSongs);
+  return transformedPinnedSongs;
 }
 
 interface Artist {
@@ -148,7 +227,6 @@ async function getTopTracks(): Promise<Track[]> {
   const response = await fetchData2(
     '/me/top/tracks?time_range=short_term&limit=5',
   );
-  console.log(response);
   return response;
 }
 
@@ -166,7 +244,6 @@ async function getRecentlyPlayed(): Promise<RecentlyPlayed[]> {
   const response = await fetchData2(
     `/me/player/recently-played?after=${unixTimestamp}&limit=50`,
   );
-  console.log('WHERE', response);
   return response.slice(0, 5);
 }
 
