@@ -1,8 +1,9 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 import { getSpotifyAccessToken, refreshSpotifyToken } from './actions';
+import { Session } from '@auth0/nextjs-auth0';
 
-const getSpotifyClient = async (): Promise<AxiosInstance> => {
-  const accessToken = await getSpotifyAccessToken();
+const getSpotifyClient = async (session?: Session): Promise<AxiosInstance> => {
+  const accessToken = await getSpotifyAccessToken(session);
 
   const spotifyInstance = axios.create({
     headers: {

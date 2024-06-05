@@ -186,10 +186,6 @@ async function getPinnedSong(UserID: string): Promise<pinnedSong[]> {
   return transformedPinnedSongs;
 }
 
-interface Artist {
-  name: string;
-}
-
 interface Track {
   name: string;
   artists: Artist[];
