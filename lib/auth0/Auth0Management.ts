@@ -26,16 +26,12 @@ class _Auth0ManagementService implements IAuth0ManagementService {
       },
     });
     if (tokenResp == null) {
-      console.log('NOTHING IN DATABASE');
       return false;
     }
-    console.log(tokenResp);
 
     if (this.checkIfTokenIsExpired(tokenResp.expiresAt)) {
-      console.log('IN DATABASE BUT EXPIRED');
       await this.fetchTokenFromAuth0();
     } else {
-      console.log('SETTING ACCESS TOKEN');
       this._accessToken = {
         accessToken: tokenResp.token,
         expiresAt: tokenResp.expiresAt,
@@ -57,28 +53,17 @@ class _Auth0ManagementService implements IAuth0ManagementService {
       },
     };
 
-    console.log('QUERYING AUTH0');
-    console.log(
-      `${process.env['AUTH0_ISSUER_BASE_URL']}/oauth/token`,
-      postBody,
-      postOptions,
-    );
     const resp = await axios.post(
       `${process.env['AUTH0_ISSUER_BASE_URL']}/oauth/token`,
       postBody,
       postOptions,
     );
-    console.log(resp);
     const data = await resp.data;
-    console.log('GOT ACCESS TOKEN');
-    console.log(data);
     const accessToken = data.access_token as string;
     const expiresIn = data.expires_in as number;
     const expiresAt = DateTime.now()
       .plus({ seconds: expiresIn - 300 })
       .toJSDate();
-
-    console.log(accessToken, expiresIn, expiresAt);
 
     await prisma.auth0ManagementApiToken.upsert({
       where: {
@@ -103,17 +88,11 @@ class _Auth0ManagementService implements IAuth0ManagementService {
   }
 
   public async getAccessToken(refetch?: boolean): Promise<string> {
-    console.log('GETTING ACCESS TOKEN');
-    console.log(
-      this._accessToken &&
-        this.checkIfTokenIsExpired(this._accessToken.expiresAt),
-    );
     if (
       refetch ||
       (this._accessToken &&
         this.checkIfTokenIsExpired(this._accessToken.expiresAt))
     ) {
-      console.log('GETTING NEW ACCESS TOKEN');
       await this.fetchTokenFromAuth0();
     }
 

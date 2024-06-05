@@ -9,7 +9,6 @@ export async function getSpotifyAccessTokenFromSession(
   session: Session,
 ): Promise<string> {
   const apiToken = await Auth0ManagementService.getAccessToken();
-  console.log('GOT API TOKKKNENEEN', apiToken);
   const auth0Url = new URL(
     session.user.sub,
     `${process.env['AUTH0_ISSUER_BASE_URL']}/api/v2/users/`,
@@ -20,18 +19,14 @@ export async function getSpotifyAccessTokenFromSession(
       Authorization: `Bearer ${apiToken}`,
     },
   };
-  console.log(auth0Url, auth0Options);
   const userResp = await axios.get(auth0Url, auth0Options);
-  console.log(userResp);
   const user = userResp.data;
-  console.log(user);
 
   if (user?.identities?.length === 0) {
     console.log('NO IDENTITIES, HOPE THIS IS FIRST LOGIN');
     return 'NONE';
   }
 
-  console.log('GOT USER WITH IDENTITIES', JSON.stringify(user, null, 2));
   const spotifyAccessToken = user.identities[0].access_token as string;
   const spotifyRefreshToken = user.identities[0].refresh_token as string;
 
@@ -68,7 +63,6 @@ export async function refreshSpotifyToken(): Promise<
   string | 'REAUTHENTICATE'
 > {
   const session = await getSession();
-  console.log(session);
   if (!session) {
     return 'REAUTHENTICATE';
   }
