@@ -68,6 +68,7 @@ interface TitleLayoutProps {
   images: {
     url: string;
   }[];
+  description: string;
 }
 
 interface PlaylistPageProps {
@@ -100,7 +101,11 @@ const Component: FC<PlaylistPageProps> = ({
         <div
           className={`mt-8 space-y-4 overflow-y-auto max-h-screen ${commentsCollapsed ? 'max-h-none' : 'max-h-48'}`}
         >
-          <TitleLayout name={title.name} images={title.images}></TitleLayout>
+          <TitleLayout
+            name={title.name}
+            images={title.images}
+            description={title.description}
+          ></TitleLayout>
           <div className="px-5">
             <ListofSongsLayout
               songs={listOfSongs}

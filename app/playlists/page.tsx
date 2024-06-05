@@ -41,6 +41,7 @@ interface TitleLayoutProps {
   images: {
     url: string;
   }[];
+  description: string;
 }
 
 interface PlaylistResponse {

@@ -21,9 +21,10 @@ interface TitleLayoutProps {
   images: {
     url: string;
   }[];
+  description: string;
 }
 
-export function TitleLayout({ name, images }: TitleLayoutProps) {
+export function TitleLayout({ name, images, description }: TitleLayoutProps) {
   return (
     <div className="bg-white text-gray-700 overflow-y-auto">
       <div className="p-6 overflow-y-auto">
@@ -46,9 +47,7 @@ export function TitleLayout({ name, images }: TitleLayoutProps) {
                 <StarRating />
               </div>
             </div>
-            <p className="text-gray-600">
-              Maybe get a description written from the database?
-            </p>
+            <p className="text-gray-600">{description}</p>
             <div className="flex items-center gap-4">
               <Button size="icon" variant="ghost">
                 <PlayIcon className="w-6 h-6" />
