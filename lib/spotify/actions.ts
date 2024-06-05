@@ -3,24 +3,28 @@
 import { getSession, Session } from '@auth0/nextjs-auth0';
 import prisma from '@/prisma';
 import { Auth0ManagementService } from '../auth0';
+import axios from 'axios';
 
 export async function getSpotifyAccessTokenFromSession(
   session: Session,
 ): Promise<string> {
   const apiToken = await Auth0ManagementService.getAccessToken();
+  console.log('GOT API TOKKKNENEEN', apiToken);
   const auth0Url = new URL(
     session.user.sub,
     `${process.env['AUTH0_ISSUER_BASE_URL']}/api/v2/users/`,
   ).href;
   const auth0Options = {
-    method: 'GET',
     headers: {
       Accept: 'application/json',
       Authorization: `Bearer ${apiToken}`,
     },
   };
-  const userResp = await fetch(auth0Url, auth0Options);
-  const user = await userResp.json();
+  console.log(auth0Url, auth0Options);
+  const userResp = await axios.get(auth0Url, auth0Options);
+  console.log(userResp);
+  const user = userResp.data;
+  console.log(user);
 
   if (user?.identities?.length === 0) {
     console.log('NO IDENTITIES, HOPE THIS IS FIRST LOGIN');
