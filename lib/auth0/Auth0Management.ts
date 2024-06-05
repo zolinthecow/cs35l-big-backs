@@ -57,10 +57,13 @@ class _Auth0ManagementService implements IAuth0ManagementService {
       }),
     };
 
+    console.log('QUERYING AUTH0');
+    console.log(`${process.env['AUTH0_ISSUER_BASE_URL']}/oauth/token`, options);
     const resp = await fetch(
       `${process.env['AUTH0_ISSUER_BASE_URL']}/oauth/token`,
       options,
     );
+    console.log(resp);
     const data = await resp.json();
     console.log('GOT ACCESS TOKEN');
     console.log(data);
