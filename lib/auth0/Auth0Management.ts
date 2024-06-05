@@ -4,6 +4,7 @@ import IAuth0ManagementService from './Auth0Management.interface';
 import prisma from '@/prisma';
 import { DateTime } from 'luxon';
 import { ManagementClient } from 'auth0';
+import axios from 'axios';
 
 const DB_AUTH0_TOKEN_ID = 'AUTH0_MANAGEMENT_TOKEN';
 
@@ -24,7 +25,9 @@ class _Auth0ManagementService implements IAuth0ManagementService {
         id: DB_AUTH0_TOKEN_ID,
       },
     });
-    if (tokenResp == null) return false;
+    if (tokenResp == null) {
+      return false;
+    }
 
     if (this.checkIfTokenIsExpired(tokenResp.expiresAt)) {
       await this.fetchTokenFromAuth0();
@@ -37,25 +40,25 @@ class _Auth0ManagementService implements IAuth0ManagementService {
     return true;
   }
 
-  private async fetchTokenFromAuth0(): Promise<boolean> {
-    const options = {
-      method: 'POST',
+  public async fetchTokenFromAuth0(): Promise<boolean> {
+    const postBody = {
+      grant_type: 'client_credentials',
+      client_id: process.env['AUTH0_MANAGEMENT_CLIENT_ID'] ?? '',
+      client_secret: process.env['AUTH0_MANAGEMENT_CLIENT_SECRET'] ?? '',
+      audience: `${process.env['AUTH0_ISSUER_BASE_URL']}/api/v2/`,
+    };
+    const postOptions = {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        grant_type: 'client_credentials',
-        client_id: process.env['AUTH0_MANAGEMENT_CLIENT_ID'] ?? '',
-        client_secret: process.env['AUTH0_MANAGEMENT_CLIENT_SECRET'] ?? '',
-        audience: `${process.env['AUTH0_ISSUER_BASE_URL']}/api/v2/`,
-      }),
     };
 
-    const resp = await fetch(
+    const resp = await axios.post(
       `${process.env['AUTH0_ISSUER_BASE_URL']}/oauth/token`,
-      options,
+      postBody,
+      postOptions,
     );
-    const data = await resp.json();
+    const data = await resp.data;
     const accessToken = data.access_token as string;
     const expiresIn = data.expires_in as number;
     const expiresAt = DateTime.now()

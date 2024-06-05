@@ -16,13 +16,18 @@ export async function createSendbirdUserIfNotExisting(session?: Session) {
     return;
   }
 
+  console.log('SB USER DOES NOT EXIST');
+
   const spotifyClient = await getSpotifyClient(_session);
+  console.log('GOT SPOTIFY CLIENT');
+
   const currentUser = await spotifyClient.get('/me');
   const userData = currentUser.data;
   if (!userData) {
     console.warn('NO CORRESPONDING SPOTIFY USER');
     return;
   }
+  console.log('GOT SPOTIFY USER', JSON.stringify(userData, null, 2));
   await sendbirdApi.post('/users', {
     user_id: _session.user.sub,
     nickname: userData.display_name,
