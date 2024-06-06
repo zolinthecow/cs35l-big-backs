@@ -3,6 +3,7 @@
 import { getSession, Session } from '@auth0/nextjs-auth0';
 import prisma from '@/prisma';
 import { Auth0ManagementService } from '../auth0';
+import axios from 'axios';
 
 export async function getSpotifyAccessTokenFromSession(
   session: Session,
@@ -13,14 +14,19 @@ export async function getSpotifyAccessTokenFromSession(
     `${process.env['AUTH0_ISSUER_BASE_URL']}/api/v2/users/`,
   ).href;
   const auth0Options = {
-    method: 'GET',
     headers: {
       Accept: 'application/json',
       Authorization: `Bearer ${apiToken}`,
     },
   };
-  const userResp = await fetch(auth0Url, auth0Options);
-  const user = await userResp.json();
+  const userResp = await axios.get(auth0Url, auth0Options);
+  const user = userResp.data;
+
+  if (user?.identities?.length === 0) {
+    console.log('NO IDENTITIES, HOPE THIS IS FIRST LOGIN');
+    return 'NONE';
+  }
+
   const spotifyAccessToken = user.identities[0].access_token as string;
   const spotifyRefreshToken = user.identities[0].refresh_token as string;
 
@@ -57,7 +63,6 @@ export async function refreshSpotifyToken(): Promise<
   string | 'REAUTHENTICATE'
 > {
   const session = await getSession();
-  console.log(session);
   if (!session) {
     return 'REAUTHENTICATE';
   }
