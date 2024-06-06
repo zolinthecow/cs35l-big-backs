@@ -18,8 +18,13 @@ model User {
   id                  String  @id
   nickname            String
   sendbirdId          String  @unique
+  name                String?
+  bio                 String?
+  ratingValue         String?
   spotifyAccessToken  String?
   spotifyRefreshToken String?
+  friends             User[]  @relation("Friend")
+  friendsRelation     User[]  @relation("Friend")
 }
 
 model Auth0ManagementApiToken {

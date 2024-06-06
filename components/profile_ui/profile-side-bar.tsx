@@ -10,7 +10,7 @@ export interface ProfileProps {
   name: string;
   username: string;
   profilePicture: string;
-  bio: string[];
+  bio: string;
   ratingValue: number;
   friendsCount: number;
 }
@@ -47,9 +47,7 @@ const ProfileSideBar: FC<ProfileProps> = ({
       </div>
       <div className="w-full text-left mb-1">
         <h2 className="text-xl font-bold mb-0">Bio</h2>
-        <div className="text-gray-700 dark:text-gray-300">
-          {bio?.map((paragraph, index) => <p key={index}>{paragraph}</p>) || []}
-        </div>
+        <div className="text-gray-700 dark:text-gray-300">{bio}</div>
       </div>
     </div>
   );
