@@ -32,6 +32,7 @@ import {
   IconWithCounter,
   StarRating,
 } from '@/components/ui/playlisticons';
+import { CommentSection } from '../ui/playlists/comment-layout';
 
 interface PlaylistItem {
   id: string;
@@ -75,12 +76,23 @@ interface PlaylistPageProps {
   listOfPlaylists: PlaylistItem[];
   listOfSongs: SongItem[];
   title: TitleLayoutProps;
+  commentsFromDb: CommentReturn[];
+}
+
+interface CommentReturn {
+  // For putting comment into database
+  userID: string;
+  username: string;
+  playlistID: string;
+  comment: string;
+  time: string;
 }
 
 const Component: FC<PlaylistPageProps> = ({
   listOfPlaylists,
   listOfSongs,
   title,
+  commentsFromDb,
 }) => {
   const [commentsCollapsed, setCommentsCollapsed] = useState(false);
   const [notes, setNotes] = useState<{ [id: string]: string }>({});
@@ -125,64 +137,22 @@ const Component: FC<PlaylistPageProps> = ({
                 {commentsCollapsed ? 'Show Comments' : 'Hide Comments'}
               </Button>
             </div>
+
             {!commentsCollapsed && (
               <div className="space-y-4 overflow-y-auto max-h-48 px-6">
                 <div className="flex gap-4 border-t pt-4 border-gray-200">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <Input
-                        className="flex-1"
-                        placeholder="Type your message..."
-                      />
-                      <Button size="icon" variant="ghost">
-                        <PaperclipIcon className="h-5 w-5 text-gray-500" />
-                        <span className="sr-only">Attach file</span>
-                      </Button>
-                      <Button size="icon" variant="ghost">
-                        <SmileIcon className="h-5 w-5 text-gray-500" />
-                        <span className="sr-only">Add emoji</span>
-                      </Button>
-                      <Button size="icon" variant="ghost">
-                        <SendIcon className="h-5 w-5 text-gray-500" />
-                        <span className="sr-only">Send message</span>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage alt="@shadcn" src="/placeholder-avatar.jpg" />
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium text-gray-900">John Doe</div>
-                      <div className="text-sm text-gray-600">2 days ago</div>
-                    </div>
-                    <p className="text-gray-600">
-                      This playlist is perfect for my morning commute. The chill
-                      vibes really help me start the day on the right note.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage alt="@shadcn" src="/placeholder-avatar.jpg" />
-                    <AvatarFallback>JS</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium text-gray-900">Jane Smith</div>
-                      <div className="text-sm text-gray-600">1 week ago</div>
-                    </div>
-                    <p className="text-gray-600">
-                      I've been listening to this playlist on repeat all week.
-                      It's the perfect background music for when I'm working or
-                      studying.
-                    </p>
+                    <CommentSection
+                      playlistID={'37i9dQZF1EVHGWrwldPRtj'}
+                      commentsFromDb={commentsFromDb}
+                    ></CommentSection>
                   </div>
                 </div>
               </div>
+            )}
+
+            {commentsCollapsed && (
+              <div className="space-y-4 overflow-y-auto max-h-0 px-6"></div>
             )}
           </div>
         </div>

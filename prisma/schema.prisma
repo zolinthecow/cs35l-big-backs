@@ -39,9 +39,10 @@ model songNotes {
 model comments {
   id          Int     @id @default(autoincrement())
   userID      String
+  username    String
   playlistID  String
   comment     String
-  time        DateTime
+  time        String
 }
 
 model playlistPinned {

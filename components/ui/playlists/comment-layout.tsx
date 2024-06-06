@@ -1,7 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { useState } from 'react';
+import { SendIcon } from '../playlisticons';
+import { useState, useEffect } from 'react';
+import { putCommentIntoDb, getCommentsFromDb } from '@/app/playlists/page';
 
 type CommentLayoutProps = {
   username: string;
@@ -10,10 +12,25 @@ type CommentLayoutProps = {
 };
 
 type Comment = {
+  userID: string;
+  playlistID: string;
   username: string;
   time: string;
   comment: string;
 };
+
+interface CommentReturn {
+  userID: string;
+  username: string;
+  playlistID: string;
+  comment: string;
+  time: string;
+}
+
+interface CommentSectionProps {
+  playlistID: string;
+  commentsFromDb: CommentReturn[];
+}
 
 export function CommentLayout({ username, time, comment }: CommentLayoutProps) {
   return (
@@ -33,16 +50,25 @@ export function CommentLayout({ username, time, comment }: CommentLayoutProps) {
   );
 }
 
-export function CommentSection() {
+export function CommentSection({
+  playlistID,
+  commentsFromDb,
+}: CommentSectionProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
 
-  const handleAddComment = () => {
+  // Get comments from database
+  const handleAddComment = async () => {
     const newCommentData: Comment = {
-      username: 'Current User', // Replace with the actual username
+      userID: 'Current User ID', // Replace with the actual user ID
+      playlistID: playlistID,
+      username: 'Current', // Replace with the actual username
       time: new Date().toLocaleString(),
       comment: newComment,
     };
+    // Add comment to the database
+    await putCommentIntoDb(newCommentData);
+    // Add comment to local state
     setComments([newCommentData, ...comments]);
     setNewComment('');
   };
@@ -51,7 +77,7 @@ export function CommentSection() {
     <div className="space-y-4">
       <div className="flex gap-4">
         <div className="border-t px-4 py-3 border-gray-300 flex-1">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             <Input
               className="flex-1"
               placeholder="Type your message..."
@@ -59,21 +85,38 @@ export function CommentSection() {
               onChange={(e) => setNewComment(e.target.value)}
             />
             <Button size="icon" variant="ghost" onClick={handleAddComment}>
+              <SendIcon className="h-5 w-5 text-gray-500" />
               <span className="sr-only">Send message</span>
             </Button>
           </div>
         </div>
       </div>
-      {comments.map((comment, index) => (
-        <CommentLayout
-          key={index}
-          username={comment.username}
-          time={comment.time}
-          comment={comment.comment}
-        />
-      ))}
+      {comments.map(
+        (
+          comment,
+          index, // Fetch from database, pass in array of comments from database
+        ) => (
+          <CommentLayout
+            key={index}
+            username={comment.username}
+            time={comment.time}
+            comment={comment.comment}
+          />
+        ),
+      )}
+      {commentsFromDb.map(
+        (
+          comment,
+          index, // Fetch from database, pass in array of comments from database
+        ) => (
+          <CommentLayout
+            key={index}
+            username={comment.username}
+            time={comment.time}
+            comment={comment.comment}
+          />
+        ),
+      )}
     </div>
   );
 }
-
-// setNewComment, handleAddComment
