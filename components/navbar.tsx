@@ -2,23 +2,140 @@
 
 import Image from 'next/image';
 import { NotificationIcon } from '@/components/ui/notification';
-import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import axios from 'axios';
+import getSpotifyClient from '@/lib/spotify';
+import { Pin, Check, X } from 'lucide-react'; // import the pin icon
+import { PrismaClient } from '@prisma/client';
+import { getSession, Session } from '@auth0/nextjs-auth0';
 
-const handleSearchSubmit = (event: React.FormEvent) => {
-  event.preventDefault();
-  // Handle search submission
-};
+const prisma = new PrismaClient();
+
+type PinStatus = 'success' | 'duplicate' | 'limitReached' | 'error';
 
 interface NavBarProps {
   className?: string;
+  handlePinClickArtist: (
+    item: SearchResult['artists']['items'][0],
+  ) => Promise<{ status: PinStatus }>;
+  handlePinClickTrack: (
+    item: SearchResult['tracks']['items'][0],
+  ) => Promise<{ status: PinStatus }>;
+  handlePinClickPlaylist: (
+    item: SearchResult['playlists']['items'][0],
+  ) => Promise<{ status: PinStatus }>;
 }
 
-export function NavBar({ className }: NavBarProps) {
+interface SearchResult {
+  artists: {
+    items: {
+      id: string;
+      name: string;
+      images: { url: string }[];
+      external_urls: { spotify: string };
+    }[];
+  };
+  tracks: {
+    items: {
+      id: string;
+      name: string;
+      external_urls: { spotify: string };
+      artists: { name: string }[];
+      album: { images: { url: string }[] };
+    }[];
+  };
+  playlists: {
+    items: {
+      id: string;
+      images: { url: string }[];
+      external_urls: { spotify: string };
+      name: string;
+      tracks: { total: number };
+    }[];
+  };
+}
+
+export function NavBar({
+  className,
+  handlePinClickArtist,
+  handlePinClickTrack,
+  handlePinClickPlaylist,
+}: NavBarProps) {
   const [isFocused, setIsFocused] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchResult | null>(null);
+  const searchResultsRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [TrackpinStatus, setTrackPinStatus] = useState<{
+    status: PinStatus | null;
+    trackId: string | null;
+  }>({ status: null, trackId: null });
+  const [artistPinStatus, setArtistPinStatus] = useState<{
+    status: PinStatus | null;
+    artistID: string | null;
+  }>({ status: null, artistID: null });
+  const [playlistPinStatus, setPlaylistStatus] = useState<{
+    status: PinStatus | null;
+    playlistID: string | null;
+  }>({ status: null, playlistID: null });
+
+  const handleSearch = async () => {
+    if (searchQuery.trim() === '') return;
+
+    try {
+      const spotifyClient = await getSpotifyClient();
+      const response = await spotifyClient.get('/search', {
+        params: {
+          q: searchQuery,
+          type: 'artist,track,playlist',
+          market: 'US',
+          limit: 5,
+          offset: 0,
+        },
+      });
+      setSearchResults(response.data);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (searchQuery) {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      typingTimeoutRef.current = setTimeout(() => {
+        handleSearch();
+      }, 300);
+    } else {
+      setSearchResults(null);
+    }
+
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, [searchQuery]);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      searchResultsRef.current &&
+      !searchResultsRef.current.contains(event.target as Node)
+    ) {
+      setIsFocused(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   return (
     <div
       className={`flex gap-7 justify-between items-center py-4 px-6 bg-white ${className}`}
@@ -48,10 +165,7 @@ export function NavBar({ className }: NavBarProps) {
           </a>
         </nav>
       </div>
-      <form
-        className="flex gap-4 justify-center space-x-8 flex-grow"
-        onSubmit={handleSearchSubmit}
-      >
+      <div className="relative flex gap-4 justify-center space-x-8 flex-grow">
         <div className="relative w-full px-2 flex items-center">
           {!isFocused && (
             <Image
@@ -66,12 +180,213 @@ export function NavBar({ className }: NavBarProps) {
             className="w-full bg-gray-100 border border-gray-300 focus:ring-2 focus:ring-gray-600 focus:outline-none px-4 py-2 rounded-md text-base pl-10"
             placeholder="Search"
             type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
           />
         </div>
-      </form>
-      <div className="flex  justify-between space-x-3">
+        {isFocused && searchResults && (
+          <div
+            ref={searchResultsRef}
+            className="absolute top-14 left-0 w-full bg-white shadow-lg mt-1 max-h-96 overflow-y-auto z-10 rounded-lg"
+          >
+            {searchResults.tracks.items.length > 0 && (
+              <div className="px-4 py-2">
+                <h3 className="text-gray-500 font-semibold border-b-2 border-gray-300 pb-1 mb-2">
+                  Tracks
+                </h3>
+                {searchResults.tracks.items.map((track) => (
+                  <div
+                    key={track.id}
+                    className="flex justify-between items-center p-2 border-b border-gray-200 hover:bg-gray-100 transition-colors"
+                  >
+                    <span>
+                      {track.name} by{' '}
+                      {track.artists.map((artist) => artist.name).join(', ')}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex items-center space-x-1"
+                      onClick={async () => {
+                        const { status } = await handlePinClickTrack(track);
+                        setTrackPinStatus({ status, trackId: track.id });
+                        if (status !== 'error') {
+                          setTimeout(
+                            () =>
+                              setTrackPinStatus({
+                                status: null,
+                                trackId: null,
+                              }),
+                            2000,
+                          );
+                        }
+                      }}
+                    >
+                      {TrackpinStatus.status === 'success' &&
+                        TrackpinStatus.trackId === track.id && (
+                          <div className="flex items-center space-x-1">
+                            <Check className="w-4 h-4 text-green-500" />
+                            <span>Pinned</span>
+                          </div>
+                        )}
+                      {TrackpinStatus.status === 'duplicate' &&
+                        TrackpinStatus.trackId === track.id && (
+                          <div className="flex items-center space-x-1">
+                            <X className="w-4 h-4 text-yellow-500" />
+                            <span>Duplicate Pin</span>
+                          </div>
+                        )}
+                      {TrackpinStatus.status === 'limitReached' &&
+                        TrackpinStatus.trackId === track.id && (
+                          <div className="flex items-center space-x-1">
+                            <X className="w-4 h-4 text-orange-500" />
+                            <span>Limit Exceeded</span>
+                          </div>
+                        )}
+                      {(TrackpinStatus.status === null ||
+                        TrackpinStatus.trackId !== track.id) && (
+                        <div className="flex items-center space-x-1">
+                          <Pin className="w-4 h-4" />
+                          <span>Pin</span>
+                        </div>
+                      )}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+            {searchResults.artists.items.length > 0 && (
+              <div className="px-4 py-2">
+                <h3 className="text-gray-500 font-semibold border-b-2 border-gray-300 pb-1 mb-2">
+                  Artists
+                </h3>
+                {searchResults.artists.items.map((artist) => (
+                  <div
+                    key={artist.id}
+                    className="flex justify-between items-center p-2 border-b border-gray-200 hover:bg-gray-100 transition-colors"
+                  >
+                    <span>{artist.name}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex items-center space-x-1"
+                      onClick={async () => {
+                        const { status } = await handlePinClickArtist(artist);
+                        setArtistPinStatus({ status, artistID: artist.id });
+                        if (status !== 'error') {
+                          setTimeout(
+                            () =>
+                              setArtistPinStatus({
+                                status: null,
+                                artistID: null,
+                              }),
+                            2000,
+                          );
+                        }
+                      }}
+                    >
+                      {artistPinStatus.status === 'success' &&
+                        artistPinStatus.artistID === artist.id && (
+                          <div className="flex items-center space-x-1">
+                            <Check className="w-4 h-4 text-green-500" />
+                            <span>Pinned</span>
+                          </div>
+                        )}
+                      {artistPinStatus.status === 'duplicate' &&
+                        artistPinStatus.artistID === artist.id && (
+                          <div className="flex items-center space-x-1">
+                            <X className="w-4 h-4 text-yellow-500" />
+                            <span>Duplicate Pin</span>
+                          </div>
+                        )}
+                      {artistPinStatus.status === 'limitReached' &&
+                        artistPinStatus.artistID === artist.id && (
+                          <div className="flex items-center space-x-1">
+                            <X className="w-4 h-4 text-orange-500" />
+                            <span>Limit Exceeded</span>
+                          </div>
+                        )}
+                      {(artistPinStatus.status === null ||
+                        artistPinStatus.artistID !== artist.id) && (
+                        <div className="flex items-center space-x-1">
+                          <Pin className="w-4 h-4" />
+                          <span>Pin</span>
+                        </div>
+                      )}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+            {searchResults.playlists.items.length > 0 && (
+              <div className="px-4 py-2">
+                <h3 className="text-gray-500 font-semibold border-b-2 border-gray-300 pb-1 mb-2">
+                  Playlists
+                </h3>
+                {searchResults.playlists.items.map((playlist) => (
+                  <div
+                    key={playlist.id}
+                    className="flex justify-between items-center p-2 border-b border-gray-200 hover:bg-gray-100 transition-colors"
+                  >
+                    <span>{playlist.name}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex items-center space-x-1"
+                      onClick={async () => {
+                        const { status } =
+                          await handlePinClickPlaylist(playlist);
+                        setPlaylistStatus({ status, playlistID: playlist.id });
+                        if (status !== 'error') {
+                          setTimeout(
+                            () =>
+                              setPlaylistStatus({
+                                status: null,
+                                playlistID: null,
+                              }),
+                            2000,
+                          );
+                        }
+                      }}
+                    >
+                      {playlistPinStatus.status === 'success' &&
+                        playlistPinStatus.playlistID === playlist.id && (
+                          <div className="flex items-center space-x-1">
+                            <Check className="w-4 h-4 text-green-500" />
+                            <span>Pinned</span>
+                          </div>
+                        )}
+                      {playlistPinStatus.status === 'duplicate' &&
+                        playlistPinStatus.playlistID === playlist.id && (
+                          <div className="flex items-center space-x-1">
+                            <X className="w-4 h-4 text-yellow-500" />
+                            <span>Duplicate Pin</span>
+                          </div>
+                        )}
+                      {playlistPinStatus.status === 'limitReached' &&
+                        playlistPinStatus.playlistID === playlist.id && (
+                          <div className="flex items-center space-x-1">
+                            <X className="w-4 h-4 text-orange-500" />
+                            <span>Limit Exceeded</span>
+                          </div>
+                        )}
+                      {(playlistPinStatus.status === null ||
+                        playlistPinStatus.playlistID !== playlist.id) && (
+                        <div className="flex items-center space-x-1">
+                          <Pin className="w-4 h-4" />
+                          <span>Pin</span>
+                        </div>
+                      )}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+      <div className="flex justify-between space-x-3">
         <Button variant="ghost" size="sm" className="px-2 hidden sm:block">
           <a
             className="flex items-center space-x-2 transition-colors hover:text-blue-500"

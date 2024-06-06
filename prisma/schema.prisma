@@ -43,3 +43,38 @@ model comments {
   comment     String
   time        DateTime
 }
+
+model playlistPinned {
+  id                Int    @id @default(autoincrement())
+  userId            String
+  playlistID        String
+  playlistName      String
+  playlistImageLink String
+  playlistLink      String
+  numberOfTracks    Int
+
+  @@unique([userId, playlistID])
+}
+
+model artistPinned {
+  id                Int    @id @default(autoincrement())
+  userId            String
+  artistID          String
+  artistName        String
+  artistImageLink   String
+  artistLink        String
+
+  @@unique([userId, artistID])
+}
+
+model songPinned {
+  id                Int    @id @default(autoincrement())
+  userId            String
+  songID            String
+  songName          String
+  artistName        String
+  songImageLink     String
+  songLink          String
+
+  @@unique([userId, songID])
+}

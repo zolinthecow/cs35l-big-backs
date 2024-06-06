@@ -76,7 +76,8 @@ const RightSidebar: FC<RightSidebarProps> = ({
             <ArtistLayout
               key={index}
               artist={name}
-              artist_url={images[0].url}
+              artistImage={images[0].url}
+              artistUrl={external_urls.spotify}
               className="hover:bg-gray-200 transition-colors duration-200"
             />
           ))}

@@ -10,15 +10,16 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 const SENBIRD_APP_ID = process.env['NEXT_PUBLIC_SENDBIRD_APP_ID'] ?? '';
 
 export default function Page() {
-  const { user } = useUser();
+  const user = useUser();
 
-  if (!user?.sub) {
+  if (!user.user?.sub) {
+    console.log('NO USER');
     return null;
   }
 
   return (
     <div className="h-screen w-full">
-      <SendbirdApp appId={SENBIRD_APP_ID} userId={user.sub} />
+      <SendbirdApp appId={SENBIRD_APP_ID} userId={user.user!.sub} />
     </div>
   );
 }
