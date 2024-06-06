@@ -1,18 +1,14 @@
 'use client';
 import Image from 'next/image';
-import Link from 'next/link';
-import { Button } from '../button';
 
 type ArtistItemProps = {
   artist: string;
-  artistImage: string;
-  artistUrl: string;
+  artist_url: string;
   className?: string;
 };
 export function ArtistLayoutProfile({
   artist,
-  artistImage,
-  artistUrl,
+  artist_url,
   className,
 }: ArtistItemProps) {
   return (
@@ -22,7 +18,7 @@ export function ArtistLayoutProfile({
       <div style={{ width: '100px', height: '100px', position: 'relative' }}>
         <Image
           alt={`${artist} cover`}
-          src={artistImage}
+          src={artist_url}
           layout="fill"
           objectFit="cover"
           className="rounded-md"
@@ -33,20 +29,6 @@ export function ArtistLayoutProfile({
           {artist}
         </h3>
       </div>
-      <Link href={artistUrl} passHref>
-        <Button
-          variant="default"
-          size="sm"
-          className="p-2 text-white bg-transparent rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75"
-        >
-          <Image
-            src="https://static-00.iconduck.com/assets.00/spotify-icon-2048x2048-n3imyp8e.png"
-            alt="Spotify"
-            width={24}
-            height={24}
-          />
-        </Button>
-      </Link>
     </div>
   );
 }

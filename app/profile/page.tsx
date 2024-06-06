@@ -10,10 +10,18 @@ const PinnedSideBar = React.lazy(
 import { SectionProps } from '@/components/profile_ui/pinned-side-bar';
 import { NavBar } from '@/components/navbar';
 import { SkeletonLoader } from '@/components/skeleton_loader';
-import { PrismaClient } from '@prisma/client';
-import getSpotifyClient from '@/lib/spotify';
 
-const prisma = new PrismaClient();
+//This is the basic function to get the mock data for now
+async function fetchData(endpoint: string) {
+  try {
+    const data = await import(
+      `../../components/mock_data/${endpoint}_data.json`
+    );
+    return data.default;
+  } catch (error) {
+    throw new Error(`Failed to fetch ${endpoint}`);
+  }
+}
 
 const Page: FC = async () => {
   return (
@@ -31,17 +39,6 @@ const Page: FC = async () => {
   );
 };
 
-async function fetchData(endpoint: string) {
-  try {
-    const data = await import(
-      `../../components/mock_data/${endpoint}_data.json`
-    );
-    return data.default;
-  } catch (error) {
-    throw new Error(`Failed to fetch ${endpoint}`);
-  }
-}
-
 const ProfileSideBarComponent = async (): Promise<JSX.Element> => {
   const userData = await fetchData('user');
   const props: ProfileProps = {
@@ -57,12 +54,10 @@ const ProfileSideBarComponent = async (): Promise<JSX.Element> => {
 };
 
 const PinnedSideBarComponent = async (): Promise<JSX.Element> => {
-  const userId = '23'; // Replace with actual user ID
-
-  const songData = await getPinnedSongs(userId);
-  const artistData = await getPinnedArtists(userId);
-  const playlistData = await getPinnedPlaylists(userId);
-  const friendData = await fetchData('airbuds'); // TODO: friends data remains mock
+  const songData = await fetchData('song');
+  const artistData = await fetchData('artist');
+  const playlistData = await fetchData('playlist');
+  const friendData = await fetchData('airbuds');
 
   const props: SectionProps = {
     songData,
@@ -73,84 +68,5 @@ const PinnedSideBarComponent = async (): Promise<JSX.Element> => {
 
   return <PinnedSideBar {...props} />;
 };
-
-interface pinnedPlaylist {
-  name: string;
-  playlistImage: string;
-  playlistURL: string;
-  numberOfSongs: number;
-}
-
-interface pinnedArtist {
-  name: string;
-  artistImage: string;
-  artistURL: string;
-}
-
-interface pinnedSong {
-  name: string;
-  artistName: string;
-  songImage: string;
-  songURL: string;
-}
-
-async function getPinnedArtists(UserID: string): Promise<pinnedArtist[]> {
-  const pinnedArtists = await prisma.artistPinned.findMany({
-    where: {
-      userId: UserID,
-    },
-  });
-
-  // Transform the data into the correct structure
-  const transformedPinnedArtists: pinnedArtist[] = pinnedArtists.map(
-    (artist): pinnedArtist => ({
-      name: artist.artistName,
-      artistImage: artist.artistImageLink,
-      artistURL: artist.artistLink,
-    }),
-  );
-  console.log('PINNED ARTISTS', transformedPinnedArtists);
-  return transformedPinnedArtists;
-}
-
-async function getPinnedSongs(UserID: string): Promise<pinnedSong[]> {
-  const pinnedSongs = await prisma.songPinned.findMany({
-    where: {
-      userId: UserID,
-    },
-  });
-
-  // Transform the data into the correct structure
-  const transformedPinnedSongs: pinnedSong[] = pinnedSongs.map(
-    (song): pinnedSong => ({
-      name: song.songName,
-      artistName: song.artistName,
-      songImage: song.songImageLink,
-      songURL: song.songLink,
-    }),
-  );
-  console.log('PINNED SONGS', transformedPinnedSongs);
-  return transformedPinnedSongs;
-}
-
-async function getPinnedPlaylists(UserID: string): Promise<pinnedPlaylist[]> {
-  const pinnedPlaylists = await prisma.playlistPinned.findMany({
-    where: {
-      userId: UserID,
-    },
-  });
-
-  // Transform the data into the correct structure
-  const transformedPinnedPlaylists: pinnedPlaylist[] = pinnedPlaylists.map(
-    (playlist): pinnedPlaylist => ({
-      name: playlist.playlistName,
-      playlistImage: playlist.playlistImageLink,
-      playlistURL: playlist.playlistLink,
-      numberOfSongs: playlist.numberOfTracks,
-    }),
-  );
-
-  return transformedPinnedPlaylists;
-}
 
 export default Page;
