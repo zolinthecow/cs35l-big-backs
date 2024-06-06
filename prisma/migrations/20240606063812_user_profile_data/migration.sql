@@ -1,7 +1,9 @@
 -- AlterTable
 ALTER TABLE "User" ADD COLUMN     "bio" TEXT,
 ADD COLUMN     "name" TEXT,
-ADD COLUMN     "ratingValue" TEXT;
+ADD COLUMN     "ratingValue" TEXT,
+ALTER COLUMN "nickname" DROP NOT NULL,
+ALTER COLUMN "sendbirdId" DROP NOT NULL;
 
 -- CreateTable
 CREATE TABLE "_Friend" (
