@@ -33,7 +33,9 @@ model songNotes {
   commName    String
   playlistID  String
   songID      String
-  note        String      
+  note        String  
+
+  @@unique([userID, playlistID, songID])    
 }
 
 model comments {

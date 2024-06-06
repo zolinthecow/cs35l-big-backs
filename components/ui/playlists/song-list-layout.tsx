@@ -8,6 +8,10 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import { PrismaClient } from '@prisma/client';
+import {
+  checkNoteExists,
+  submitNote,
+} from '@/components/data_functions/note_playlists';
 
 const prisma = new PrismaClient();
 
@@ -39,44 +43,16 @@ export function SongItemLayout({
   album_url,
   song_url,
   song_length,
-  note,
-  onAddNote,
 }: SongItemLayoutProps) {
   const [showNotebox, setShowNotebox] = useState(false);
-  const [newNote, setNewNote] = useState(note);
+  const [newNote, setNewNote] = useState('');
 
   const toggleNotebox = () => {
     setShowNotebox(!showNotebox);
   };
 
-  const handleSendNote = () => {
-    onAddNote(id, newNote);
-    setShowNotebox(false);
-  };
-
-  const handleDeleteNote = () => {
-    onAddNote(id, ''); // Call onAddNote with empty string to delete the note
-    setNewNote(''); // Clear the local state
-  };
-
   return (
     <div className="grid grid-cols-[48px_1fr_1fr_0.4fr_0.4fr_auto] items-center gap-7">
-      {note && (
-        <div className="col-span-full mb-0 text-gray-500 pl-1 py-0 relative group">
-          {note}
-          <button
-            className="opacity-0 absolute right-9 top-4 transition-opacity duration-300 ease-in-out group-hover:opacity-50 focus:opacity-100"
-            onClick={handleDeleteNote}
-            title="Delete Note"
-          >
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/2891/2891491.png"
-              alt="Delete"
-              className="w-4 h-4"
-            />
-          </button>
-        </div>
-      )}
       <div className="w-14 h-14 bg-gray-200 rounded-md flex items-center justify-center">
         <img
           src={album_url}
@@ -99,7 +75,19 @@ export function SongItemLayout({
       </div>
       <div className="text-sm text-gray-600">{song_length}</div>
       <div className="flex items-right gap-2 pl-9">
-        <Button size="icon" variant="ghost" onClick={toggleNotebox}>
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={async () => {
+            const note = await checkNoteExists({
+              userID: '23',
+              songID: id,
+              playlistID: '37i9dQZF1DX8Sz1gsYZdwj',
+            });
+            setShowNotebox(true);
+            setNewNote(note.note);
+          }}
+        >
           <NotebookIcon className="w-6.5 h-6.5" />
           <span className="sr-only">Add note</span>
         </Button>
@@ -130,7 +118,19 @@ export function SongItemLayout({
             />
             <div className="flex justify-end gap-2 mt-2">
               <Button onClick={toggleNotebox}>Close</Button>
-              <Button onClick={handleSendNote}>Send</Button>
+              <Button
+                onClick={async () => {
+                  const note = await submitNote({
+                    userID: '23',
+                    songID: id,
+                    playlistID: '37i9dQZF1DX8Sz1gsYZdwj',
+                    note: newNote, // Use newNote here to pass the updated value
+                  });
+                  setShowNotebox(false);
+                }}
+              >
+                Send
+              </Button>
             </div>
           </div>
         </div>

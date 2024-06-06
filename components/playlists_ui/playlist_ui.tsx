@@ -13,24 +13,9 @@ import React, { FC } from 'react';
 import { TitleLayout } from '../ui/playlists/title-layout';
 
 import {
-  ClapperboardIcon,
-  DownloadIcon,
-  FrownIcon,
-  HomeIcon,
-  ImageIcon,
-  MusicIcon,
-  NotebookIcon,
   PaperclipIcon,
-  PlayIcon,
-  SearchIcon,
   SendIcon,
-  ShuffleIcon,
   SmileIcon,
-  StarIcon,
-  ThumbsDownIcon,
-  ThumbsUpIcon,
-  IconWithCounter,
-  StarRating,
 } from '@/components/ui/playlisticons';
 
 interface PlaylistItem {
@@ -69,6 +54,17 @@ interface TitleLayoutProps {
     url: string;
   }[];
   description: string;
+}
+
+interface NoteReturn {
+  songID: string;
+  note: string;
+}
+
+interface Note {
+  userID: string;
+  songID: string;
+  playlistID: string;
 }
 
 interface PlaylistPageProps {
@@ -172,12 +168,14 @@ const Component: FC<PlaylistPageProps> = ({
                   </Avatar>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <div className="font-medium text-gray-900">Jane Smith</div>
+                      <div className="font-medium text-gray-900">
+                        Jane Smith
+                      </div>
                       <div className="text-sm text-gray-600">1 week ago</div>
                     </div>
                     <p className="text-gray-600">
-                      I've been listening to this playlist on repeat all week.
-                      It's the perfect background music for when I'm working or
+                      Ive been listening to this playlist on repeat all week.
+                      Its the perfect background music for when Im working or
                       studying.
                     </p>
                   </div>

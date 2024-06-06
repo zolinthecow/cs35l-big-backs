@@ -8,7 +8,6 @@ import { title } from 'process';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaClient } from '@prisma/client';
 
-type noteStatus = 'exists' | 'doesNotExist' | 'error';
 const prisma = new PrismaClient();
 
 interface PlaylistItem {
@@ -107,36 +106,65 @@ interface NoteReturn {
   note: string;
 }
 
-// const checkNoteExists = async (item: Note): Promise<{ NoteReturn: NoteReturn }> => {
-//   "use server"
-//   console.log('Note status:', item);
-//   try{
-//     // Check if the user has already pinned 5 or more artists
-//     const count = await prisma.songNotes.count({
-//       where: {
-//         userID: item.userID,
-//         songID: item.songID,
-//         playlistID: item.playlistID
-//       },
-//     });
+interface submitNote {
+  userID: string;
+  songID: string;
+  playlistID: string;
+  note: string;
+}
 
-//     if (count >= 1) {
-//       const noteInDB = await prisma.songNotes.findMany({
-//         where: {
-//           userID: item.userID,
-//           songID: item.songID,
-//           playlistID: item.playlistID
-//         },
-//       });
-//       return { NoteReturn: { songID: noteInDB.songID, note: noteInDB.note } };
-//     } else {
-//         return { NoteReturn: { songID: item.songID, note: "" } };
-//     }
-//   } catch(error) {
-//     console.error('An error occurred:', error);
-//     return { NoteReturn: { songID: "", note: ""} };
-//   }
-// };
+type noteStatus = 'success' | 'error';
+
+const checkNoteExists = async (item: Note): Promise<NoteReturn> => {
+  'use server';
+  console.log('Note status:', item);
+  try {
+    // Check if the user has a comment
+    const count = await prisma.songNotes.count({
+      where: {
+        userID: item.userID,
+        songID: item.songID,
+        playlistID: item.playlistID,
+      },
+    });
+
+    if (count >= 1) {
+      const noteInDB = await prisma.songNotes.findMany({
+        where: {
+          userID: item.userID,
+          songID: item.songID,
+          playlistID: item.playlistID,
+        },
+      });
+      return { songID: noteInDB[0].songID, note: noteInDB[0].note };
+    } else {
+      return { songID: item.songID, note: '' };
+    }
+  } catch (error) {
+    console.error('An error occurred:', error);
+    return { songID: '', note: '' };
+  }
+};
+
+const submitNote = async (
+  item: submitNote,
+): Promise<{ status: noteStatus }> => {
+  'use server';
+  try {
+    const noteInDB = await prisma.songNotes.create({
+      data: {
+        userID: item.userID,
+        commName: 'test',
+        playlistID: item.playlistID,
+        songID: item.songID,
+        note: item.note,
+      },
+    });
+    return { status: 'success' };
+  } catch (error) {
+    return { status: 'success' };
+  }
+};
 
 const Page: FC = async () => {
   const listOfPlaylists = await getPlaylists();
