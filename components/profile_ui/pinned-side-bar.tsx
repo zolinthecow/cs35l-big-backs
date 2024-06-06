@@ -5,26 +5,47 @@ import { PlaylistLayout } from '../ui/layouts/playlist-layout';
 import { ArtistLayoutProfile } from '../ui/layouts/artist-layout-profile';
 import { FriendItem } from '../ui/layouts/friend-layout';
 
-interface SongProps {
-  id: string;
-  title: string;
-  artist: string;
-  album_url: string;
-  song_url: string;
+// interface SongProps {
+//   id: string;
+//   title: string;
+//   artist: string;
+//   album_url: string;
+//   song_url: string;
+// }
+
+// interface ArtistProps {
+//   id: string;
+//   artist: string;
+//   artist_url: string;
+// }
+
+// interface PlaylistProps {
+//   id: string;
+//   title: string;
+//   album_url: string;
+//   playlist_url: string;
+//   numberOfSongs: number;
+// }
+
+
+interface pinnedSong {
+  name: string;
+  artistName: string;
+  songImage: string;
+  songURL: string;
 }
 
-interface ArtistProps {
-  id: string;
-  artist: string;
-  artist_url: string;
-}
-
-interface PlaylistProps {
-  id: string;
-  title: string;
-  album_url: string;
-  playlist_url: string;
+interface pinnedPlaylist {
+  name: string;
+  playlistImage: string;
+  playlistURL: string;
   numberOfSongs: number;
+}
+
+interface pinnedArtist {
+  name: string;
+  artistImage: string;
+  artistURL: string;
 }
 
 interface FriendProps {
@@ -36,9 +57,9 @@ interface FriendProps {
 }
 
 export interface SectionProps {
-  songData: SongProps[];
-  artistData: ArtistProps[];
-  playlistData: PlaylistProps[];
+  songData: pinnedSong[];
+  artistData: pinnedArtist[];
+  playlistData: pinnedPlaylist[];
   friendData: FriendProps[];
 }
 
@@ -67,30 +88,39 @@ const PinnedSideBar: FC<SectionProps> = ({
     <div className="flex flex-col h-full gap-6 md:w-2/3 overflow-y-auto">
       <div className="flex flex-col bg-white p-6 rounded-lg shadow-md space-y-4">
         <h2 className="text-2xl font-bold text-gray-800">Pinned Songs</h2>
-        {songData.map((song) => (
+        {songData.map(({ name, artistName, songImage, songURL }, index) => (
           <SongLayout
-            key={song.id}
-            {...song}
+            key={index}
+            title={name}
+            artist={artistName}
+            album_url={songImage}
+            song_url={songURL}
             className="transition-all duration-200 ease-in-out hover:bg-gray-100 hover:shadow-xl"
           />
         ))}
       </div>
       <div className="flex flex-col bg-white p-6 rounded-lg shadow-md space-y-4">
         <h2 className="text-2xl font-bold text-gray-800">Pinned Playlists</h2>
-        {playlistData.map((playlist) => (
-          <PlaylistLayout
-            key={playlist.id}
-            {...playlist}
-            className="transition-all duration-200 ease-in-out hover:bg-gray-100 hover:shadow-xl"
-          />
-        ))}
+        {playlistData?.map(
+            ({ name, playlistImage, playlistURL, numberOfSongs }, index) => (
+              <PlaylistLayout
+                key={index}
+                title={name}
+                album_url={playlistImage}
+                playlist_url={playlistURL}
+                numberOfSongs={numberOfSongs}
+                className="transition-all duration-200 ease-in-out hover:bg-gray-100 hover:shadow-xl"
+              />
+            ),
+          )}
       </div>
       <Section title="Pinned Artists" scrollable>
-        {artistData.map((artist) => (
+        {artistData.map(({ name, artistImage, artistURL }, index) => (
           <ArtistLayoutProfile
-            key={artist.id}
-            artist={artist.artist}
-            artist_url={artist.artist_url}
+            key={index}
+            artist={name}
+            artistImage={artistImage}
+            artistUrl={artistURL}
           />
         ))}
       </Section>
