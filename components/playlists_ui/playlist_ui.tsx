@@ -176,8 +176,8 @@ const Component: FC<PlaylistPageProps> = ({
                       <div className="text-sm text-gray-600">1 week ago</div>
                     </div>
                     <p className="text-gray-600">
-                      I've been listening to this playlist on repeat all week.
-                      It's the perfect background music for when I'm working or
+                      Ive been listening to this playlist on repeat all week.
+                      Its the perfect background music for when Im working or
                       studying.
                     </p>
                   </div>
