@@ -67,7 +67,7 @@ const ProfileSideBarComponent = async ({
 
   const props: ProfileProps = {
     name: userData.name ?? '',
-    username: userData.nickname,
+    username: userData.nickname ?? '',
     profilePicture: spotifyUserData.images?.[0]?.url ?? '',
     bio: userData.bio ?? '',
     ratingValue: parseFloat(userData.ratingValue ?? '0'),

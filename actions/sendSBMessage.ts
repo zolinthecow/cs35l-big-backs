@@ -47,10 +47,13 @@ export default async function sendSBMessage(
     },
   });
 
-  const userIds = bothUsers.map((u) => u.sendbirdId).sort();
+  const userIds = bothUsers
+    .filter((u) => u.sendbirdId)
+    .map((u) => u.sendbirdId)
+    .sort();
   const channelUrl = userIds.join('_');
 
-  await createSBChannelIfNotExisting(userIds);
+  await createSBChannelIfNotExisting(userIds as string[]);
   await sendbirdApi.post(`/group_channels/${channelUrl}/messages`, {
     message_type: 'MESG',
     user_id: bothUsers.find((u) => u.id === session.user.sub)?.sendbirdId,
