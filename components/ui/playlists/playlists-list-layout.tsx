@@ -45,12 +45,18 @@ type ListofPlaylistsLayoutProps = {
 export function ListofPlaylistsLayout({
   playlists,
 }: ListofPlaylistsLayoutProps) {
+  console.log('PL', playlists);
   return (
     <div className="space-y-4">
       <h3 className="text-sm font-medium text-gray-600">Playlists</h3>
       <div className="grid gap-6">
         {playlists?.map(({ id, name, images }, index) => (
-          <PlaylistLayout key={index} id={id} name={name} url={images[0].url} />
+          <PlaylistLayout
+            key={index}
+            id={id}
+            name={name}
+            url={images?.[0].url}
+          />
         ))}
       </div>
     </div>
