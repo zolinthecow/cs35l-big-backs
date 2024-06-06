@@ -174,7 +174,7 @@ export function ListofSongsLayout({
   onAddNote,
 }: ListofSongsLayoutProps) {
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-6 h-auto overflow-y-hidden">
       {songs?.map(({ track }, index) => (
         <SongItemLayout
           key={index}

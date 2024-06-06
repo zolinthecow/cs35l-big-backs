@@ -143,12 +143,14 @@ const Page: FC = async () => {
   const listOfSongs = await getSongs();
   const title = await getTitle();
   return (
-    <div>
-      <Component
-        listOfPlaylists={listOfPlaylists}
-        listOfSongs={listOfSongs}
-        title={title}
-      />
+    <div className='h-100vh overflow-y-hidden'>
+      <div className='h-screen overflow-hidden'>
+        <Component
+          listOfPlaylists={listOfPlaylists}
+          listOfSongs={listOfSongs}
+          title={title}
+        />
+      </div>
     </div>
   );
 };

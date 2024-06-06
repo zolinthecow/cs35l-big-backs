@@ -12,7 +12,7 @@ interface PlaylistItemLayoutProps {
 function PlaylistLayout({ id, name, url }: PlaylistItemLayoutProps) {
   return (
     <Link className={`flex items-center gap-4 hover:text-gray-900`} href={id}>
-      <div className="flex-none w-30 h-30 bg-gray-200 rounded-md flex items-center justify-center">
+      <div className="flex-none w-30 h-30 bg-gray-200 rounded-md flex items-center justify-center max-h-screen">
         <Image
           src={url}
           alt={name}

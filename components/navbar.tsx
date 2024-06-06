@@ -11,6 +11,7 @@ import getSpotifyClient from '@/lib/spotify';
 import { Pin, Check, X } from 'lucide-react'; // import the pin icon
 import { PrismaClient } from '@prisma/client';
 import { getSession, Session } from '@auth0/nextjs-auth0';
+import { handlePinClickArtist, handlePinClickPlaylist, handlePinClickTrack } from './data_functions/pinningFunctions';
 
 const prisma = new PrismaClient();
 
@@ -18,15 +19,6 @@ type PinStatus = 'success' | 'duplicate' | 'limitReached' | 'error';
 
 interface NavBarProps {
   className?: string;
-  handlePinClickArtist: (
-    item: SearchResult['artists']['items'][0],
-  ) => Promise<{ status: PinStatus }>;
-  handlePinClickTrack: (
-    item: SearchResult['tracks']['items'][0],
-  ) => Promise<{ status: PinStatus }>;
-  handlePinClickPlaylist: (
-    item: SearchResult['playlists']['items'][0],
-  ) => Promise<{ status: PinStatus }>;
 }
 
 interface SearchResult {
@@ -60,9 +52,6 @@ interface SearchResult {
 
 export function NavBar({
   className,
-  handlePinClickArtist,
-  handlePinClickTrack,
-  handlePinClickPlaylist,
 }: NavBarProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
