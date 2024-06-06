@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { on } from 'events';
 
 export function ChevronLeftIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -391,26 +392,38 @@ interface IconWithCounterProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   initialCount?: number;
   className?: string;
+  didUserReact: boolean;
+  onCountChange: (newCount: number) => void;
 }
 
 export function IconWithCounter({
   icon: Icon,
   initialCount = 0,
   className = 'text-gray-400',
+  didUserReact,
+  onCountChange,
 }: IconWithCounterProps) {
   const [count, setCount] = useState(initialCount);
+  const [isDoubleClicked, setIsDoubleClicked] = useState(didUserReact);
 
   const handleClick = () => {
     // Toggle count: increment by 1 if count is even, decrement by 1 if count is odd
-    setCount((prevCount) =>
-      prevCount % 2 === 0 ? prevCount + 1 : prevCount - 1,
-    );
+    if (!isDoubleClicked) {
+      setCount((prevCount) => prevCount + 1);
+      onCountChange(count + 1);
+      setIsDoubleClicked(true);
+    } else {
+      setCount((prevCount) => prevCount - 1);
+      setIsDoubleClicked(false);
+      onCountChange(count - 1);
+    }
   };
 
   return (
     <Button
       className="flex items-center gap-1 custom-bg-cream"
       onClick={handleClick}
+      style={isDoubleClicked ? { border: '1px solid gray-800' } : {}}
     >
       <Icon className={`w-5 h-5 hover-effect ${className}`} />
       <span className={`text-sm ${className}`}>{count}</span>

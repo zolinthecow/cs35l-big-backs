@@ -80,3 +80,21 @@ model songPinned {
 
   @@unique([userId, songID])
 }
+
+model playlistReactions {
+  id          Int     @id @default(autoincrement())
+  playlistID  String
+  reaction    Int
+  count       Int
+
+  @@unique([ playlistID, reaction])
+}
+
+model userPlaylistReactions{
+  id          Int     @id @default(autoincrement())
+  userID      String
+  playlistID  String
+  reaction    Int
+
+  @@unique([userID, playlistID, reaction])
+}

@@ -71,12 +71,16 @@ interface PlaylistPageProps {
   listOfPlaylists: PlaylistItem[];
   listOfSongs: SongItem[];
   title: TitleLayoutProps;
+  initialCount: number[];
+  booleanArray: boolean[];
 }
 
 const Component: FC<PlaylistPageProps> = ({
   listOfPlaylists,
   listOfSongs,
   title,
+  initialCount,
+  booleanArray,
 }) => {
   const [commentsCollapsed, setCommentsCollapsed] = useState(false);
   const [notes, setNotes] = useState<{ [id: string]: string }>({});
@@ -100,6 +104,10 @@ const Component: FC<PlaylistPageProps> = ({
               name={title.name}
               images={title.images}
               description={title.description}
+              userID="23"
+              playlistID="37i9dQZF1DX8Sz1gsYZdwj"
+              initialCount={initialCount}
+              booleanArray={booleanArray}
             />
             <div className="px-5 max-h-full">
               <ListofSongsLayout

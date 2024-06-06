@@ -15,6 +15,11 @@ import {
   IconWithCounter,
   StarRating,
 } from '@/components/ui/playlisticons';
+import { useState } from 'react';
+import {
+  submitReaction,
+  submitUserPlaylistReaction,
+} from '@/components/data_functions/reactionFunctions';
 
 interface TitleLayoutProps {
   name: string;
@@ -22,9 +27,32 @@ interface TitleLayoutProps {
     url: string;
   }[];
   description: string;
+  initialCount: number[];
+  booleanArray: boolean[];
+  userID: string;
+  playlistID: string;
 }
 
-export function TitleLayout({ name, images, description }: TitleLayoutProps) {
+export function TitleLayout({
+  name,
+  images,
+  description,
+  initialCount,
+  userID,
+  playlistID,
+  booleanArray,
+}: TitleLayoutProps) {
+  const [counts, setCounts] = useState(initialCount);
+
+  const handleCountChange = (reaction: number, newCount: number) => {
+    const newCounts = [...counts];
+    newCounts[reaction] = newCount;
+    console.log('NEW COUNTS', newCounts);
+    console.log('reaction', reaction);
+    setCounts(newCounts);
+    submitReaction(playlistID, reaction, newCount);
+    submitUserPlaylistReaction(playlistID, '23', reaction);
+  };
   return (
     <div className="bg-white text-gray-700 overflow-y-auto">
       <div className="p-6 overflow-y-auto">
@@ -49,47 +77,41 @@ export function TitleLayout({ name, images, description }: TitleLayoutProps) {
             </div>
             <p className="text-gray-600">{description}</p>
             <div className="flex items-center gap-4">
-              <Button size="icon" variant="ghost">
-                <PlayIcon className="w-6 h-6" />
-                <span className="sr-only">Play</span>
-              </Button>
-              <Button size="icon" variant="ghost">
-                <ShuffleIcon className="w-6 h-6" />
-                <span className="sr-only">Shuffle</span>
-              </Button>
-              <Button size="icon" variant="ghost">
-                <DownloadIcon className="w-6 h-6" />
-                <span className="sr-only">Download</span>
-              </Button>
-              <Button size="icon" variant="ghost">
-                <SearchIcon className="w-6 h-6" />
-                <span className="sr-only">Search</span>
-              </Button>
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2">
                   <IconWithCounter
                     icon={ThumbsUpIcon}
-                    initialCount={0}
+                    initialCount={counts[0]}
+                    didUserReact={booleanArray[0]}
+                    onCountChange={(count) => handleCountChange(0, count)}
                     className="text-gray-400"
                   />
                   <IconWithCounter
                     icon={ThumbsDownIcon}
-                    initialCount={0}
+                    initialCount={counts[1]}
+                    didUserReact={booleanArray[1]}
+                    onCountChange={(count) => handleCountChange(1, count)}
                     className="text-gray-400"
                   />
                   <IconWithCounter
                     icon={ClapperboardIcon}
-                    initialCount={0}
+                    initialCount={counts[2]}
+                    didUserReact={booleanArray[2]}
+                    onCountChange={(count) => handleCountChange(2, count)}
                     className="text-gray-400"
                   />
                   <IconWithCounter
                     icon={SmileIcon}
-                    initialCount={0}
+                    initialCount={counts[3]}
+                    didUserReact={booleanArray[3]}
+                    onCountChange={(count) => handleCountChange(3, count)}
                     className="text-gray-400"
                   />
                   <IconWithCounter
                     icon={FrownIcon}
-                    initialCount={0}
+                    initialCount={counts[4]}
+                    didUserReact={booleanArray[4]}
+                    onCountChange={(count) => handleCountChange(4, count)}
                     className="text-gray-400"
                   />
                 </div>

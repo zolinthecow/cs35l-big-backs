@@ -113,63 +113,58 @@ interface submitNote {
   note: string;
 }
 
-type noteStatus = 'success' | 'error';
+async function getPlaylistReactions(playlistID: string): Promise<number[]> {
+  const numbersArray = [0, 0, 0, 0, 0]; // Initialize array with 4 zeros
 
-const checkNoteExists = async (item: Note): Promise<NoteReturn> => {
-  'use server';
-  console.log('Note status:', item);
-  try {
-    // Check if the user has a comment
-    const count = await prisma.songNotes.count({
+  for (let i = 0; i < 5; i++) {
+    const reactionCount = await prisma.playlistReactions.findMany({
       where: {
-        userID: item.userID,
-        songID: item.songID,
-        playlistID: item.playlistID,
+        playlistID: playlistID,
+        reaction: i,
       },
     });
-
-    if (count >= 1) {
-      const noteInDB = await prisma.songNotes.findMany({
-        where: {
-          userID: item.userID,
-          songID: item.songID,
-          playlistID: item.playlistID,
-        },
-      });
-      return { songID: noteInDB[0].songID, note: noteInDB[0].note };
-    } else {
-      return { songID: item.songID, note: '' };
-    }
-  } catch (error) {
-    console.error('An error occurred:', error);
-    return { songID: '', note: '' };
+    numbersArray[i] = reactionCount[0]?.count || 0;
   }
-};
+  return numbersArray;
+}
 
-const submitNote = async (
-  item: submitNote,
-): Promise<{ status: noteStatus }> => {
-  'use server';
+async function getUserIDReactions(
+  userID: string,
+  playlistID: string,
+): Promise<boolean[]> {
+  const booleanArray = [false, false, false, false, false]; // Initialize array with 5 falses
+
   try {
-    const noteInDB = await prisma.songNotes.create({
-      data: {
-        userID: item.userID,
-        commName: 'test',
-        playlistID: item.playlistID,
-        songID: item.songID,
-        note: item.note,
+    const reactions = await prisma.userPlaylistReactions.findMany({
+      where: {
+        playlistID: playlistID,
+        userID: userID,
+      },
+      select: {
+        reaction: true,
       },
     });
-    return { status: 'success' };
+
+    reactions.forEach(({ reaction }: { reaction: number }) => {
+      if (reaction >= 0 && reaction < 5) {
+        booleanArray[reaction] = true;
+      }
+    });
   } catch (error) {
-    return { status: 'success' };
+    console.error('Error fetching reactions:', error);
   }
-};
+  return booleanArray;
+}
 
 const Page: FC = async () => {
   const listOfPlaylists = await getPlaylists();
   const listOfSongs = await getSongs();
   const title = await getTitle();
+  const initialCount = await getPlaylistReactions('37i9dQZF1DX8Sz1gsYZdwj');
+  const initialUserReaction = await getUserIDReactions(
+    '23',
+    '37i9dQZF1DX8Sz1gsYZdwj',
+  );
   return (
     <div className="h-100vh overflow-y-hidden fixed">
       <div className="h-screen overflow-hidden">
@@ -177,6 +172,8 @@ const Page: FC = async () => {
           listOfPlaylists={listOfPlaylists}
           listOfSongs={listOfSongs}
           title={title}
+          initialCount={initialCount}
+          booleanArray={initialUserReaction}
         />
       </div>
     </div>
