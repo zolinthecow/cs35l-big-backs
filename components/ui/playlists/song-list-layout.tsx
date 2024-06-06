@@ -7,6 +7,9 @@ import {
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import React, { useState } from 'react';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 type SongItemLayoutProps = {
   id: string;

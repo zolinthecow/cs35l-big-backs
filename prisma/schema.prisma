@@ -26,3 +26,20 @@ model Auth0ManagementApiToken {
   token     String
   expiresAt DateTime
 }
+
+model songNotes {
+  id          Int      @id @default(autoincrement())
+  userID      String
+  commName    String
+  playlistID  String
+  songID      String
+  note        String      
+}
+
+model comments {
+  id          Int     @id @default(autoincrement())
+  userID      String
+  playlistID  String
+  comment     String
+  time        DateTime
+}

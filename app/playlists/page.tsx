@@ -5,6 +5,11 @@ import { ListofPlaylistsLayout } from '@/components/ui/playlists/playlists-list-
 import Component from '@/components/playlists_ui/playlist_ui';
 import React, { FC } from 'react';
 import { title } from 'process';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { PrismaClient } from '@prisma/client';
+
+type noteStatus = 'exists' | 'doesNotExist' | 'error';
+const prisma = new PrismaClient();
 
 interface PlaylistItem {
   id: string;
@@ -90,6 +95,48 @@ async function getTitle(): Promise<TitleLayoutProps> {
 interface PageProps {
   listOfPlaylists: PlaylistResponse;
 }
+
+interface Note {
+  userID: string;
+  songID: string;
+  playlistID: string;
+}
+
+interface NoteReturn {
+  songID: string;
+  note: string;
+}
+
+// const checkNoteExists = async (item: Note): Promise<{ NoteReturn: NoteReturn }> => {
+//   "use server"
+//   console.log('Note status:', item);
+//   try{
+//     // Check if the user has already pinned 5 or more artists
+//     const count = await prisma.songNotes.count({
+//       where: {
+//         userID: item.userID,
+//         songID: item.songID,
+//         playlistID: item.playlistID
+//       },
+//     });
+
+//     if (count >= 1) {
+//       const noteInDB = await prisma.songNotes.findMany({
+//         where: {
+//           userID: item.userID,
+//           songID: item.songID,
+//           playlistID: item.playlistID
+//         },
+//       });
+//       return { NoteReturn: { songID: noteInDB.songID, note: noteInDB.note } };
+//     } else {
+//         return { NoteReturn: { songID: item.songID, note: "" } };
+//     }
+//   } catch(error) {
+//     console.error('An error occurred:', error);
+//     return { NoteReturn: { songID: "", note: ""} };
+//   }
+// };
 
 const Page: FC = async () => {
   const listOfPlaylists = await getPlaylists();
