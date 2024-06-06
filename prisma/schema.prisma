@@ -16,9 +16,15 @@ datasource db {
 
 model User {
   id                  String  @id
-  nickname            String
+  nickname            String?
+  sendbirdId          String?
+  name                String?
+  bio                 String?
+  ratingValue         String?
   spotifyAccessToken  String?
   spotifyRefreshToken String?
+  friends             User[]  @relation("Friend")
+  friendsRelation     User[]  @relation("Friend")
 }
 
 model Auth0ManagementApiToken {
@@ -28,20 +34,20 @@ model Auth0ManagementApiToken {
 }
 
 model songNotes {
-  id          Int      @id @default(autoincrement())
-  userID      String
-  commName    String
-  playlistID  String
-  songID      String
-  note        String      
+  id         Int    @id @default(autoincrement())
+  userID     String
+  commName   String
+  playlistID String
+  songID     String
+  note       String
 }
 
 model comments {
-  id          Int     @id @default(autoincrement())
-  userID      String
-  playlistID  String
-  comment     String
-  time        DateTime
+  id         Int      @id @default(autoincrement())
+  userID     String
+  playlistID String
+  comment    String
+  time       DateTime
 }
 
 model playlistPinned {
@@ -57,24 +63,27 @@ model playlistPinned {
 }
 
 model artistPinned {
-  id                Int    @id @default(autoincrement())
-  userId            String
-  artistID          String
-  artistName        String
-  artistImageLink   String
-  artistLink        String
+  id              Int    @id @default(autoincrement())
+  userId          String
+  artistID        String
+  artistName      String
+  artistImageLink String
+  artistLink      String
 
   @@unique([userId, artistID])
 }
 
 model songPinned {
-  id                Int    @id @default(autoincrement())
-  userId            String
-  songID            String
-  songName          String
-  artistName        String
-  songImageLink     String
-  songLink          String
+  id            Int    @id @default(autoincrement())
+  userId        String
+  songID        String
+  songName      String
+  artistName    String
+  songImageLink String
+  songLink      String
 
   @@unique([userId, songID])
 }
+
+
+
