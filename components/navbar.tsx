@@ -53,16 +53,19 @@ interface SearchResult {
       tracks: { total: number };
     }[];
   };
-  friends: {
-    id: string;
-    name: string;
-  };
+}
+interface UserResult {
+  id: string;
+  name: string;
 }
 
 export function NavBar({ className }: NavBarProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult | null>(null);
+  const [searchResultsFriends, setSearchResultsFriends] = useState<
+    UserResult[] | null
+  >(null);
   const [activeTab, setActiveTab] = useState('tracks');
   const searchResultsRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -102,6 +105,16 @@ export function NavBar({ className }: NavBarProps) {
       console.error('Error fetching search results:', error);
     }
   };
+  const handleSearchFriends = async () => {
+    if (searchQuery.trim() === '') return;
+
+    try {
+      const results = await searchUsersByName(searchQuery);
+      setSearchResultsFriends(results as UserResult[]);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
+  };
 
   useEffect(() => {
     if (searchQuery) {
@@ -110,6 +123,7 @@ export function NavBar({ className }: NavBarProps) {
       }
       typingTimeoutRef.current = setTimeout(() => {
         handleSearch();
+        handleSearchFriends();
       }, 300);
     } else {
       setSearchResults(null);
@@ -317,22 +331,8 @@ export function NavBar({ className }: NavBarProps) {
         </div>
       ));
     }
-    if (activeTab === 'friends') {
-      const friends = [
-        { id: '1', name: 'John Doe', profilePicture: { url: '/profile1.jpg' } },
-        {
-          id: '2',
-          name: 'Jane Smith',
-          profilePicture: { url: '/profile2.jpg' },
-        },
-        {
-          id: '3',
-          name: 'Alice Johnson',
-          profilePicture: { url: '/profile3.jpg' },
-        },
-      ];
-
-      return friends.map((friend) => (
+    if (activeTab === 'friends' && searchResultsFriends) {
+      return searchResultsFriends.map((friend) => (
         <div
           key={friend.id}
           className="flex justify-between items-center p-2 border-b border-gray-200 hover:bg-gray-100 transition-colors"
