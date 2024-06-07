@@ -176,6 +176,7 @@ interface pinnedPlaylist {
   name: string;
   playlistImage: string;
   playlistURL: string;
+  playlistID: string;
   numberOfSongs: number;
 }
 

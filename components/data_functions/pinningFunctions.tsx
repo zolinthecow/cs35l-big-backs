@@ -165,6 +165,7 @@ interface pinnedPlaylist {
   name: string;
   playlistImage: string;
   playlistURL: string;
+  playlistID: string;
   numberOfSongs: number;
 }
 
@@ -193,6 +194,7 @@ export async function getPinnedPlaylists(
     playlistImage: playlist.playlistImageLink,
     playlistURL: playlist.playlistLink,
     numberOfSongs: playlist.numberOfTracks,
+    playlistID: playlist.playlistID,
   }));
 }
 
