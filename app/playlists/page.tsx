@@ -176,18 +176,19 @@ const Page: FC = async () => {
   const title = await getTitle();
   const commentsFromDb = await getCommentsFromDb('37i9dQZF1EVHGWrwldPRtj');
   const initialCount = await getPlaylistReactions('37i9dQZF1DX8Sz1gsYZdwj');
-  const initialUserReaction = await getUserIDReactions(
-    '23',
-    '37i9dQZF1DX8Sz1gsYZdwj',
-  );
   const averageRating = await getAverageRating('37i9dQZF1DX8Sz1gsYZdwj');
-  const userRating = await getUserIDRating('23', '37i9dQZF1DX8Sz1gsYZdwj');
   const session = await getSession();
   const userID = session?.user?.sub;
+  const initialUserReaction = await getUserIDReactions(
+    userID,
+    '37i9dQZF1DX8Sz1gsYZdwj',
+  );
+  const userRating = await getUserIDRating(userID, '37i9dQZF1DX8Sz1gsYZdwj');
+
   return (
     <div className="h-100vh overflow-y-hidden fixed">
       <div className="h-screen overflow-hidden">
-        <Suspense fallback={<SkeletonLoader />}>
+        <Suspense>
           <Component
             listOfPlaylists={listOfPlaylists}
             listOfSongs={listOfSongs}

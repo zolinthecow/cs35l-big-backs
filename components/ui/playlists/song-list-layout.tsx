@@ -12,6 +12,7 @@ import {
   checkNoteExists,
   submitNote,
 } from '@/components/data_functions/note_playlists';
+import { getSession } from '@auth0/nextjs-auth0';
 
 const prisma = new PrismaClient();
 
@@ -24,6 +25,7 @@ type SongItemLayoutProps = {
   song_url: string;
   song_length: string;
   note: string;
+  userID: string;
   onAddNote: (id: string, note: string) => void;
 };
 
@@ -35,7 +37,7 @@ function formatDuration(ms: string): string {
   return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 }
 
-export function SongItemLayout({
+export async function SongItemLayout({
   id,
   title,
   artist,
@@ -43,10 +45,10 @@ export function SongItemLayout({
   album_url,
   song_url,
   song_length,
+  userID,
 }: SongItemLayoutProps) {
   const [showNotebox, setShowNotebox] = useState(false);
   const [newNote, setNewNote] = useState('');
-
   const toggleNotebox = () => {
     setShowNotebox(!showNotebox);
   };
@@ -80,7 +82,7 @@ export function SongItemLayout({
           variant="ghost"
           onClick={async () => {
             const note = await checkNoteExists({
-              userID: '23',
+              userID: userID,
               songID: id,
               playlistID: '37i9dQZF1DX8Sz1gsYZdwj',
             });
@@ -121,7 +123,7 @@ export function SongItemLayout({
               <Button
                 onClick={async () => {
                   const note = await submitNote({
-                    userID: '23',
+                    userID: userID,
                     songID: id,
                     playlistID: '37i9dQZF1DX8Sz1gsYZdwj',
                     note: newNote, // Use newNote here to pass the updated value
@@ -166,12 +168,14 @@ type ListofSongsLayoutProps = {
   songs: SongItem[];
   notes: { [id: string]: string };
   onAddNote: (id: string, note: string) => void;
+  userID: string;
 };
 
 export function ListofSongsLayout({
   songs,
   notes,
   onAddNote,
+  userID,
 }: ListofSongsLayoutProps) {
   return (
     <div className="grid gap-6 h-auto overflow-y-hidden">
@@ -187,6 +191,7 @@ export function ListofSongsLayout({
           song_length={formatDuration(track.duration_ms)}
           note={notes[track.id] || ''}
           onAddNote={onAddNote}
+          userID={userID}
         />
       ))}
     </div>

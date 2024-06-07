@@ -134,6 +134,7 @@ const Component: FC<PlaylistPageProps> = ({
                 songs={listOfSongs}
                 notes={notes}
                 onAddNote={handleAddNote}
+                userID={userID}
               />
             </div>
           </div>

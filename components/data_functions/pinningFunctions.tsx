@@ -1,31 +1,32 @@
-"use server";
+'use server';
 import { PrismaClient } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { getSession } from '@auth0/nextjs-auth0';
 
 const prisma = new PrismaClient();
 //functions to pin items
 interface ArtistItem {
-    id: string;
-    name: string;
-    images: { url: string }[];
-    external_urls: { spotify: string };
-  }
-  
-  interface TrackItem {
-    id: string;
-    name: string;
-    external_urls: { spotify: string };
-    artists: { name: string }[];
-    album: { images: { url: string }[] };
-  }
-  
-  interface PlaylistItem {
-    id: string;
-    images: { url: string }[];
-    external_urls: { spotify: string };
-    name: string;
-    tracks: { total: number };
-  }
+  id: string;
+  name: string;
+  images: { url: string }[];
+  external_urls: { spotify: string };
+}
+
+interface TrackItem {
+  id: string;
+  name: string;
+  external_urls: { spotify: string };
+  artists: { name: string }[];
+  album: { images: { url: string }[] };
+}
+
+interface PlaylistItem {
+  id: string;
+  images: { url: string }[];
+  external_urls: { spotify: string };
+  name: string;
+  tracks: { total: number };
+}
 
 type PinStatus = 'success' | 'duplicate' | 'limitReached' | 'error';
 
@@ -34,11 +35,13 @@ export const handlePinClickArtist = async (
 ): Promise<{ status: PinStatus }> => {
   'use server';
   console.log('Pinned artist:', item);
+  const session = await getSession();
+  const userID = session?.user?.sub;
 
   // Check if the user has already pinned 5 or more artists
   const count = await prisma.artistPinned.count({
     where: {
-      userId: '23',
+      userId: userID,
     },
   });
 
@@ -49,7 +52,7 @@ export const handlePinClickArtist = async (
   try {
     const newRecord = await prisma.artistPinned.create({
       data: {
-        userId: '23',
+        userId: userID,
         artistID: item.id,
         artistName: item.name,
         artistImageLink: item.images[0].url,
@@ -74,12 +77,14 @@ export const handlePinClickTrack = async (
   item: TrackItem,
 ): Promise<{ status: PinStatus }> => {
   'use server';
+  const session = await getSession();
+  const userID = session?.user?.sub;
   console.log('Pinned track:', item);
 
   // Check if the user has already pinned 5 or more tracks
   const count = await prisma.songPinned.count({
     where: {
-      userId: '23',
+      userId: userID,
     },
   });
 
@@ -90,7 +95,7 @@ export const handlePinClickTrack = async (
   try {
     const newRecord = await prisma.songPinned.create({
       data: {
-        userId: '23',
+        userId: userID,
         songID: item.id,
         songName: item.name,
         artistName: item.artists[0].name,
@@ -117,11 +122,13 @@ export const handlePinClickPlaylist = async (
 ): Promise<{ status: PinStatus }> => {
   'use server';
   console.log('Pinned playlist:', item);
+  const session = await getSession();
+  const userID = session?.user?.sub;
 
   // Check if the user has already pinned 5 or more playlists
   const count = await prisma.playlistPinned.count({
     where: {
-      userId: '23',
+      userId: userID,
     },
   });
 
@@ -132,7 +139,7 @@ export const handlePinClickPlaylist = async (
   try {
     const newRecord = await prisma.playlistPinned.create({
       data: {
-        userId: '23',
+        userId: userID,
         playlistID: item.id,
         playlistName: item.name,
         playlistImageLink: item.images[0].url,

@@ -17,8 +17,7 @@ import {
 import { NavBar } from '@/components/navbar';
 import getSpotifyClient from '@/lib/spotify';
 import { PrismaClient } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { handlePinClickArtist, handlePinClickPlaylist, handlePinClickTrack } from '@/components/data_functions/pinningFunctions';
+import { getSession } from '@auth0/nextjs-auth0';
 
 const prisma = new PrismaClient();
 
@@ -38,7 +37,7 @@ async function fetchData(endpoint: string) {
 const Page: FC = async () => {
   return (
     <div className="h-screen w-screen flex flex-col">
-      <NavBar/>
+      <NavBar />
       <div className="flex flex-1 overflow-hidden">
         <Suspense fallback={<LeftSidebarSkeleton />}>
           <div className="w-1/4">
@@ -72,9 +71,11 @@ const AirbudsComponents = async (): Promise<JSX.Element> => {
 };
 
 const LeftSideBarComponent = async (): Promise<JSX.Element> => {
-  const songData = await getPinnedSong('23');
-  const artistData = await getPinnedArtist('23');
-  const playlistData = await getPinnedPlaylists('23');
+  const session = await getSession();
+  const userID = session?.user?.sub;
+  const songData = await getPinnedSong(userID);
+  const artistData = await getPinnedArtist(userID);
+  const playlistData = await getPinnedPlaylists(userID);
 
   const props: LeftSidebarProps = {
     songData,

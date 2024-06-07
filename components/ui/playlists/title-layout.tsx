@@ -4,11 +4,7 @@ import { Button } from '@/components/ui/button';
 import React, { FC } from 'react';
 import {
   ClapperboardIcon,
-  DownloadIcon,
   FrownIcon,
-  PlayIcon,
-  SearchIcon,
-  ShuffleIcon,
   SmileIcon,
   ThumbsDownIcon,
   ThumbsUpIcon,
@@ -20,7 +16,6 @@ import {
   submitReaction,
   submitUserPlaylistReaction,
 } from '@/components/data_functions/reactionFunctions';
-
 import { submitRating } from '@/components/data_functions/ratingPlaylists';
 
 interface TitleLayoutProps {
@@ -49,7 +44,6 @@ export function TitleLayout({
   userRating,
 }: TitleLayoutProps) {
   const [counts, setCounts] = useState(initialCount);
-
   const handleCountChange = (reaction: number, newCount: number) => {
     const newCounts = [...counts];
     newCounts[reaction] = newCount;
@@ -57,7 +51,7 @@ export function TitleLayout({
     console.log('reaction', reaction);
     setCounts(newCounts);
     submitReaction(playlistID, reaction, newCount);
-    submitUserPlaylistReaction(playlistID, '23', reaction);
+    submitUserPlaylistReaction(playlistID, userID, reaction);
   };
   return (
     <div className="bg-white text-gray-700 overflow-y-auto">

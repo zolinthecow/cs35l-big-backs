@@ -442,7 +442,7 @@ interface StarRatingProps {
 }
 export function StarRating({
   initialUserRating,
-  className = '',
+  className,
   playlistID,
   userID,
   onCountChange,
@@ -453,24 +453,26 @@ export function StarRating({
   const [hover, setHover] = useState(0);
   const [averageRating, setAverageRating] = useState<number | null>(null);
 
+  const getAverageRatingAsync = async () => {
+    return getAverageRating(playlistID);
+  };
+
   useEffect(() => {
     const fetchAverageRating = async () => {
-      const average = await getAverageRating(playlistID);
+      const average = await getAverageRatingAsync();
       setAverageRating(average);
     };
 
     fetchAverageRating();
-  }, [playlistID]);
+  }, []);
 
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
+    <div className={`flex items-center gap-1 ${className}`}>
       <div className="star-rating flex gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <StarIcon
             key={star}
-            className={`w-5 h-5 cursor-pointer transition-colors duration-200 ${
-              star <= (hover ?? rating) ? 'text-yellow-500' : 'text-gray-400'
-            }`}
+            className={`w-5 h-5 cursor-pointer ${star <= (hover || rating || 0) ? 'text-yellow-500' : 'text-gray-400'}`}
             onClick={() => {
               setRating(star);
               onCountChange(playlistID, star, userID);
@@ -481,7 +483,7 @@ export function StarRating({
         ))}
       </div>
       {averageRating !== null && averageRating !== -1 && (
-        <span className="text-sm font-medium text-gray-500 ml-2">
+        <span className="text-sm font-medium text-gray-400 ml-2">
           {averageRating.toFixed(1)}
         </span>
       )}
