@@ -160,3 +160,63 @@ export const handlePinClickPlaylist = async (
     }
   }
 };
+
+interface pinnedPlaylist {
+  name: string;
+  playlistImage: string;
+  playlistURL: string;
+  numberOfSongs: number;
+}
+
+interface pinnedArtist {
+  name: string;
+  artistImage: string;
+  artistURL: string;
+}
+
+interface pinnedSong {
+  name: string;
+  artistName: string;
+  songImage: string;
+  songURL: string;
+}
+
+export async function getPinnedPlaylists(
+  UserID: string,
+): Promise<pinnedPlaylist[]> {
+  const pinnedPlaylists = await prisma.playlistPinned.findMany({
+    where: { userId: UserID },
+  });
+
+  return pinnedPlaylists.map((playlist) => ({
+    name: playlist.playlistName,
+    playlistImage: playlist.playlistImageLink,
+    playlistURL: playlist.playlistLink,
+    numberOfSongs: playlist.numberOfTracks,
+  }));
+}
+
+export async function getPinnedArtist(UserID: string): Promise<pinnedArtist[]> {
+  const pinnedArtist = await prisma.artistPinned.findMany({
+    where: { userId: UserID },
+  });
+
+  return pinnedArtist.map((artist) => ({
+    name: artist.artistName,
+    artistImage: artist.artistImageLink,
+    artistURL: artist.artistLink,
+  }));
+}
+
+export async function getPinnedSong(UserID: string): Promise<pinnedSong[]> {
+  const pinnedSongs = await prisma.songPinned.findMany({
+    where: { userId: UserID },
+  });
+
+  return pinnedSongs.map((song) => ({
+    name: song.songName,
+    artistName: song.artistName,
+    songImage: song.songImageLink,
+    songURL: song.songLink,
+  }));
+}
