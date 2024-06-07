@@ -159,7 +159,7 @@ const Component: FC<PlaylistPageProps> = ({
                 <div className="flex gap-4 border-t pt-4 border-gray-200">
                   <div className="flex-1">
                     <CommentSection
-                      playlistID={'37i9dQZF1EVHGWrwldPRtj'}
+                      playlistID={playlistID}
                       commentsFromDb={commentsFromDb}
                       userID={userID}
                     ></CommentSection>

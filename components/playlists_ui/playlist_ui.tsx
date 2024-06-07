@@ -158,59 +158,11 @@ const Component: FC<PlaylistPageProps> = ({
               <div className="space-y-4 overflow-y-auto max-h-48 px-6">
                 <div className="flex gap-4 border-t pt-4 border-gray-200">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <Input
-                        className="flex-1"
-                        placeholder="Type your message..."
-                      />
-                      <Button size="icon" variant="ghost">
-                        <PaperclipIcon className="h-5 w-5 text-gray-500" />
-                        <span className="sr-only">Attach file</span>
-                      </Button>
-                      <Button size="icon" variant="ghost">
-                        <SmileIcon className="h-5 w-5 text-gray-500" />
-                        <span className="sr-only">Add emoji</span>
-                      </Button>
-                      <Button size="icon" variant="ghost">
-                        <SendIcon className="h-5 w-5 text-gray-500" />
-                        <span className="sr-only">Send message</span>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage alt="@shadcn" src="/placeholder-avatar.jpg" />
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium text-gray-900">John Doe</div>
-                      <div className="text-sm text-gray-600">2 days ago</div>
-                    </div>
-                    <p className="text-gray-600">
-                      This playlist is perfect for my morning commute. The chill
-                      vibes really help me start the day on the right note.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage alt="@shadcn" src="/placeholder-avatar.jpg" />
-                    <AvatarFallback>JS</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium text-gray-900">
-                        Jane Smith
-                      </div>
-                      <div className="text-sm text-gray-600">1 week ago</div>
-                    </div>
-                    <p className="text-gray-600">
-                      Ive been listening to this playlist on repeat all week.
-                      Its the perfect background music for when Im working or
-                      studying.
-                    </p>
+                    <CommentSection
+                      playlistID={playlistID}
+                      commentsFromDb={commentsFromDb}
+                      userID={userID}
+                    ></CommentSection>
                   </div>
                 </div>
               </div>
