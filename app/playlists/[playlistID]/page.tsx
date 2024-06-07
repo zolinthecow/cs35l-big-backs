@@ -2,7 +2,7 @@
 
 import getSpotifyClient from '@/lib/spotify';
 import { ListofPlaylistsLayout } from '@/components/ui/playlists/playlists-list-layout';
-import Component from '@/components/playlists_ui/playlist_ui';
+import Component from '@/components/playlists_ui/playlist_ui2';
 import React, { FC, Suspense } from 'react';
 import { getSession } from '@auth0/nextjs-auth0';
 import { PrismaClient } from '@prisma/client';
@@ -11,6 +11,12 @@ import { getCommentsFromDb } from '@/components/data_functions/commentsFunctions
 import { DateTime } from 'luxon';
 
 const prisma = new PrismaClient();
+
+type Props = {
+  params: {
+    playlistID: string;
+  };
+};
 
 interface PlaylistItem {
   id: string;
@@ -170,9 +176,9 @@ async function getUserIDRating(
   return -1; // Return false if no rating exists
 }
 
-const Page: FC = async () => {
+export default async function Page({ params }: Props) {
   const listOfPlaylists = await getPlaylists();
-  const playlistID = listOfPlaylists[0].id;
+  const playlistID = params.playlistID;
   const title = await getTitle(playlistID);
   const commentsFromDb = await getCommentsFromDb(playlistID);
   const listOfSongs = await getSongs(playlistID);
@@ -203,6 +209,4 @@ const Page: FC = async () => {
       </div>
     </div>
   );
-};
-
-export default Page;
+}

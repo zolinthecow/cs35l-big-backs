@@ -7,7 +7,7 @@ import { AvatarImage, AvatarFallback, Avatar } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { NavBar } from '@/components/navbar';
 import { useState } from 'react';
-import { ListofPlaylistsLayout } from '../ui/playlists/playlists-list-layout';
+import { ListofPlaylistsLayout } from '../ui/playlists/playlists-list-layout2';
 import { ListofSongsLayout } from '../ui/playlists/song-list-layout';
 import React, { FC } from 'react';
 import { TitleLayout } from '../ui/playlists/title-layout';
@@ -112,14 +112,14 @@ const Component: FC<PlaylistPageProps> = ({
   return (
     <div className="grid grid-rows-[auto_1fr_auto] h-full w-full bg-gray-50 overflow-hidden">
       <NavBar />
-      <div className="grid grid-cols-[240px_1fr] overflow-hidden max-h-100vh">
+      <div className="grid grid-cols-[240px_1fr] overflow-hidden max-h-100vh w-full">
         <div className="bg-gray-100 text-gray-700 p-6 overflow-y-auto max-h-screen shadow-lg">
           <div className="space-y-4">
             <ListofPlaylistsLayout playlists={listOfPlaylists} />
           </div>
         </div>
-        <div className="flex flex-col overflow-hidden h-full">
-          <div className="flex-1 mt-8 space-y-4 overflow-y-auto px-6">
+        <div className="flex flex-col overflow-hidden h-full w-full">
+          <div className="flex-1 mt-8 space-y-4 overflow-y-auto px-6 w-full">
             <TitleLayout
               name={title.name}
               images={title.images}

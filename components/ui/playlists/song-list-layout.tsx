@@ -27,6 +27,7 @@ type SongItemLayoutProps = {
   note: string;
   userID: string;
   onAddNote: (id: string, note: string) => void;
+  playlistID: string;
 };
 
 function formatDuration(ms: string): string {
@@ -37,7 +38,7 @@ function formatDuration(ms: string): string {
   return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 }
 
-export async function SongItemLayout({
+export function SongItemLayout({
   id,
   title,
   artist,
@@ -46,6 +47,7 @@ export async function SongItemLayout({
   song_url,
   song_length,
   userID,
+  playlistID,
 }: SongItemLayoutProps) {
   const [showNotebox, setShowNotebox] = useState(false);
   const [newNote, setNewNote] = useState('');
@@ -84,7 +86,7 @@ export async function SongItemLayout({
             const note = await checkNoteExists({
               userID: userID,
               songID: id,
-              playlistID: '37i9dQZF1DX8Sz1gsYZdwj',
+              playlistID: playlistID,
             });
             setShowNotebox(true);
             setNewNote(note.note);
@@ -125,7 +127,7 @@ export async function SongItemLayout({
                   const note = await submitNote({
                     userID: userID,
                     songID: id,
-                    playlistID: '37i9dQZF1DX8Sz1gsYZdwj',
+                    playlistID: playlistID,
                     note: newNote, // Use newNote here to pass the updated value
                   });
                   setShowNotebox(false);
@@ -169,6 +171,7 @@ type ListofSongsLayoutProps = {
   notes: { [id: string]: string };
   onAddNote: (id: string, note: string) => void;
   userID: string;
+  playlistID: string;
 };
 
 export function ListofSongsLayout({
@@ -176,6 +179,7 @@ export function ListofSongsLayout({
   notes,
   onAddNote,
   userID,
+  playlistID,
 }: ListofSongsLayoutProps) {
   return (
     <div className="grid gap-6 h-auto overflow-y-hidden">
@@ -192,6 +196,7 @@ export function ListofSongsLayout({
           note={notes[track.id] || ''}
           onAddNote={onAddNote}
           userID={userID}
+          playlistID={playlistID}
         />
       ))}
     </div>
