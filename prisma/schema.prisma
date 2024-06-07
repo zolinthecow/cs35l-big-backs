@@ -98,3 +98,12 @@ model userPlaylistReactions{
 
   @@unique([userID, playlistID, reaction])
 }
+
+model playlistRating {
+  id          Int     @id @default(autoincrement())
+  userID      String
+  playlistID  String
+  stars      Int
+
+  @@unique([userID, playlistID])
+}

@@ -21,6 +21,8 @@ import {
   submitUserPlaylistReaction,
 } from '@/components/data_functions/reactionFunctions';
 
+import { submitRating } from '@/components/data_functions/ratingPlaylists';
+
 interface TitleLayoutProps {
   name: string;
   images: {
@@ -31,6 +33,8 @@ interface TitleLayoutProps {
   booleanArray: boolean[];
   userID: string;
   playlistID: string;
+  averageRating: number;
+  userRating: number;
 }
 
 export function TitleLayout({
@@ -41,6 +45,8 @@ export function TitleLayout({
   userID,
   playlistID,
   booleanArray,
+  averageRating,
+  userRating,
 }: TitleLayoutProps) {
   const [counts, setCounts] = useState(initialCount);
 
@@ -72,7 +78,13 @@ export function TitleLayout({
             <div className="flex items-center gap-2.5">
               <h1 className="text-2xl font-bold text-gray-900">{name}</h1>
               <div className="flex items-center gap-1 text-yellow-500">
-                <StarRating />
+                <StarRating
+                  initialUserRating={userRating === -1 ? 0 : userRating}
+                  playlistID={playlistID}
+                  userID={userID}
+                  averageRating={averageRating === -1 ? 0 : averageRating}
+                  onCountChange={submitRating}
+                />
               </div>
             </div>
             <p className="text-gray-600">{description}</p>

@@ -155,7 +155,45 @@ async function getUserIDReactions(
   }
   return booleanArray;
 }
+async function getAverageRating(playlistID: string): Promise<number> {
+  'use client';
+  const reactions = await prisma.playlistRating.findMany({
+    where: {
+      playlistID: playlistID,
+    },
+  });
 
+  if (reactions.length === 0) {
+    return -1; // Return 0 or some other value indicating no ratings
+  }
+
+  const totalStars = reactions.reduce(
+    (acc: number, curr: { stars: number }) => acc + curr.stars,
+    0,
+  );
+  const totalUsers = reactions.length;
+  console.log('AVERAGE RATING', totalStars / totalUsers);
+
+  return totalStars / totalUsers;
+}
+async function getUserIDRating(
+  userID: string,
+  playlistID: string,
+): Promise<number> {
+  'use client';
+  const rating = await prisma.playlistRating.findMany({
+    where: {
+      playlistID: playlistID,
+      userID: userID,
+    },
+  });
+
+  if (rating.length > 0) {
+    return rating[0].stars; // Return true if a rating from that user exists
+  }
+
+  return -1; // Return false if no rating exists
+}
 const Page: FC = async () => {
   const listOfPlaylists = await getPlaylists();
   const listOfSongs = await getSongs();
@@ -165,6 +203,8 @@ const Page: FC = async () => {
     '23',
     '37i9dQZF1DX8Sz1gsYZdwj',
   );
+  const averageRating = await getAverageRating('37i9dQZF1DX8Sz1gsYZdwj');
+  const userRating = await getUserIDRating('23', '37i9dQZF1DX8Sz1gsYZdwj');
   return (
     <div className="h-100vh overflow-y-hidden fixed">
       <div className="h-screen overflow-hidden">
@@ -174,6 +214,8 @@ const Page: FC = async () => {
           title={title}
           initialCount={initialCount}
           booleanArray={initialUserReaction}
+          averageRating={averageRating}
+          userIDStar={userRating}
         />
       </div>
     </div>
