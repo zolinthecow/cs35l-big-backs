@@ -7,6 +7,9 @@ import React, { FC, Suspense } from 'react';
 import { title } from 'process';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaClient } from '@prisma/client';
+import { CommentLayout } from '@/components/ui/playlists/comment-layout';
+import { CommentSection } from '@/components/ui/playlists/comment-layout';
+import { Odibee_Sans } from 'next/font/google';
 import { SkeletonLoader } from '@/components/skeleton_loader';
 
 const prisma = new PrismaClient();
@@ -96,16 +99,93 @@ interface PageProps {
   listOfPlaylists: PlaylistResponse;
 }
 
-interface Note {
+type Comment = {
   userID: string;
-  songID: string;
-  playlistID: string;
-}
+  playlistID: string; // Playlist ID
+  username: string;
+  time: string;
+  comment: string;
+};
 
+interface CommentReturn {
+  // For putting comment into database
+  userID: string;
+  username: string;
+  playlistID: string;
+  comment: string;
+  time: string;
+}
 interface NoteReturn {
   songID: string;
   note: string;
 }
+
+// Put comments inside a database
+export const putCommentIntoDb = async (
+  item: Comment,
+): Promise<{ CommentReturn: CommentReturn }> => {
+  'use server';
+  console.log('Putting comment into database...');
+  try {
+    // Put comment into database
+    const commentInDB = await prisma.comments.create({
+      data: {
+        userID: item.userID,
+        username: item.username, // Replace with the actual username
+        playlistID: item.playlistID,
+        comment: item.comment,
+        time: new Date().toLocaleString(),
+      },
+    });
+    return {
+      CommentReturn: {
+        userID: commentInDB.userID,
+        username: commentInDB.username,
+        playlistID: commentInDB.playlistID,
+        comment: commentInDB.comment,
+        time: commentInDB.time,
+      },
+    };
+  } catch (error) {
+    console.error('An error occurred:', error);
+    return {
+      CommentReturn: {
+        userID: '',
+        username: '',
+        playlistID: '',
+        comment: '',
+        time: '',
+      },
+    };
+  }
+};
+
+export const getCommentsFromDb = async (
+  playlistID: string,
+): Promise<CommentReturn[]> => {
+  'use server';
+  console.log('Fetching comment from database...');
+  try {
+    // Get comment from database
+    const commentsFromDB = await prisma.comments.findMany({
+      where: {
+        playlistID: playlistID,
+      },
+    });
+
+    console.log('Comments from db: ', commentsFromDB);
+    return commentsFromDB.map((comment) => ({
+      userID: comment.userID,
+      username: comment.username,
+      playlistID: comment.playlistID,
+      comment: comment.comment,
+      time: comment.time.toLocaleString(), // Convert Date object to string
+    }));
+  } catch (error) {
+    console.error('An error occurred: ', error);
+    return [];
+  }
+};
 
 interface submitNote {
   userID: string;
@@ -199,6 +279,7 @@ const Page: FC = async () => {
   const listOfPlaylists = await getPlaylists();
   const listOfSongs = await getSongs();
   const title = await getTitle();
+  const commentsFromDb = await getCommentsFromDb('37i9dQZF1EVHGWrwldPRtj');
   const initialCount = await getPlaylistReactions('37i9dQZF1DX8Sz1gsYZdwj');
   const initialUserReaction = await getUserIDReactions(
     '23',
@@ -218,6 +299,7 @@ const Page: FC = async () => {
             booleanArray={initialUserReaction}
             averageRating={averageRating}
             userIDStar={userRating}
+            commentsFromDb={commentsFromDb}
           />
         </Suspense>
       </div>

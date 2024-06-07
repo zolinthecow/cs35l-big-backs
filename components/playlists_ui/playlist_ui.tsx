@@ -17,6 +17,7 @@ import {
   SendIcon,
   SmileIcon,
 } from '@/components/ui/playlisticons';
+import { CommentSection } from '../ui/playlists/comment-layout';
 
 interface PlaylistItem {
   id: string;
@@ -75,6 +76,16 @@ interface PlaylistPageProps {
   booleanArray: boolean[];
   averageRating: number;
   userIDStar: number;
+  commentsFromDb: CommentReturn[];
+}
+
+interface CommentReturn {
+  // For putting comment into database
+  userID: string;
+  username: string;
+  playlistID: string;
+  comment: string;
+  time: string;
 }
 
 const Component: FC<PlaylistPageProps> = ({
@@ -85,6 +96,7 @@ const Component: FC<PlaylistPageProps> = ({
   booleanArray,
   averageRating,
   userIDStar,
+  commentsFromDb,
 }) => {
   const [commentsCollapsed, setCommentsCollapsed] = useState(false);
   const [notes, setNotes] = useState<{ [id: string]: string }>({});
@@ -135,10 +147,15 @@ const Component: FC<PlaylistPageProps> = ({
                 {commentsCollapsed ? 'Show Comments' : 'Hide Comments'}
               </Button>
             </div>
+
             {!commentsCollapsed && (
               <div className="space-y-4 overflow-y-auto max-h-48 px-6">
                 <div className="flex gap-4 border-t pt-4 border-gray-200">
                   <div className="flex-1">
+                    <CommentSection
+                      playlistID={'37i9dQZF1EVHGWrwldPRtj'}
+                      commentsFromDb={commentsFromDb}
+                    ></CommentSection>
                     <div className="flex items-center gap-2">
                       <Input
                         className="flex-1"
@@ -195,6 +212,10 @@ const Component: FC<PlaylistPageProps> = ({
                   </div>
                 </div>
               </div>
+            )}
+
+            {commentsCollapsed && (
+              <div className="space-y-4 overflow-y-auto max-h-0 px-6"></div>
             )}
           </div>
         </div>
