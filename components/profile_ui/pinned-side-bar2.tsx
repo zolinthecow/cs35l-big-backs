@@ -1,8 +1,8 @@
 'use client';
 import React, { FC } from 'react';
-import { SongLayout } from '../ui/layouts/song-layout-profile';
-import { PlaylistLayout } from '../ui/layouts/playlist-layout-profile';
-import { ArtistLayoutProfile } from '../ui/layouts/artist-layout-profile';
+import { SongLayout } from '../ui/layouts/song-layout';
+import { PlaylistLayout } from '../ui/layouts/playlist-layout';
+import { ArtistLayoutProfile } from '../ui/layouts/artist-layout-profile2';
 import { FriendItem } from '../ui/layouts/friend-layout';
 
 interface pinnedSong {
@@ -93,7 +93,6 @@ const PinnedSideBar: FC<SectionProps> = ({
             album_url={songImage}
             song_url={songURL}
             className="transition-all duration-200 ease-in-out hover:bg-gray-100 hover:shadow-xl"
-            onUnpin={() => handleUnpinClickTrack(userId, id)}
           />
         ))}
       </div>
@@ -108,7 +107,6 @@ const PinnedSideBar: FC<SectionProps> = ({
               playlist_url={playlistURL}
               numberOfSongs={numberOfSongs}
               className="transition-all duration-200 ease-in-out hover:bg-gray-100 hover:shadow-xl"
-              onUnpin={() => handleUnpinClickPlaylist(userId, id)}
             />
           ),
         )}
@@ -120,7 +118,6 @@ const PinnedSideBar: FC<SectionProps> = ({
             artist={name}
             artistImage={artistImage}
             artistUrl={artistURL}
-            onUnpin={() => handleUnpinClickArtist(userId, id)}
           />
         ))}
       </Section>

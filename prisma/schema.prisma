@@ -40,14 +40,18 @@ model songNotes {
   playlistID String
   songID     String
   note       String
+
+  @@unique([userID, playlistID, songID])
 }
 
 model comments {
   id         Int      @id @default(autoincrement())
   userID     String
+  userName   String
   playlistID String
   comment    String
   time       DateTime
+  
 }
 
 model playlistPinned {
@@ -86,4 +90,31 @@ model songPinned {
 }
 
 
+
+model playlistReactions {
+  id          Int     @id @default(autoincrement())
+  playlistID  String
+  reaction    Int
+  count       Int
+
+  @@unique([ playlistID, reaction])
+}
+
+model userPlaylistReactions{
+  id          Int     @id @default(autoincrement())
+  userID      String
+  playlistID  String
+  reaction    Int
+
+  @@unique([userID, playlistID, reaction])
+}
+
+model playlistRating {
+  id          Int     @id @default(autoincrement())
+  userID      String
+  playlistID  String
+  stars      Int
+
+  @@unique([userID, playlistID])
+}
 

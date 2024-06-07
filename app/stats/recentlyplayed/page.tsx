@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { NavBar } from '@/components/navbar';
@@ -43,8 +43,12 @@ async function getRecentlyPlayed(): Promise<RecentlyPlayed[]> {
 }
 
 export default function Page() {
-  const [recentlyPlayed, setRecentlyPlayed] = useState<RecentlyPlayed[] | null>(null);
-  const [currentView, setCurrentView] = useState<'tracks' | 'artists' | 'recent'>('recent');
+  const [recentlyPlayed, setRecentlyPlayed] = useState<RecentlyPlayed[] | null>(
+    null,
+  );
+  const [currentView, setCurrentView] = useState<
+    'tracks' | 'artists' | 'recent'
+  >('recent');
 
   useEffect(() => {
     getRecentlyPlayed().then(setRecentlyPlayed);
@@ -59,12 +63,18 @@ export default function Page() {
             <div className="flex items-center justify-center border-b-2 border-gray-200 py-6 md:justify-center md:space-x-10">
               <nav className="hidden md:flex space-x-10">
                 <button>
-                  <a className="text-base font-medium text-gray-500 hover:text-gray-900" href="/stats/toptracks">
+                  <a
+                    className="text-base font-medium text-gray-500 hover:text-gray-900"
+                    href="/stats/toptracks"
+                  >
                     Top Tracks
                   </a>
                 </button>
                 <button>
-                  <a className="text-base font-medium text-gray-500 hover:text-gray-900" href="/stats/topartists">
+                  <a
+                    className="text-base font-medium text-gray-500 hover:text-gray-900"
+                    href="/stats/topartists"
+                  >
                     Top Artists
                   </a>
                 </button>
@@ -86,28 +96,51 @@ export default function Page() {
               </h1>
             </header>
             <div className="mt-12 grid grid-cols-1 gap-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              {currentView === 'recent' && recentlyPlayed?.map(({ track, played_at }, index) =>
-                <div key={index} className="flex items-center justify-between space-x-4 bg-white p-4 rounded-lg shadow-md">
-                  <div className="flex items-center space-x-4">
-                    <span className="text-lg font-medium">{index + 1}.</span>
-                    {track.album.images[0] ? (
-                      <img src={track.album.images[0].url} alt={track.name} className="w-16 h-16 rounded-md object-cover" />
-                    ) : (
-                      <div className="w-16 h-16 flex items-center justify-center rounded-md bg-gray-300 text-gray-600 text-xs text-center">
-                        No Album Cover
+              {currentView === 'recent' &&
+                recentlyPlayed?.map(({ track, played_at }, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between space-x-4 bg-white p-4 rounded-lg shadow-md"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <span className="text-lg font-medium">{index + 1}.</span>
+                      {track.album.images[0] ? (
+                        <img
+                          src={track.album.images[0].url}
+                          alt={track.name}
+                          className="w-16 h-16 rounded-md object-cover"
+                        />
+                      ) : (
+                        <div className="w-16 h-16 flex items-center justify-center rounded-md bg-gray-300 text-gray-600 text-xs text-center">
+                          No Album Cover
+                        </div>
+                      )}
+                      <div>
+                        <div className="font-medium text-lg text-gray-900">
+                          {track.name}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {track.artists
+                            .map((artist) => artist.name)
+                            .join(', ')}
+                        </div>
                       </div>
-                    )}
-                    <div>
-                      <div className="font-medium text-lg text-gray-900">{track.name}</div>
-                      <div className="text-sm text-gray-500">{track.artists.map(artist => artist.name).join(', ')}</div>
+                    </div>
+                    <div className="flex flex-col items-end space-y-2">
+                      <div className="text-sm text-gray-500">
+                        Played at: {new Date(played_at).toLocaleString()}
+                      </div>
+                      <a
+                        className="text-gray-700 hover:text-gray-900"
+                        href={track.external_urls.spotify}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Listen on Spotify
+                      </a>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end space-y-2">
-                    <div className="text-sm text-gray-500">Played at: {new Date(played_at).toLocaleString()}</div>
-                    <a className="text-gray-700 hover:text-gray-900" href={track.external_urls.spotify} target="_blank" rel="noopener noreferrer">Listen on Spotify</a>
-                  </div>
-                </div>
-              )}
+                ))}
             </div>
           </div>
         </div>

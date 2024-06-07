@@ -1,6 +1,6 @@
 'use server';
 import React, { FC } from 'react';
-import ProfilePageUsingId from '@/components/profile_ui/ProfilePageUsingId';
+import ProfilePageUsingId from '@/components/profile_ui/ProfilePageUsingId2';
 
 type Props = {
   params: {

@@ -8,7 +8,6 @@ type ArtistItemProps = {
   artistImage: string;
   artistUrl: string;
   className?: string;
-  onUnpin: () => void;
 };
 
 export function ArtistLayoutProfile({
@@ -16,7 +15,6 @@ export function ArtistLayoutProfile({
   artistImage,
   artistUrl,
   className,
-  onUnpin,
 }: ArtistItemProps) {
   return (
     <div
@@ -51,14 +49,6 @@ export function ArtistLayoutProfile({
             />
           </Button>
         </Link>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onUnpin}
-          className="text-red-500 hover:text-red-700"
-        >
-          Unpin
-        </Button>
       </div>
     </div>
   );

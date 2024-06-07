@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { on } from 'events';
+import { getAverageRating } from '../data_functions/ratingPlaylists';
 
 export function ChevronLeftIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -391,26 +393,38 @@ interface IconWithCounterProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   initialCount?: number;
   className?: string;
+  didUserReact: boolean;
+  onCountChange: (newCount: number) => void;
 }
 
 export function IconWithCounter({
   icon: Icon,
   initialCount = 0,
   className = 'text-gray-400',
+  didUserReact,
+  onCountChange,
 }: IconWithCounterProps) {
   const [count, setCount] = useState(initialCount);
+  const [isDoubleClicked, setIsDoubleClicked] = useState(didUserReact);
 
   const handleClick = () => {
     // Toggle count: increment by 1 if count is even, decrement by 1 if count is odd
-    setCount((prevCount) =>
-      prevCount % 2 === 0 ? prevCount + 1 : prevCount - 1,
-    );
+    if (!isDoubleClicked) {
+      setCount((prevCount) => prevCount + 1);
+      onCountChange(count + 1);
+      setIsDoubleClicked(true);
+    } else {
+      setCount((prevCount) => prevCount - 1);
+      setIsDoubleClicked(false);
+      onCountChange(count - 1);
+    }
   };
 
   return (
     <Button
       className="flex items-center gap-1 custom-bg-cream"
       onClick={handleClick}
+      style={isDoubleClicked ? { backgroundColor: 'navy' } : {}} //change color on double click to smt nicer
     >
       <Icon className={`w-5 h-5 hover-effect ${className}`} />
       <span className={`text-sm ${className}`}>{count}</span>
@@ -418,22 +432,34 @@ export function IconWithCounter({
   );
 }
 
-export function StarRating() {
-  const [rating, setRating] = useState(0);
+interface StarRatingProps {
+  initialUserRating?: number;
+  className?: string;
+  playlistID: string;
+  userID: string;
+  averageRating?: number;
+  onCountChange: (playlistID: string, stars: number, userID: string) => void;
+}
+export function StarRating({
+  initialUserRating,
+  className,
+  playlistID,
+  userID,
+  onCountChange,
+}: StarRatingProps) {
+  const [rating, setRating] = useState(
+    initialUserRating !== -1 ? initialUserRating : 0,
+  );
   const [hover, setHover] = useState(0);
   const [averageRating, setAverageRating] = useState<number | null>(null);
 
-  const getAverageRating = async () => {
-    // Replace with ratings fetched from database
-    const ratings = [5, 4, 3, 4, 5]; // Replace this with the rating from first click
-    const total = ratings.reduce((sum, rating) => sum + rating, 0);
-    const average = total / ratings.length;
-    return average;
+  const getAverageRatingAsync = async () => {
+    return getAverageRating(playlistID);
   };
 
   useEffect(() => {
     const fetchAverageRating = async () => {
-      const average = await getAverageRating();
+      const average = await getAverageRatingAsync();
       setAverageRating(average);
     };
 
@@ -441,19 +467,22 @@ export function StarRating() {
   }, []);
 
   return (
-    <div className="flex items-center gap-1">
+    <div className={`flex items-center gap-1 ${className}`}>
       <div className="star-rating flex gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <StarIcon
             key={star}
-            className={`w-5 h-5 cursor-pointer ${star <= (hover || rating) ? 'text-yellow-500' : 'text-gray-400'}`}
-            onClick={() => setRating(star)}
+            className={`w-5 h-5 cursor-pointer ${star <= (hover || rating || 0) ? 'text-yellow-500' : 'text-gray-400'}`}
+            onClick={() => {
+              setRating(star);
+              onCountChange(playlistID, star, userID);
+            }}
             onMouseEnter={() => setHover(star)}
             onMouseLeave={() => setHover(0)}
           />
         ))}
       </div>
-      {averageRating !== null && (
+      {averageRating !== null && averageRating !== -1 && (
         <span className="text-sm font-medium text-gray-400 ml-2">
           {averageRating.toFixed(1)}
         </span>

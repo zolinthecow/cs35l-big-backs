@@ -1,13 +1,13 @@
 'use server';
 import React, { FC, Suspense } from 'react';
 const ProfileSideBar = React.lazy(
-  () => import('@/components/profile_ui/profile-side-bar'),
+  () => import('@/components/profile_ui/profile-side-bar2'),
 );
-import { ProfileProps } from '@/components/profile_ui/profile-side-bar';
+import { ProfileProps } from '@/components/profile_ui/profile-side-bar2';
 const PinnedSideBar = React.lazy(
-  () => import('@/components/profile_ui/pinned-side-bar'),
+  () => import('@/components/profile_ui/pinned-side-bar2'),
 );
-import { SectionProps } from '@/components/profile_ui/pinned-side-bar';
+import { SectionProps } from '@/components/profile_ui/pinned-side-bar2';
 import { NavBar } from '@/components/navbar';
 import { SkeletonLoader } from '@/components/skeleton_loader';
 import { PrismaClient } from '@prisma/client';

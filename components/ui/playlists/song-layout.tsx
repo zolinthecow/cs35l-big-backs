@@ -7,7 +7,7 @@ import {
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
-type SongProps = {
+type SongItemProps = {
   id: string;
   title: string;
   artist: string;
@@ -17,14 +17,14 @@ type SongProps = {
   song_length: string;
 };
 
-export function SongLayout({
+export function SongItemLayout({
   title,
   artist,
   album,
   album_url,
   song_url,
   song_length,
-}: SongProps) {
+}: SongItemProps) {
   return (
     <div className="grid grid-cols-[48px_1fr_1fr_0.4fr_auto] items-center gap-7">
       <div className="w-14 h-14 bg-gray-200 rounded-md flex items-center justify-center">

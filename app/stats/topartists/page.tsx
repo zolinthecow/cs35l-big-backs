@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { NavBar } from '@/components/navbar';
@@ -20,7 +20,9 @@ interface Artist {
 
 async function getTopArtists(timeRange: string): Promise<Artist[]> {
   try {
-    const response = await fetchData(`/me/top/artists?time_range=${timeRange}&limit=50`);
+    const response = await fetchData(
+      `/me/top/artists?time_range=${timeRange}&limit=50`,
+    );
     return response;
   } catch (error) {
     console.error('Error fetching top artists:', error);
@@ -30,8 +32,12 @@ async function getTopArtists(timeRange: string): Promise<Artist[]> {
 
 export default function Page() {
   const [topArtists, setTopArtists] = useState<Artist[] | null>(null);
-  const [currentView, setCurrentView] = useState<'tracks' | 'artists' | 'recent'>('artists');
-  const [timeRange, setTimeRange] = useState<'short_term' | 'medium_term' | 'long_term'>('short_term');
+  const [currentView, setCurrentView] = useState<
+    'tracks' | 'artists' | 'recent'
+  >('artists');
+  const [timeRange, setTimeRange] = useState<
+    'short_term' | 'medium_term' | 'long_term'
+  >('short_term');
 
   useEffect(() => {
     getTopArtists(timeRange).then(setTopArtists);
@@ -46,7 +52,10 @@ export default function Page() {
             <div className="flex items-center justify-center border-b-2 border-gray-200 py-6 md:justify-center md:space-x-10">
               <nav className="hidden md:flex space-x-10">
                 <button>
-                  <a className="text-base font-medium text-gray-500 hover:text-gray-900" href="/stats/toptracks">
+                  <a
+                    className="text-base font-medium text-gray-500 hover:text-gray-900"
+                    href="/stats/toptracks"
+                  >
                     Top Tracks
                   </a>
                 </button>
@@ -57,7 +66,10 @@ export default function Page() {
                   Top Artists
                 </button>
                 <button>
-                  <a className="text-base font-medium text-gray-500 hover:text-gray-900" href="/stats/recentlyplayed">
+                  <a
+                    className="text-base font-medium text-gray-500 hover:text-gray-900"
+                    href="/stats/recentlyplayed"
+                  >
                     Recently Played
                   </a>
                 </button>
@@ -91,15 +103,32 @@ export default function Page() {
               </button>
             </div>
             <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              {currentView === 'artists' && topArtists?.map(({ name, images, external_urls }, index) =>
-                <div key={index} className="flex flex-col items-center space-y-4 bg-white p-4 rounded-lg shadow-md">
-                  <img src={images[0]?.url || '/default-artist.png'} alt={name} className="w-48 h-48 rounded-md object-cover" />
-                  <div className="text-center">
-                    <div className="font-medium text-lg text-gray-900">{name}</div>
-                    <a className="text-gray-700 hover:text-gray-900" href={external_urls.spotify} target="_blank" rel="noopener noreferrer">View on Spotify</a>
+              {currentView === 'artists' &&
+                topArtists?.map(({ name, images, external_urls }, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col items-center space-y-4 bg-white p-4 rounded-lg shadow-md"
+                  >
+                    <img
+                      src={images[0]?.url || '/default-artist.png'}
+                      alt={name}
+                      className="w-48 h-48 rounded-md object-cover"
+                    />
+                    <div className="text-center">
+                      <div className="font-medium text-lg text-gray-900">
+                        {name}
+                      </div>
+                      <a
+                        className="text-gray-700 hover:text-gray-900"
+                        href={external_urls.spotify}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        View on Spotify
+                      </a>
+                    </div>
                   </div>
-                </div>
-              )}
+                ))}
             </div>
           </div>
         </div>
