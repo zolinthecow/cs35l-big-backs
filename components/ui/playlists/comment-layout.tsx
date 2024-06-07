@@ -3,7 +3,10 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { SendIcon } from '../playlisticons';
 import { useState, useEffect } from 'react';
-import { putCommentIntoDb, getCommentsFromDb } from '@/app/playlists/page';
+import {
+  putCommentIntoDb,
+  getCommentsFromDb,
+} from '@/components/data_functions/commentsFunctions';
 import { getUserName } from '@/components/data_functions/getUserDetails';
 
 type CommentLayoutProps = {
