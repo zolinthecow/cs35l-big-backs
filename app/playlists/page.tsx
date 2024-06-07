@@ -4,13 +4,10 @@ import getSpotifyClient from '@/lib/spotify';
 import { ListofPlaylistsLayout } from '@/components/ui/playlists/playlists-list-layout';
 import Component from '@/components/playlists_ui/playlist_ui';
 import React, { FC, Suspense } from 'react';
-import { title } from 'process';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { getSession } from '@auth0/nextjs-auth0';
 import { PrismaClient } from '@prisma/client';
-import { CommentLayout } from '@/components/ui/playlists/comment-layout';
-import { CommentSection } from '@/components/ui/playlists/comment-layout';
-import { Odibee_Sans } from 'next/font/google';
 import { SkeletonLoader } from '@/components/skeleton_loader';
+import { DateTime } from 'luxon';
 
 const prisma = new PrismaClient();
 
@@ -62,23 +59,20 @@ interface SongResponse {
 
 async function fetchData2(endpoint: string) {
   const spotifyClient = await getSpotifyClient();
-  console.log('HI PLEASE WORK', spotifyClient);
   const resp = await spotifyClient.get(endpoint);
-  console.log('HI PLEASE WORK', resp.data.items);
   return resp.data.items;
 }
 
 async function fetchData3(endpoint: string) {
   const spotifyClient = await getSpotifyClient();
-  console.log('HI PLEASE WORK', spotifyClient);
   const resp = await spotifyClient.get(endpoint);
-  console.log('HI PLEASE WORK', resp.data.items);
   return resp.data;
 }
 
 async function getPlaylists(): Promise<PlaylistItem[]> {
   // Endpoint reference: https://developer.spotify.com/documentation/web-api/reference/get-current-users-profile
   const response = await fetchData2('/me/playlists?limit=20&offset=0');
+  console.log('response23', response);
   return response;
 }
 
@@ -95,68 +89,44 @@ async function getTitle(): Promise<TitleLayoutProps> {
   return response;
 }
 
-interface PageProps {
-  listOfPlaylists: PlaylistResponse;
-}
-
-type Comment = {
-  userID: string;
-  playlistID: string; // Playlist ID
-  username: string;
-  time: string;
-  comment: string;
-};
-
 interface CommentReturn {
-  // For putting comment into database
   userID: string;
-  username: string;
   playlistID: string;
+  username: string;
   comment: string;
-  time: string;
+  time: Date;
 }
-interface NoteReturn {
+
+interface Note {
+  userID: string;
   songID: string;
-  note: string;
+  playlistID: string;
 }
 
 // Put comments inside a database
 export const putCommentIntoDb = async (
-  item: Comment,
-): Promise<{ CommentReturn: CommentReturn }> => {
+  userID: string,
+  playlistID: string,
+  newComment: string,
+  p0: Date,
+  userName: string,
+): Promise<void> => {
   'use server';
   console.log('Putting comment into database...');
   try {
     // Put comment into database
-    const commentInDB = await prisma.comments.create({
+    await prisma.comments.create({
       data: {
-        userID: item.userID,
-        username: item.username, // Replace with the actual username
-        playlistID: item.playlistID,
-        comment: item.comment,
-        time: new Date().toLocaleString(),
+        userID: userID,
+        userName: userName, // Assuming username is a string
+        playlistID: playlistID,
+        comment: newComment,
+        time: p0,
       },
     });
-    return {
-      CommentReturn: {
-        userID: commentInDB.userID,
-        username: commentInDB.username,
-        playlistID: commentInDB.playlistID,
-        comment: commentInDB.comment,
-        time: commentInDB.time,
-      },
-    };
   } catch (error) {
     console.error('An error occurred:', error);
-    return {
-      CommentReturn: {
-        userID: '',
-        username: '',
-        playlistID: '',
-        comment: '',
-        time: '',
-      },
-    };
+    throw error; // Throw the error so it can be caught and handled by the calling code
   }
 };
 
@@ -164,9 +134,9 @@ export const getCommentsFromDb = async (
   playlistID: string,
 ): Promise<CommentReturn[]> => {
   'use server';
-  console.log('Fetching comment from database...');
+  console.log('Fetching comments from database...');
   try {
-    // Get comment from database
+    // Get comments from database
     const commentsFromDB = await prisma.comments.findMany({
       where: {
         playlistID: playlistID,
@@ -176,23 +146,16 @@ export const getCommentsFromDb = async (
     console.log('Comments from db: ', commentsFromDB);
     return commentsFromDB.map((comment) => ({
       userID: comment.userID,
-      username: comment.username,
       playlistID: comment.playlistID,
+      username: comment.userName,
       comment: comment.comment,
-      time: comment.time.toLocaleString(), // Convert Date object to string
+      time: comment.time, // Assuming time is a Date object
     }));
   } catch (error) {
-    console.error('An error occurred: ', error);
+    console.error('An error occurred:', error);
     return [];
   }
 };
-
-interface submitNote {
-  userID: string;
-  songID: string;
-  playlistID: string;
-  note: string;
-}
 
 async function getPlaylistReactions(playlistID: string): Promise<number[]> {
   const numbersArray = [0, 0, 0, 0, 0]; // Initialize array with 4 zeros
@@ -287,6 +250,8 @@ const Page: FC = async () => {
   );
   const averageRating = await getAverageRating('37i9dQZF1DX8Sz1gsYZdwj');
   const userRating = await getUserIDRating('23', '37i9dQZF1DX8Sz1gsYZdwj');
+  const session = await getSession();
+  const userID = session?.user?.sub;
   return (
     <div className="h-100vh overflow-y-hidden fixed">
       <div className="h-screen overflow-hidden">
@@ -300,6 +265,7 @@ const Page: FC = async () => {
             averageRating={averageRating}
             userIDStar={userRating}
             commentsFromDb={commentsFromDb}
+            userID={userID}
           />
         </Suspense>
       </div>

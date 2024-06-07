@@ -40,14 +40,18 @@ model songNotes {
   playlistID String
   songID     String
   note       String
+
+  @@unique([userID, playlistID, songID])
 }
 
 model comments {
   id         Int      @id @default(autoincrement())
   userID     String
+  userName   String
   playlistID String
   comment    String
   time       DateTime
+  
 }
 
 model playlistPinned {

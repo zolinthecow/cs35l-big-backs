@@ -27,7 +27,7 @@ const PlaylistLayout: FC<PlaylistItemLayoutProps> = ({ id, name, url }) => {
   return (
     <Link
       className="flex items-center gap-4 transition-colors duration-200 h-18 w-full p-1 rounded-md bg-gray-100 overflow-x-hidden"
-      href={id}
+      href={`playlists/${id}`}
     >
       <div className="flex-none w-30 h-30 bg-gray-200 rounded-md flex items-center justify-center max-h-screen shadow-lg">
         <Image
