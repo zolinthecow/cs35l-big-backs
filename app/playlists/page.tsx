@@ -3,10 +3,11 @@
 import getSpotifyClient from '@/lib/spotify';
 import { ListofPlaylistsLayout } from '@/components/ui/playlists/playlists-list-layout';
 import Component from '@/components/playlists_ui/playlist_ui';
-import React, { FC } from 'react';
+import React, { FC, Suspense } from 'react';
 import { title } from 'process';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaClient } from '@prisma/client';
+import { SkeletonLoader } from '@/components/skeleton_loader';
 
 const prisma = new PrismaClient();
 
@@ -208,15 +209,17 @@ const Page: FC = async () => {
   return (
     <div className="h-100vh overflow-y-hidden fixed">
       <div className="h-screen overflow-hidden">
-        <Component
-          listOfPlaylists={listOfPlaylists}
-          listOfSongs={listOfSongs}
-          title={title}
-          initialCount={initialCount}
-          booleanArray={initialUserReaction}
-          averageRating={averageRating}
-          userIDStar={userRating}
-        />
+        <Suspense fallback={<SkeletonLoader />}>
+          <Component
+            listOfPlaylists={listOfPlaylists}
+            listOfSongs={listOfSongs}
+            title={title}
+            initialCount={initialCount}
+            booleanArray={initialUserReaction}
+            averageRating={averageRating}
+            userIDStar={userRating}
+          />
+        </Suspense>
       </div>
     </div>
   );

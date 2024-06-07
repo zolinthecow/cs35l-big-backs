@@ -26,7 +26,7 @@ const PlaylistLayout: FC<PlaylistItemLayoutProps> = ({ id, name, url }) => {
 
   return (
     <Link
-      className="flex items-center gap-4 hover:text-black transition-colors duration-200 h-18 w-full p-1 rounded-md bg-gray-100 hover:bg-gray-200 overflow-x-hidden"
+      className="flex items-center gap-4 transition-colors duration-200 h-18 w-full p-1 rounded-md bg-gray-100 overflow-x-hidden"
       href={id}
     >
       <div className="flex-none w-30 h-30 bg-gray-200 rounded-md flex items-center justify-center max-h-screen shadow-lg">
@@ -39,7 +39,7 @@ const PlaylistLayout: FC<PlaylistItemLayoutProps> = ({ id, name, url }) => {
         />
       </div>
       <div className="overflow-hidden">
-        <div className="font-semibold text-sm text-gray-800 truncate text-ellipsis">
+        <div className="font-semibold text-sm text-gray-800 truncate hover:underline">
           {name}
         </div>
         {rating !== null && rating !== -1 && (
