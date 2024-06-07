@@ -2,6 +2,9 @@ import { getSession, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import Image from 'next/image';
 import getSpotifyClient from '@/lib/spotify';
 import TestComponent from '@/components/test';
+import sendSBMessage from '@/actions/sendSBMessage';
+
+const T_USER_ID = 'oauth2|spotify|spotify:user:pats02.01.04';
 
 /* export default withPageAuthRequired( */
 export default async function Home() {

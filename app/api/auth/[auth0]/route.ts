@@ -8,6 +8,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import createUserIfNotExisting from '@/actions/createUserIfNotExisting';
 import { getSpotifyAccessTokenFromSession } from '@/lib/spotify/actions';
 import { createSendbirdUserIfNotExisting } from '@/lib/sendbird/actions';
+import populateDBUserWithSpotifyData from '@/actions/populateDBUserWithSpotifyData';
 
 const scopes = [
   'user-read-private',
@@ -26,6 +27,7 @@ const afterCallback: AfterCallbackAppRoute = async (req, session, state) => {
     await createUserIfNotExisting(session);
     await getSpotifyAccessTokenFromSession(session);
     await createSendbirdUserIfNotExisting(session);
+    await populateDBUserWithSpotifyData(session);
   }
 
   return session;
