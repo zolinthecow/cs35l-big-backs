@@ -16,6 +16,7 @@ import {
   handlePinClickPlaylist,
   handlePinClickTrack,
 } from './data_functions/pinningFunctions';
+import searchUsersByName from './data_functions/searchFunction';
 
 const prisma = new PrismaClient();
 
@@ -53,11 +54,8 @@ interface SearchResult {
     }[];
   };
   friends: {
-    items: {
-      id: string;
-      name: string;
-      profilePicture: { url: string };
-    }[];
+    id: string;
+    name: string;
   };
 }
 
@@ -476,7 +474,7 @@ export function NavBar({ className }: NavBarProps) {
                 }`}
                 onClick={() => setActiveTab('friends')}
               >
-                Friends
+                Users
               </button>
             </div>
             <div className="px-4 py-2">{renderTabContent()}</div>
