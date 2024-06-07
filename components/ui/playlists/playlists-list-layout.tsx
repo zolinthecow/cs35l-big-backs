@@ -1,6 +1,9 @@
 import { Rating } from '../rating';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getAverageRating } from '@/components/data_functions/ratingPlaylists';
+import { get } from 'http';
+import { useState, useEffect, FC } from 'react';
 
 // Props and PlaylistLayout from previous playlist
 interface PlaylistItemLayoutProps {
@@ -9,10 +12,24 @@ interface PlaylistItemLayoutProps {
   url: string;
 }
 
-function PlaylistLayout({ id, name, url }: PlaylistItemLayoutProps) {
+const PlaylistLayout: FC<PlaylistItemLayoutProps> = ({ id, name, url }) => {
+  const [rating, setRating] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchRating = async () => {
+      const result = await getAverageRating(id); // Replace '23' with userID
+      setRating(result);
+    };
+
+    fetchRating();
+  }, [id]);
+
   return (
-    <Link className={`flex items-center gap-4 hover:text-gray-900`} href={id}>
-      <div className="flex-none w-30 h-30 bg-gray-200 rounded-md flex items-center justify-center max-h-screen">
+    <Link
+      className="flex items-center gap-4 hover:text-black transition-colors duration-200 h-18 w-full p-1 rounded-md bg-gray-100 hover:bg-gray-200 overflow-x-hidden"
+      href={id}
+    >
+      <div className="flex-none w-30 h-30 bg-gray-200 rounded-md flex items-center justify-center max-h-screen shadow-lg">
         <Image
           src={url}
           alt={name}
@@ -21,13 +38,17 @@ function PlaylistLayout({ id, name, url }: PlaylistItemLayoutProps) {
           width={50}
         />
       </div>
-      <div>
-        <div className="font-medium text-sm">{name}</div>
-        <div className="text-xs text-gray-500">★ 4</div>
+      <div className="overflow-hidden">
+        <div className="font-semibold text-sm text-gray-800 truncate text-ellipsis">
+          {name}
+        </div>
+        {rating !== null && rating !== -1 && (
+          <div className="text-xs text-yellow-500 font-bold">★ {rating}</div>
+        )}
       </div>
     </Link>
   );
-}
+};
 
 interface PlaylistItem {
   id: string;
@@ -42,23 +63,17 @@ type ListofPlaylistsLayoutProps = {
   playlists: PlaylistItem[];
 };
 
-export function ListofPlaylistsLayout({
+export const ListofPlaylistsLayout: FC<ListofPlaylistsLayoutProps> = ({
   playlists,
-}: ListofPlaylistsLayoutProps) {
-  console.log('PL', playlists);
+}) => {
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-medium text-gray-600">Playlists</h3>
+      <h1 className="text-xl font-bold mb-4">Playlists</h1>
       <div className="grid gap-6">
-        {playlists?.map(({ id, name, images }, index) => (
-          <PlaylistLayout
-            key={index}
-            id={id}
-            name={name}
-            url={images?.[0].url}
-          />
+        {playlists?.map(({ id, name, images }) => (
+          <PlaylistLayout key={id} id={id} name={name} url={images?.[0].url} />
         ))}
       </div>
     </div>
   );
-}
+};
