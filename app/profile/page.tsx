@@ -11,7 +11,11 @@ import { SectionProps } from '@/components/profile_ui/pinned-side-bar';
 import { NavBar } from '@/components/navbar';
 import { SkeletonLoader } from '@/components/skeleton_loader';
 import { PrismaClient } from '@prisma/client';
-import getSpotifyClient from '@/lib/spotify';
+import {
+  handleUnpinClickArtist,
+  handleUnpinClickPlaylist,
+  handleUnpinClickTrack,
+} from '@/components/data_functions/unpinningFunctions';
 
 const prisma = new PrismaClient();
 
@@ -69,6 +73,10 @@ const PinnedSideBarComponent = async (): Promise<JSX.Element> => {
     artistData,
     playlistData,
     friendData,
+    userId,
+    handleUnpinClickTrack,
+    handleUnpinClickArtist,
+    handleUnpinClickPlaylist,
   };
 
   return <PinnedSideBar {...props} />;
@@ -79,12 +87,14 @@ interface pinnedPlaylist {
   playlistImage: string;
   playlistURL: string;
   numberOfSongs: number;
+  id: string;
 }
 
 interface pinnedArtist {
   name: string;
   artistImage: string;
   artistURL: string;
+  id: string;
 }
 
 interface pinnedSong {
@@ -92,6 +102,7 @@ interface pinnedSong {
   artistName: string;
   songImage: string;
   songURL: string;
+  id: string;
 }
 
 async function getPinnedArtists(UserID: string): Promise<pinnedArtist[]> {
@@ -107,6 +118,7 @@ async function getPinnedArtists(UserID: string): Promise<pinnedArtist[]> {
       name: artist.artistName,
       artistImage: artist.artistImageLink,
       artistURL: artist.artistLink,
+      id: artist.artistID,
     }),
   );
   console.log('PINNED ARTISTS', transformedPinnedArtists);
@@ -127,6 +139,7 @@ async function getPinnedSongs(UserID: string): Promise<pinnedSong[]> {
       artistName: song.artistName,
       songImage: song.songImageLink,
       songURL: song.songLink,
+      id: song.songID,
     }),
   );
   console.log('PINNED SONGS', transformedPinnedSongs);
@@ -147,6 +160,7 @@ async function getPinnedPlaylists(UserID: string): Promise<pinnedPlaylist[]> {
       playlistImage: playlist.playlistImageLink,
       playlistURL: playlist.playlistLink,
       numberOfSongs: playlist.numberOfTracks,
+      id: playlist.playlistID,
     }),
   );
 

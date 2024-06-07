@@ -2,12 +2,14 @@
 import { Button } from '../button';
 import Image from 'next/image';
 import Link from 'next/link';
+
 type PlaylistLayoutProps = {
   title: string;
   album_url: string;
   playlist_url: string;
   numberOfSongs: number;
   className?: string;
+  onUnpin: () => void;
 };
 
 export function PlaylistLayout({
@@ -16,6 +18,7 @@ export function PlaylistLayout({
   playlist_url,
   numberOfSongs,
   className,
+  onUnpin,
 }: PlaylistLayoutProps) {
   return (
     <div
@@ -34,20 +37,30 @@ export function PlaylistLayout({
           {numberOfSongs ? numberOfSongs.toString() : '0'} songs
         </p>
       </div>
-      <Link href={playlist_url} passHref>
+      <div className="flex space-x-2">
+        <Link href={playlist_url} passHref>
+          <Button
+            variant="default"
+            size="sm"
+            className="p-2 text-white bg-transparent rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75"
+          >
+            <Image
+              src="https://static-00.iconduck.com/assets.00/spotify-icon-2048x2048-n3imyp8e.png"
+              alt="Spotify"
+              width={24}
+              height={24}
+            />
+          </Button>
+        </Link>
         <Button
-          variant="default"
+          variant="ghost"
           size="sm"
-          className="p-2 text-white bg-transparent rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75"
+          onClick={onUnpin}
+          className="text-red-500 hover:text-red-700"
         >
-          <Image
-            src="https://static-00.iconduck.com/assets.00/spotify-icon-2048x2048-n3imyp8e.png"
-            alt="Spotify"
-            width={24}
-            height={24}
-          />
+          Unpin
         </Button>
-      </Link>
+      </div>
     </div>
   );
 }
