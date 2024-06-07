@@ -81,6 +81,7 @@ const ProfileSideBarComponent = async ({
     bio: userData.bio ?? '',
     ratingValue: parseFloat(userData.ratingValue ?? '0'),
     friendsCount: userData.friends.length,
+    userId: userId,
   };
 
   return <ProfileSideBar {...props} />;
