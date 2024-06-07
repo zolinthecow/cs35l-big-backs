@@ -16,6 +16,7 @@ import {
   handleUnpinClickPlaylist,
   handleUnpinClickTrack,
 } from '@/components/data_functions/unpinningFunctions';
+import getSpotifyClient from '@/lib/spotify';
 
 const prisma = new PrismaClient();
 
@@ -30,10 +31,10 @@ export default async function ProfilePageUsingId({
       <NavBar className="sticky top-0 z-20" />
       <div className="flex flex-col md:flex-row gap-6 px-4 pt-16 py-4 md:px-6 md:py-4">
         <Suspense fallback={<SkeletonLoader />}>
-          <ProfileSideBarComponent />
+          <ProfileSideBarComponent userId={userId} />
         </Suspense>
         <Suspense fallback={<SkeletonLoader />}>
-          {PinnedSideBarComponent(userId.toString())}
+          <PinnedSideBarComponent userId={userId} />
         </Suspense>
       </div>
     </div>
@@ -51,22 +52,45 @@ async function fetchData(endpoint: string) {
   }
 }
 
-const ProfileSideBarComponent = async (): Promise<JSX.Element> => {
-  const userData = await fetchData('user');
+const ProfileSideBarComponent = async ({
+  userId,
+}: {
+  userId: string;
+}): Promise<JSX.Element> => {
+  const userData = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    include: {
+      friends: true,
+    },
+  });
+  const spotifyClient = await getSpotifyClient();
+  const spotifyUserResp = await spotifyClient.get(`/me`);
+  const spotifyUserData = spotifyUserResp.data;
+
+  if (!userData || !spotifyUserData) {
+    console.error('NO USER DATA');
+    return <div></div>;
+  }
+
   const props: ProfileProps = {
-    name: userData.name,
-    username: userData.username,
-    profilePicture: userData.profilePicture,
-    bio: userData.bio,
-    ratingValue: userData.ratingValue,
-    friendsCount: userData.friendsCount,
+    name: userData.name ?? '',
+    username: userData.nickname ?? '',
+    profilePicture: spotifyUserData.images?.[0]?.url ?? '',
+    bio: userData.bio ?? '',
+    ratingValue: parseFloat(userData.ratingValue ?? '0'),
+    friendsCount: userData.friends.length,
   };
 
   return <ProfileSideBar {...props} />;
 };
 
-const PinnedSideBarComponent = async (userID: string): Promise<JSX.Element> => {
-  const userId = userID;
+const PinnedSideBarComponent = async ({
+  userId,
+}: {
+  userId: string;
+}): Promise<JSX.Element> => {
   const songData = await getPinnedSongs(userId);
   const artistData = await getPinnedArtists(userId);
   const playlistData = await getPinnedPlaylists(userId);
