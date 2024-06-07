@@ -37,7 +37,7 @@ export async function createSendbirdUserIfNotExisting(session?: Session) {
     // This happens if the SB user doesn't exit so pass through
   }
 
-  const spotifyClient = await getSpotifyClient(_session);
+  const spotifyClient = await getSpotifyClient({ session: _session });
   console.log('GOT SPOTIFY CLIENT');
 
   const currentUser = await spotifyClient.get('/me');

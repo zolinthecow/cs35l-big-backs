@@ -16,6 +16,9 @@ import {
 } from '@/components/skeleton_loader';
 import { NavBar } from '@/components/navbar';
 import getSpotifyClient from '@/lib/spotify';
+import prisma from '@/prisma';
+import { getSession } from '@auth0/nextjs-auth0';
+import { DateTime } from 'luxon';
 
 //This is the basic function to get the mock data for now
 async function fetchData(endpoint: string) {
@@ -57,7 +60,87 @@ const Page: FC = async () => {
 
 //Each of these functions renders the elements client side so that way people can interact with them
 const AirbudsComponents = async (): Promise<JSX.Element> => {
-  const airbudsData = await fetchData('airbuds');
+  const session = await getSession();
+  if (!session?.user?.sub) {
+    console.error('NO SESSION');
+    return <div></div>;
+  }
+
+  const prismaUser = await prisma.user.findUnique({
+    where: {
+      id: session.user.sub,
+    },
+    include: {
+      friends: true,
+    },
+  });
+  if (!prismaUser) {
+    console.error('NO PRISMA USER');
+    return <div></div>;
+  }
+  const friends = [...prismaUser.friends, prismaUser];
+  const airbudsData: {
+    profileUserId: string;
+    profileImage: string;
+    profileName: string;
+    profileTime: string;
+    albumImage: string;
+    songTitle: string;
+    songArtist: string;
+    songLink: string;
+  }[] = [];
+
+  function idHash(str: string) {
+    let hash = 0;
+
+    // Sum ASCII values of each character in the string
+    for (let i = 0; i < str.length; i++) {
+      hash += str.charCodeAt(i);
+    }
+
+    // Use modulus to get a result from 0 to 49, then add 1 to change the range to 1 to 50
+    return (hash % 50) + 1;
+  }
+
+  for (const friend of friends) {
+    try {
+      const friendSpotifyClient = await getSpotifyClient({ userId: friend.id });
+      const friendSpotifyUserResp = await friendSpotifyClient.get(`/me`);
+      const friendCurrentTrackResp = await friendSpotifyClient.get(
+        `/me/player/currently-playing`,
+      );
+      const friendRecentlyPlayedResp = await friendSpotifyClient.get(
+        `/me/player/recently-played`,
+      );
+      if (
+        !friendSpotifyUserResp.data ||
+        !friendCurrentTrackResp.data ||
+        !friendRecentlyPlayedResp.data
+      ) {
+        console.error(`NO SPOTIFY USER DATA FOR ${friend.id}`);
+        continue;
+      }
+      const spotifyFriend = friendSpotifyUserResp.data;
+      const friendCurrentTrack = friendCurrentTrackResp.data;
+      const friendRecentlyPlayedTracks = friendRecentlyPlayedResp.data;
+      const itemToUse =
+        friendCurrentTrack.item ?? friendRecentlyPlayedTracks.items[0];
+      airbudsData.push({
+        profileUserId: friend.id,
+        profileImage:
+          spotifyFriend.images?.[0]?.url ??
+          `https://avatar.iran.liara.run/public/${idHash(friend.id)}`,
+        profileName: friend.name ?? '',
+        profileTime: 'Now',
+        albumImage: itemToUse.album.images?.[0].url,
+        songTitle: itemToUse.name,
+        songArtist: itemToUse.artists?.[0].name,
+        songLink: `https://open.spotify.com/track/${itemToUse.id}`,
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
   const props: SnappingScrollContainerProps = {
     airbudsData,
@@ -95,9 +178,7 @@ const RightSideBarComponent = async (): Promise<JSX.Element> => {
 
 async function fetchData2(endpoint: string) {
   const spotifyClient = await getSpotifyClient();
-  console.log('HI PLEASE WORK', spotifyClient);
   const resp = await spotifyClient.get(endpoint);
-  console.log('HI PLEASE WORK', resp.data.items);
   return resp.data.items;
 }
 
@@ -142,7 +223,6 @@ async function getTopTracks(): Promise<Track[]> {
   const response = await fetchData2(
     '/me/top/tracks?time_range=short_term&limit=5',
   );
-  console.log(response);
   return response;
 }
 
@@ -156,11 +236,9 @@ async function getTopArtists(): Promise<TopArtist[]> {
 async function getRecentlyPlayed(): Promise<RecentlyPlayed[]> {
   const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
   const unixTimestamp = Math.floor(oneMinuteAgo.getTime() / 1000);
-  console.log(unixTimestamp);
   const response = await fetchData2(
     `/me/player/recently-played?after=${unixTimestamp}&limit=50`,
   );
-  console.log('WHERE', response);
   return response.slice(0, 5);
 }
 
