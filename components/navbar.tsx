@@ -17,6 +17,7 @@ import {
   handlePinClickTrack,
 } from './data_functions/pinningFunctions';
 import searchUsersByName from './data_functions/searchFunction';
+import { handleFriendAdd } from './data_functions/friendAddFunction';
 
 const prisma = new PrismaClient();
 
@@ -342,17 +343,19 @@ export function NavBar({ className }: NavBarProps) {
             variant="ghost"
             size="sm"
             className="flex items-center space-x-1"
-            onClick={() => {
-              // Hardcoded add action for display purposes
-              setFriendPinStatus({ status: 'success', friendID: friend.id });
-              setTimeout(
-                () =>
-                  setFriendPinStatus({
-                    status: null,
-                    friendID: null,
-                  }),
-                2000,
-              );
+            onClick={async () => {
+              const { status } = await handleFriendAdd(friend);
+              setFriendPinStatus({ status, friendID: friend.id });
+              if (status !== 'error') {
+                setTimeout(
+                  () =>
+                    setFriendPinStatus({
+                      status: null,
+                      friendID: null,
+                    }),
+                  2000,
+                );
+              }
             }}
           >
             {friendPinStatus.status === 'success' &&
