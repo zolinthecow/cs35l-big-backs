@@ -161,12 +161,6 @@ const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
           <IconAdd color="black" size={24} />
         </Button>
       </div>
-      <div className="flex justify-around w-full mt-6 px-8">
-        {emojis.map((emoji) => (
-          <EmojiButton key={emoji} emoji={emoji} />
-        ))}
-      </div>
-      <Reply sendReply={sendReply} />
     </div>
   );
 };

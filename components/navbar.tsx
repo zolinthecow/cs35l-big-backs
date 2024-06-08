@@ -419,12 +419,6 @@ export function NavBar({ className }: NavBarProps) {
         <nav className="hidden md:flex space-x-8">
           <a
             className="text-base font-medium transition-colors hover:text-blue-500"
-            href="/messages"
-          >
-            Messages
-          </a>
-          <a
-            className="text-base font-medium transition-colors hover:text-blue-500"
             href="/playlists"
           >
             Playlists
