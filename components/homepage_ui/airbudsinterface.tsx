@@ -65,6 +65,7 @@ const Reply = () => {
 };
 
 interface AirbudsInterfaceProps {
+  profileUserId: string;
   profileImage: string;
   profileName: string;
   profileTime: string;
@@ -75,6 +76,7 @@ interface AirbudsInterfaceProps {
 }
 
 const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
+  profileUserId,
   profileImage,
   profileName,
   profileTime,
@@ -176,8 +178,8 @@ const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
   );
 };
 
-interface DataProps {
-  key: string;
+export interface AirbudsElement {
+  profileUserId: string;
   profileImage: string;
   profileName: string;
   profileTime: string;
@@ -187,18 +189,15 @@ interface DataProps {
   songLink: string;
 }
 
-export interface SnappingScrollContainerProps {
-  airbudsData: DataProps[];
-}
-
-const SnappingScrollContainer: React.FC<SnappingScrollContainerProps> = ({
+const SnappingScrollContainer: React.FC<{ airbudsData: AirbudsElement[] }> = ({
   airbudsData,
 }) => {
   return (
     <div className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide border border-gray-100 rounded-md">
       {airbudsData.map((airbudsData) => (
         <AirbudsInterface
-          key={airbudsData.key}
+          key={airbudsData.profileUserId}
+          profileUserId={airbudsData.profileUserId}
           profileImage={airbudsData.profileImage}
           profileName={airbudsData.profileName}
           profileTime={airbudsData.profileTime}

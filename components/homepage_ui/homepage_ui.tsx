@@ -7,6 +7,7 @@ import LeftSidebar, {
   LeftSidebarProps,
 } from '@/components/homepage_ui/leftsidebar';
 import SnappingScrollContainer, {
+  AirbudsElement,
   SnappingScrollContainerProps,
 } from '@/components/homepage_ui/airbudsinterface';
 import {
@@ -39,59 +40,14 @@ async function fetchData(endpoint: string) {
   }
 }
 
-//server side rendering with a skeleton
-export default async function HomePage({
-  userId,
-}: {
-  userId: string;
-}): Promise<JSX.Element> {
-  return (
-    <div className="h-screen w-screen flex flex-col">
-      <NavBar />
-      <div className="flex flex-1 overflow-hidden">
-        <Suspense fallback={<LeftSidebarSkeleton />}>
-          <div className="w-1/4">
-            <LeftSideBarComponent userId={userId} />
-          </div>
-        </Suspense>
-        <div className="h-full flex-1 overflow-y-auto border-t border-gray-100 border-b rounded bg-gray-100">
-          <Suspense fallback={<AirbudsInterfaceSkeleton />}>
-            <AirbudsComponents />
-          </Suspense>
-        </div>
-        <Suspense fallback={<RightSidebarSkeleton />}>
-          <div className="w-1/4">
-            <RightSideBarComponent />
-          </div>
-        </Suspense>
-      </div>
-    </div>
-  );
-}
-
 //Each of these functions renders the elements client side so that way people can interact with them
-const AirbudsComponents: FC = () => {
-  const [airbudsData, setAirbudsData] = useState(null);
-
-  useEffect(() => {
-    const fetchDataAsync = async () => {
-      const data = await fetchData('airbuds');
-      setAirbudsData(data);
-    };
-
-    fetchDataAsync();
-  }, []);
-
-  if (!airbudsData) return <AirbudsInterfaceSkeleton />;
-
-  const props: SnappingScrollContainerProps = {
-    airbudsData,
-  };
-
-  return <SnappingScrollContainer {...props} />;
+export const AirbudsComponents: FC<{ airbudsData: AirbudsElement[] }> = (
+  props,
+) => {
+  return <SnappingScrollContainer airbudsData={props.airbudsData} />;
 };
 
-const LeftSideBarComponent: FC<{ userId: string }> = ({ userId }) => {
+export const LeftSideBarComponent: FC<{ userId: string }> = ({ userId }) => {
   const [songData, setSongData] = useState<pinnedSong[]>([]);
   const [artistData, setArtistData] = useState<pinnedArtist[]>([]);
   const [playlistData, setPlaylistData] = useState<pinnedPlaylist[]>([]);
@@ -125,7 +81,7 @@ const LeftSideBarComponent: FC<{ userId: string }> = ({ userId }) => {
   return <LeftSidebar {...props} />;
 };
 
-const RightSideBarComponent: FC = () => {
+export const RightSideBarComponent: FC = () => {
   const [songData, setSongData] = useState<Track[]>([]);
   const [artistData, setArtistData] = useState<TopArtist[]>([]);
   const [recentlyPlayed, setRecentlyPlayed] = useState<RecentlyPlayed[]>([]);
