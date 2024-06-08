@@ -118,7 +118,7 @@ async function AirbudsComponentWrapper() {
             spotifyFriend.images?.[0]?.url ??
             `https://avatar.iran.liara.run/public/${idHash(friend.id)}`,
           profileName: friend.name ?? '',
-          profileTime: 'Now',
+          profileTime: '',
           albumImage: itemToUse.album.images?.[0].url,
           songTitle: itemToUse.name,
           songArtist: itemToUse.artists?.[0].name,
