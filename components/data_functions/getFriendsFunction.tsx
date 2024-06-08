@@ -37,7 +37,7 @@ export const getFriendsFromDb = async (
     // Map the data to the FriendItem type
     const friends = userWithFriends.friends.map((friend) => ({
       key: friend.id,
-      profileName: friend.username,
+      profileName: friend.name,
       songArtist: friend.nickname || '',
       profileImage: friend.cover_url || '',
       songLink: friend.profile_link || '',
