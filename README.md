@@ -26,6 +26,7 @@ Start the database:
 ```bash
 docker-compose up
 ```
+The database runs on port `8001` so make sure that port is free before trying this.
 
 Make sure you have a populated `.env.local` file before continuing.
 
