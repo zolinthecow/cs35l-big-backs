@@ -39,8 +39,8 @@ export const getFriendsFromDb = async (
       key: friend.id,
       profileName: friend.name,
       songArtist: friend.nickname || '',
-      profileImage: friend.cover_url || '',
-      songLink: friend.profile_link || '',
+      profileImage: "/favicon.ico",
+      songLink: friend.nickname || '',
     }));
 
     console.log('Friend information: ', friends);
