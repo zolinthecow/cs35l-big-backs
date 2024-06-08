@@ -17,6 +17,8 @@ touch .env.local
 ```
 Ask someone for the variables and just paste them into the file
 
+**NOTE TO 35L GRADER:** There shoudl be a `.env.local` file in the tarball
+
 ## Setup
 
 Start the database:
@@ -32,6 +34,12 @@ Run the database migrations:
 ```bash
 pnpm exec prisma migrate dev
 ```
+
+**IMPORTANT NOTE TO 35L GRADER:** The only way this app will run is if you either:
+1. Email `colinzhao777@gmail.com` to be added to the spotify developer dashboard or
+2. Create your own spotify developer app and change the values in `.env.local` to use your own client id and client secret
+
+This is because Spotify never approved our developer application to publish the oauth app to the public so we have to manually add accounts to be approved to log in
 
 ## Development
 
