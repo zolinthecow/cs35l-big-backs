@@ -16,7 +16,7 @@ import {
   handleUnpinClickPlaylist,
   handleUnpinClickTrack,
 } from '@/components/data_functions/unpinningFunctions';
-import { handleFriendRemove } from '@/components/data_functions/friendUnaddFunction'; 
+import { handleFriendRemove } from '@/components/data_functions/friendUnaddFunction';
 import getSpotifyClient from '@/lib/spotify';
 import { getFriendsFromDb } from '../data_functions/getFriendsFunction';
 
@@ -41,17 +41,6 @@ export default async function ProfilePageUsingId({
       </div>
     </div>
   );
-}
-
-async function fetchData(endpoint: string) {
-  try {
-    const data = await import(
-      `../../components/mock_data/${endpoint}_data.json`
-    );
-    return data.default;
-  } catch (error) {
-    throw new Error(`Failed to fetch ${endpoint}`);
-  }
 }
 
 const ProfileSideBarComponent = async ({
