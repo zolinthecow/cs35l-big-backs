@@ -8,6 +8,7 @@ type PlaylistLayoutProps = {
   playlist_url: string;
   numberOfSongs: number;
   className?: string;
+  playlistID: string;
 };
 
 export function PlaylistLayout({
@@ -16,6 +17,7 @@ export function PlaylistLayout({
   playlist_url,
   numberOfSongs,
   className,
+  playlistID,
 }: PlaylistLayoutProps) {
   return (
     <div
@@ -27,9 +29,11 @@ export function PlaylistLayout({
         src={album_url}
       />
       <div className="flex flex-col justify-center flex-1 min-w-0">
-        <h1 className="font-bold text-[15px] text-gray-900 truncate">
-          {title}
-        </h1>
+        <Link href={`/playlists/${playlistID}`}>
+          <h1 className="font-bold text-[15px] text-gray-900 truncate hover:underline">
+            {title}
+          </h1>
+        </Link>
         <p className="text-[13px] text-gray-500">
           {numberOfSongs ? numberOfSongs.toString() : '0'} songs
         </p>

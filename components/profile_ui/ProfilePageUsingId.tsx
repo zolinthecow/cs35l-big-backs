@@ -16,7 +16,9 @@ import {
   handleUnpinClickPlaylist,
   handleUnpinClickTrack,
 } from '@/components/data_functions/unpinningFunctions';
+import { handleFriendRemove } from '@/components/data_functions/friendUnaddFunction'; 
 import getSpotifyClient from '@/lib/spotify';
+import { getFriendsFromDb } from '../data_functions/getFriendsFunction';
 
 const prisma = new PrismaClient();
 
@@ -81,6 +83,7 @@ const ProfileSideBarComponent = async ({
     bio: userData.bio ?? '',
     ratingValue: parseFloat(userData.ratingValue ?? '0'),
     friendsCount: userData.friends.length,
+    userId: userId,
   };
 
   return <ProfileSideBar {...props} />;
@@ -94,7 +97,7 @@ const PinnedSideBarComponent = async ({
   const songData = await getPinnedSongs(userId);
   const artistData = await getPinnedArtists(userId);
   const playlistData = await getPinnedPlaylists(userId);
-  const friendData = await fetchData('airbuds'); // TODO: friends data remains mock
+  const friendData = await getFriendsFromDb(userId); // Get friends from database
 
   const props: SectionProps = {
     songData,
@@ -105,6 +108,7 @@ const PinnedSideBarComponent = async ({
     handleUnpinClickTrack,
     handleUnpinClickArtist,
     handleUnpinClickPlaylist,
+    handleFriendRemove,
   };
 
   return <PinnedSideBar {...props} />;

@@ -15,6 +15,7 @@ interface pinnedPlaylist {
   name: string;
   playlistImage: string;
   playlistURL: string;
+  playlistID: string;
   numberOfSongs: number;
 }
 
@@ -70,12 +71,16 @@ const LeftSidebar: FC<LeftSidebarProps> = ({
         <h1 className="text-xl font-bold mb-4">Pinned Playlists</h1>
         <div className="space-y-4">
           {playlistData?.map(
-            ({ name, playlistImage, playlistURL, numberOfSongs }, index) => (
+            (
+              { name, playlistImage, playlistURL, playlistID, numberOfSongs },
+              index,
+            ) => (
               <PlaylistLayout
                 key={index}
                 title={name}
                 album_url={playlistImage}
                 playlist_url={playlistURL}
+                playlistID={playlistID}
                 numberOfSongs={numberOfSongs}
                 className="hover:bg-gray-200 transition-colors duration-200"
               />

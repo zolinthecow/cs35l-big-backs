@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { NotificationIcon } from '@/components/ui/notification';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState, useEffect, useRef } from 'react';
@@ -16,6 +15,8 @@ import {
   handlePinClickPlaylist,
   handlePinClickTrack,
 } from './data_functions/pinningFunctions';
+import searchUsersByName from './data_functions/searchFunction';
+import { handleFriendAdd } from './data_functions/friendAddFunction';
 
 const prisma = new PrismaClient();
 
@@ -23,6 +24,7 @@ type PinStatus = 'success' | 'duplicate' | 'limitReached' | 'error';
 
 interface NavBarProps {
   className?: string;
+  profilePicture?: string;
 }
 
 interface SearchResult {
@@ -52,19 +54,20 @@ interface SearchResult {
       tracks: { total: number };
     }[];
   };
-  friends: {
-    items: {
-      id: string;
-      name: string;
-      profilePicture: { url: string };
-    }[];
-  };
+}
+interface UserResult {
+  id: string;
+  name: string;
 }
 
 export function NavBar({ className }: NavBarProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult | null>(null);
+  const [profilePicUrl, setProfilePicUrl] = useState<string>('');
+  const [searchResultsFriends, setSearchResultsFriends] = useState<
+    UserResult[] | null
+  >(null);
   const [activeTab, setActiveTab] = useState('tracks');
   const searchResultsRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -104,6 +107,16 @@ export function NavBar({ className }: NavBarProps) {
       console.error('Error fetching search results:', error);
     }
   };
+  const handleSearchFriends = async () => {
+    if (searchQuery.trim() === '') return;
+
+    try {
+      const results = await searchUsersByName(searchQuery);
+      setSearchResultsFriends(results as UserResult[]);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
+  };
 
   useEffect(() => {
     if (searchQuery) {
@@ -112,6 +125,7 @@ export function NavBar({ className }: NavBarProps) {
       }
       typingTimeoutRef.current = setTimeout(() => {
         handleSearch();
+        handleSearchFriends();
       }, 300);
     } else {
       setSearchResults(null);
@@ -123,6 +137,23 @@ export function NavBar({ className }: NavBarProps) {
       }
     };
   }, [searchQuery]);
+
+  useEffect(() => {
+    const fetchProfilePic = async () => {
+      try {
+        const spotifyClient = await getSpotifyClient();
+        const spotifyUserResp = await spotifyClient.get(`/me`);
+        const spotifyUserData = spotifyUserResp.data;
+        const profilePicture = spotifyUserData.images?.[0]?.url ?? '';
+        console.log('THIS IS THE PROFILE PIC IMAGE', profilePicture);
+        setProfilePicUrl(profilePicture);
+      } catch (error) {
+        console.error('Could not get profile pic');
+      }
+    };
+
+    fetchProfilePic();
+  }, []);
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -319,22 +350,8 @@ export function NavBar({ className }: NavBarProps) {
         </div>
       ));
     }
-    if (activeTab === 'friends') {
-      const friends = [
-        { id: '1', name: 'John Doe', profilePicture: { url: '/profile1.jpg' } },
-        {
-          id: '2',
-          name: 'Jane Smith',
-          profilePicture: { url: '/profile2.jpg' },
-        },
-        {
-          id: '3',
-          name: 'Alice Johnson',
-          profilePicture: { url: '/profile3.jpg' },
-        },
-      ];
-
-      return friends.map((friend) => (
+    if (activeTab === 'friends' && searchResultsFriends) {
+      return searchResultsFriends.map((friend) => (
         <div
           key={friend.id}
           className="flex justify-between items-center p-2 border-b border-gray-200 hover:bg-gray-100 transition-colors"
@@ -344,17 +361,19 @@ export function NavBar({ className }: NavBarProps) {
             variant="ghost"
             size="sm"
             className="flex items-center space-x-1"
-            onClick={() => {
-              // Hardcoded add action for display purposes
-              setFriendPinStatus({ status: 'success', friendID: friend.id });
-              setTimeout(
-                () =>
-                  setFriendPinStatus({
-                    status: null,
-                    friendID: null,
-                  }),
-                2000,
-              );
+            onClick={async () => {
+              const { status } = await handleFriendAdd(friend);
+              setFriendPinStatus({ status, friendID: friend.id });
+              if (status !== 'error') {
+                setTimeout(
+                  () =>
+                    setFriendPinStatus({
+                      status: null,
+                      friendID: null,
+                    }),
+                  2000,
+                );
+              }
             }}
           >
             {friendPinStatus.status === 'success' &&
@@ -397,7 +416,7 @@ export function NavBar({ className }: NavBarProps) {
     >
       <div className="flex gap-4 items-center space-x-8 flex-shrink-0">
         <a className="flex items-center space-x-2" href="/home">
-          <Image src="/image.png" alt="Logo" width={36} height={36} />
+          <Image src="/spotifriends.png" alt="Logo" width={46} height={46} />
         </a>
         <nav className="hidden md:flex space-x-8">
           <a
@@ -476,7 +495,7 @@ export function NavBar({ className }: NavBarProps) {
                 }`}
                 onClick={() => setActiveTab('friends')}
               >
-                Friends
+                Users
               </button>
             </div>
             <div className="px-4 py-2">{renderTabContent()}</div>
@@ -484,21 +503,14 @@ export function NavBar({ className }: NavBarProps) {
         )}
       </div>
       <div className="flex justify-between space-x-3">
-        <Button variant="ghost" size="sm" className="px-2 hidden sm:block">
-          <a
-            className="flex items-center space-x-2 transition-colors hover:text-blue-500"
-            href="/notifications"
-          >
-            <NotificationIcon count={98} />
-          </a>
-        </Button>
         <Link href="/profile">
           <Button
             variant="ghost"
             className="text-base font-medium transition-colors hover:text-blue-500 px-2"
           >
             <Image
-              src="https://avatar.iran.liara.run/public/39"
+              className="rounded-full"
+              src={profilePicUrl}
               alt="Profile"
               width={36}
               height={36}

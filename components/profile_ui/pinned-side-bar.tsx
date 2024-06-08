@@ -4,6 +4,8 @@ import { SongLayout } from '../ui/layouts/song-layout-profile';
 import { PlaylistLayout } from '../ui/layouts/playlist-layout-profile';
 import { ArtistLayoutProfile } from '../ui/layouts/artist-layout-profile';
 import { FriendItem } from '../ui/layouts/friend-layout';
+import { handleFriendRemove } from '@/components/data_functions/friendUnaddFunction';
+
 
 interface pinnedSong {
   name: string;
@@ -36,6 +38,10 @@ interface FriendProps {
   songLink: string;
 }
 
+interface FriendItem {
+  id: string;
+}
+
 export interface SectionProps {
   songData: pinnedSong[];
   artistData: pinnedArtist[];
@@ -54,6 +60,7 @@ export interface SectionProps {
     userId: string,
     playlistId: string,
   ) => Promise<{ status: string }>;
+  handleFriendRemove: (item: FriendItem) => Promise<{ status: string }>;
 }
 
 const Section: FC<{
@@ -80,6 +87,7 @@ const PinnedSideBar: FC<SectionProps> = ({
   handleUnpinClickTrack,
   handleUnpinClickArtist,
   handleUnpinClickPlaylist,
+  handleFriendRemove,
 }) => {
   return (
     <div className="flex flex-col h-full gap-6 md:w-2/3 overflow-y-auto">
@@ -132,6 +140,7 @@ const PinnedSideBar: FC<SectionProps> = ({
             username={data.songArtist}
             cover_url={data.profileImage}
             profile_link={data.songLink}
+            onUnpin={() => handleFriendRemove({ id: data.key })}
           />
         ))}
       </Section>

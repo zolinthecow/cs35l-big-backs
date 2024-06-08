@@ -115,7 +115,7 @@ interface pinnedPlaylist {
   playlistImage: string;
   playlistURL: string;
   numberOfSongs: number;
-  id: string;
+  playlistID: string;
 }
 
 interface pinnedArtist {
@@ -188,7 +188,7 @@ async function getPinnedPlaylists(UserID: string): Promise<pinnedPlaylist[]> {
       playlistImage: playlist.playlistImageLink,
       playlistURL: playlist.playlistLink,
       numberOfSongs: playlist.numberOfTracks,
-      id: playlist.playlistID,
+      playlistID: playlist.playlistID,
     }),
   );
 
