@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 import { SongLayout } from '../ui/layouts/song-layout';
 import { PlaylistLayout } from '../ui/layouts/playlist-layout';
 import { ArtistLayoutProfile } from '../ui/layouts/artist-layout-profile2';
-import { FriendItem } from '../ui/layouts/friend-layout';
+import { FriendItem } from '../ui/layouts/friend-layout2';
 
 interface pinnedSong {
   name: string;
