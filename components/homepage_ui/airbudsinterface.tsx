@@ -102,6 +102,7 @@ const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
 
   const emojis = ['🔥', '❤️', '🙌', '😍'];
 
+  console.log('YOOOO');
   return (
     <div className="flex flex-col items-center justify-between h-full w-full p-4 snap-center">
       <div className="flex flex-col items-center mt-4">

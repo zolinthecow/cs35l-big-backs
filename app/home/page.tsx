@@ -6,6 +6,9 @@ import {
   LeftSideBarComponent,
   AirbudsComponents,
   RightSideBarComponent,
+  getTopTracks,
+  getTopArtists,
+  getRecentlyPlayed,
 } from '@/components/homepage_ui/homepage_ui';
 import {
   LeftSidebarSkeleton,
@@ -15,8 +18,36 @@ import {
 import prisma from '@/prisma';
 import getSpotifyClient from '@/lib/spotify';
 import { AirbudsElement } from '@/components/homepage_ui/airbudsinterface';
+import {
+  getPinnedArtist,
+  getPinnedPlaylists,
+  getPinnedSong,
+} from '@/components/data_functions/pinningFunctions';
+import LeftSidebar from '@/components/homepage_ui/leftsidebar';
+import RightSidebar from '@/components/homepage_ui/rightsidebar';
 
 const Page: FC = async () => {
+  const session = await getSession();
+  if (!session?.user?.sub) {
+    console.error('NO SESSION');
+    return null;
+  }
+
+  return (
+    <div className="h-screen w-screen flex flex-col">
+      <NavBar />
+      <div className="flex flex-1 overflow-hidden">
+        <LeftSideBarWrapper />
+        <div className="h-full flex-1 overflow-y-auto border-t border-gray-100 border-b rounded bg-gray-100">
+          <AirbudsComponentWrapper />
+        </div>
+        <RightSideBarWrapper />
+      </div>
+    </div>
+  );
+};
+
+async function AirbudsComponentWrapper() {
   const session = await getSession();
   if (!session?.user?.sub) {
     console.error('NO SESSION');
@@ -90,27 +121,56 @@ const Page: FC = async () => {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col">
-      <NavBar />
-      <div className="flex flex-1 overflow-hidden">
-        <Suspense fallback={<LeftSidebarSkeleton />}>
-          <div className="w-1/4">
-            <LeftSideBarComponent userId={session.user.sub} />
-          </div>
-        </Suspense>
-        <div className="h-full flex-1 overflow-y-auto border-t border-gray-100 border-b rounded bg-gray-100">
-          <Suspense fallback={<AirbudsInterfaceSkeleton />}>
-            <AirbudsComponents airbudsData={airbudsData} />
-          </Suspense>
-        </div>
-        <Suspense fallback={<RightSidebarSkeleton />}>
-          <div className="w-1/4">
-            <RightSideBarComponent />
-          </div>
-        </Suspense>
-      </div>
-    </div>
+    <Suspense fallback={<AirbudsInterfaceSkeleton />}>
+      <AirbudsComponents airbudsData={airbudsData} />
+    </Suspense>
   );
-};
+}
+
+async function LeftSideBarWrapper() {
+  const session = await getSession();
+  if (!session?.user?.sub) {
+    return <div></div>;
+  }
+
+  const pinnedSong = await getPinnedSong(session.user.sub);
+  const pinnedArtist = await getPinnedArtist(session.user.sub);
+  const pinnedPlaylists = await getPinnedPlaylists(session.user.sub);
+
+  return (
+    <Suspense fallback={<LeftSidebarSkeleton />}>
+      <div className="w-1/4">
+        <LeftSidebar
+          songData={pinnedSong}
+          artistData={pinnedArtist}
+          playlistData={pinnedPlaylists}
+        />
+      </div>
+    </Suspense>
+  );
+}
+
+async function RightSideBarWrapper() {
+  const session = await getSession();
+  if (!session?.user?.sub) {
+    return <div></div>;
+  }
+
+  const topTracks = await getTopTracks();
+  const topArtists = await getTopArtists();
+  const recentlyPlayed = await getRecentlyPlayed();
+
+  return (
+    <Suspense fallback={<RightSidebarSkeleton />}>
+      <div className="w-1/4">
+        <RightSidebar
+          songData={topTracks}
+          artistData={topArtists}
+          recentlyPlayed={recentlyPlayed}
+        />
+      </div>
+    </Suspense>
+  );
+}
 
 export default Page;
