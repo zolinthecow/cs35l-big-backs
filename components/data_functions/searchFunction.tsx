@@ -1,8 +1,8 @@
 'use server';
 import { PrismaClient } from '@prisma/client';
 import { getSession } from '@auth0/nextjs-auth0';
-
-const prisma = new PrismaClient();
+import prisma from '@/prisma';
+import getSpotifyClient from '@/lib/spotify';
 
 interface UserResult {
   id: string;
@@ -45,3 +45,33 @@ const searchUsersByName = async (searchTerm: string): Promise<UserResult[]> => {
 };
 
 export default searchUsersByName;
+
+export const handleSearch = async (searchQuery: string) => {
+  if (searchQuery.trim() === '') return;
+
+  try {
+    const spotifyClient = await getSpotifyClient();
+    const response = await spotifyClient.get('/search', {
+      params: {
+        q: searchQuery,
+        type: 'artist,track,playlist',
+        market: 'US',
+        limit: 5,
+        offset: 0,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching search results:', error);
+  }
+};
+export const handleSearchFriends = async (searchQuery: string) => {
+  if (searchQuery.trim() === '') return;
+
+  try {
+    const results = await searchUsersByName(searchQuery);
+    return results as UserResult[];
+  } catch (error) {
+    console.error('Error fetching search results:', error);
+  }
+};

@@ -15,7 +15,10 @@ import {
   handlePinClickPlaylist,
   handlePinClickTrack,
 } from './data_functions/pinningFunctions';
-import searchUsersByName from './data_functions/searchFunction';
+import searchUsersByName, {
+  handleSearch,
+  handleSearchFriends,
+} from './data_functions/searchFunction';
 import { handleFriendAdd } from './data_functions/friendAddFunction';
 
 type PinStatus = 'success' | 'duplicate' | 'limitReached' | 'error';
@@ -86,48 +89,24 @@ export function NavBar({ className }: NavBarProps) {
     friendID: string | null;
   }>({ status: null, friendID: null });
 
-  const handleSearch = async () => {
-    if (searchQuery.trim() === '') return;
-
-    try {
-      const spotifyClient = await getSpotifyClient();
-      const response = await spotifyClient.get('/search', {
-        params: {
-          q: searchQuery,
-          type: 'artist,track,playlist',
-          market: 'US',
-          limit: 5,
-          offset: 0,
-        },
-      });
-      setSearchResults(response.data);
-    } catch (error) {
-      console.error('Error fetching search results:', error);
-    }
-  };
-  const handleSearchFriends = async () => {
-    if (searchQuery.trim() === '') return;
-
-    try {
-      const results = await searchUsersByName(searchQuery);
-      setSearchResultsFriends(results as UserResult[]);
-    } catch (error) {
-      console.error('Error fetching search results:', error);
-    }
-  };
-
   useEffect(() => {
-    if (searchQuery) {
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
+    async function getData() {
+      if (searchQuery) {
+        if (typingTimeoutRef.current) {
+          clearTimeout(typingTimeoutRef.current);
+        }
+        typingTimeoutRef.current = setTimeout(async () => {
+          const _searchResults = await handleSearch(searchQuery);
+          const _friendSearchResults = await handleSearchFriends(searchQuery);
+          if (_searchResults) setSearchResults(_searchResults);
+          if (_friendSearchResults)
+            setSearchResultsFriends(_friendSearchResults);
+        }, 300);
+      } else {
+        setSearchResults(null);
       }
-      typingTimeoutRef.current = setTimeout(() => {
-        handleSearch();
-        handleSearchFriends();
-      }, 300);
-    } else {
-      setSearchResults(null);
     }
+    getData();
 
     return () => {
       if (typingTimeoutRef.current) {
