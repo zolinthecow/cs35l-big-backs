@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { NotificationIcon } from '@/components/ui/notification';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState, useEffect, useRef } from 'react';
@@ -25,6 +24,7 @@ type PinStatus = 'success' | 'duplicate' | 'limitReached' | 'error';
 
 interface NavBarProps {
   className?: string;
+  profilePicture?: string;
 }
 
 interface SearchResult {
@@ -64,6 +64,7 @@ export function NavBar({ className }: NavBarProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult | null>(null);
+  const [profilePicUrl, setProfilePicUrl] = useState<string>('');
   const [searchResultsFriends, setSearchResultsFriends] = useState<
     UserResult[] | null
   >(null);
@@ -136,6 +137,23 @@ export function NavBar({ className }: NavBarProps) {
       }
     };
   }, [searchQuery]);
+
+  useEffect(() => {
+    const fetchProfilePic = async () => {
+      try {
+        const spotifyClient = await getSpotifyClient();
+        const spotifyUserResp = await spotifyClient.get(`/me`);
+        const spotifyUserData = spotifyUserResp.data;
+        const profilePicture = spotifyUserData.images?.[0]?.url ?? '';
+        console.log('THIS IS THE PROFILE PIC IMAGE', profilePicture);
+        setProfilePicUrl(profilePicture);
+      } catch (error) {
+        console.error('Could not get profile pic');
+      }
+    };
+
+    fetchProfilePic();
+  }, []);
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -398,7 +416,7 @@ export function NavBar({ className }: NavBarProps) {
     >
       <div className="flex gap-4 items-center space-x-8 flex-shrink-0">
         <a className="flex items-center space-x-2" href="/home">
-          <Image src="/image.png" alt="Logo" width={36} height={36} />
+          <Image src="/spotifriends.png" alt="Logo" width={46} height={46} />
         </a>
         <nav className="hidden md:flex space-x-8">
           <a
@@ -485,21 +503,14 @@ export function NavBar({ className }: NavBarProps) {
         )}
       </div>
       <div className="flex justify-between space-x-3">
-        <Button variant="ghost" size="sm" className="px-2 hidden sm:block">
-          <a
-            className="flex items-center space-x-2 transition-colors hover:text-blue-500"
-            href="/notifications"
-          >
-            <NotificationIcon count={98} />
-          </a>
-        </Button>
         <Link href="/profile">
           <Button
             variant="ghost"
             className="text-base font-medium transition-colors hover:text-blue-500 px-2"
           >
             <Image
-              src="https://avatar.iran.liara.run/public/39"
+              className="rounded-full"
+              src={profilePicUrl}
               alt="Profile"
               width={36}
               height={36}
