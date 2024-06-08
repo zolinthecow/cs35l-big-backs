@@ -8,7 +8,6 @@ type FriendItemProps = {
   cover_url: string;
   profile_link: string;
   className?: string;
-  onUnpin: () => void;
 };
 export function FriendItem({
   name,
@@ -16,7 +15,6 @@ export function FriendItem({
   cover_url,
   profile_link,
   className,
-  onUnpin,
 }: FriendItemProps) {
   return (
     <div
@@ -41,9 +39,6 @@ export function FriendItem({
           @{username}
         </h3>
       </div>
-      <button onClick={onUnpin} className="text-red-500 hover:text-red-700">
-        Remove
-      </button>
     </div>
   );
 }

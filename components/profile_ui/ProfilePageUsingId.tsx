@@ -16,6 +16,7 @@ import {
   handleUnpinClickPlaylist,
   handleUnpinClickTrack,
 } from '@/components/data_functions/unpinningFunctions';
+import { handleFriendRemove } from '@/components/data_functions/friendUnaddFunction'; 
 import getSpotifyClient from '@/lib/spotify';
 import { getFriendsFromDb } from '../data_functions/getFriendsFunction';
 
@@ -107,6 +108,7 @@ const PinnedSideBarComponent = async ({
     handleUnpinClickTrack,
     handleUnpinClickArtist,
     handleUnpinClickPlaylist,
+    handleFriendRemove,
   };
 
   return <PinnedSideBar {...props} />;
