@@ -1,8 +1,7 @@
 'use server';
-import { PrismaClient } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
-const prisma = new PrismaClient();
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import prisma from '@/prisma';
 
 interface ArtistItem {
   id: string;

@@ -1,9 +1,8 @@
 'use server';
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/prisma';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { getSession } from '@auth0/nextjs-auth0';
 
-const prisma = new PrismaClient();
 //functions to pin items
 interface ArtistItem {
   id: string;

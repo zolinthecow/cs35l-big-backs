@@ -8,7 +8,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import getSpotifyClient from '@/lib/spotify';
 import { Pin, Check, X, UserPlus } from 'lucide-react';
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/prisma';
 import { getSession, Session } from '@auth0/nextjs-auth0';
 import {
   handlePinClickArtist,
@@ -17,8 +17,6 @@ import {
 } from './data_functions/pinningFunctions';
 import searchUsersByName from './data_functions/searchFunction';
 import { handleFriendAdd } from './data_functions/friendAddFunction';
-
-const prisma = new PrismaClient();
 
 type PinStatus = 'success' | 'duplicate' | 'limitReached' | 'error';
 

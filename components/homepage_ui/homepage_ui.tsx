@@ -16,16 +16,12 @@ import {
 } from '@/components/skeleton_loader';
 import { NavBar } from '@/components/navbar';
 import getSpotifyClient from '@/lib/spotify';
-import { PrismaClient } from '@prisma/client';
-import { getSession } from '@auth0/nextjs-auth0';
 import { useState, useEffect } from 'react';
 import {
   getPinnedArtist,
   getPinnedPlaylists,
   getPinnedSong,
 } from '@/components/data_functions/pinningFunctions';
-
-const prisma = new PrismaClient();
 
 //This is the basic function to get the mock data for now
 async function fetchData(endpoint: string) {

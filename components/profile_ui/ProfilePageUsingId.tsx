@@ -19,8 +19,7 @@ import {
 import { handleFriendRemove } from '@/components/data_functions/friendUnaddFunction';
 import getSpotifyClient from '@/lib/spotify';
 import { getFriendsFromDb } from '../data_functions/getFriendsFunction';
-
-const prisma = new PrismaClient();
+import prisma from '@/prisma';
 
 export default async function ProfilePageUsingId({
   userId,
