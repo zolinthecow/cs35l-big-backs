@@ -17,7 +17,7 @@ touch .env.local
 ```
 Ask someone for the variables and just paste them into the file
 
-**NOTE TO 35L GRADER:** There shoudl be a `.env.local` file in the tarball
+**NOTE TO 35L GRADER:** There should be a `.env.local` file in the submission txt file
 
 ## Setup
 
