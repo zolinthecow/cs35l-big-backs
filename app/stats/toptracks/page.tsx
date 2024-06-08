@@ -2,13 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { NavBar } from '@/components/navbar';
-import getSpotifyClient from '@/lib/spotify';
-
-async function fetchData(endpoint: string) {
-  const spotifyClient = await getSpotifyClient();
-  const resp = await spotifyClient.get(endpoint);
-  return resp.data.items;
-}
+import { fetchData } from '@/components/stats/page';
 
 interface Artist {
   name: string;

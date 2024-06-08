@@ -1,10 +1,9 @@
 'use server';
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/prisma';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { getSession } from '@auth0/nextjs-auth0';
 
 type PinStatus = 'success' | 'notFound' | 'error';
-const prisma = new PrismaClient();
 
 interface FriendItem {
   id: string;

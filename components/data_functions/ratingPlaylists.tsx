@@ -1,8 +1,6 @@
 'use server';
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/prisma';
 import { use } from 'react';
-
-const prisma = new PrismaClient();
 
 export async function getAverageRating(playlistID: string): Promise<number> {
   'use server';

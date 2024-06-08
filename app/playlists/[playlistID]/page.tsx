@@ -9,8 +9,7 @@ import { PrismaClient } from '@prisma/client';
 import { SkeletonLoader } from '@/components/skeleton_loader';
 import { getCommentsFromDb } from '@/components/data_functions/commentsFunctions';
 import { DateTime } from 'luxon';
-
-const prisma = new PrismaClient();
+import prisma from '@/prisma';
 
 type Props = {
   params: {
