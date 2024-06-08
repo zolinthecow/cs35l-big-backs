@@ -79,6 +79,7 @@ async function AirbudsComponentWrapper() {
     return (hash % 50) + 1;
   }
 
+  const itemsToUse = [];
   for (const friend of friends) {
     try {
       const friendSpotifyClient = await getSpotifyClient({ userId: friend.id });
@@ -99,7 +100,6 @@ async function AirbudsComponentWrapper() {
       const spotifyFriend = friendSpotifyUserResp.data;
       const friendCurrentTrack = friendCurrentTrackResp.data;
       const friendRecentlyPlayedTracks = friendRecentlyPlayedResp.data;
-      const itemsToUse = [];
       if (friendCurrentTrack.item) {
         itemsToUse.push(friendCurrentTrack.item);
       }
@@ -110,7 +110,6 @@ async function AirbudsComponentWrapper() {
       ) {
         itemsToUse.push(friendRecentlyPlayedTracks.items[i].track);
       }
-      itemsToUse.sort((a, b) => (a.id < b.id ? -1 : 1));
       for (const itemToUse of itemsToUse) {
         airbudsData.push({
           profileUserId: friend.id,
@@ -128,6 +127,9 @@ async function AirbudsComponentWrapper() {
     } catch (e) {
       console.error(e);
     }
+    airbudsData.sort((a, b) =>
+      idHash(a.songTitle) < idHash(b.songTitle) ? -1 : 1,
+    );
   }
 
   return (
