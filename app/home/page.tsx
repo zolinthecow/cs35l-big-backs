@@ -99,20 +99,31 @@ async function AirbudsComponentWrapper() {
       const spotifyFriend = friendSpotifyUserResp.data;
       const friendCurrentTrack = friendCurrentTrackResp.data;
       const friendRecentlyPlayedTracks = friendRecentlyPlayedResp.data;
-      const itemToUse =
-        friendCurrentTrack.item ?? friendRecentlyPlayedTracks.items[0]?.track;
-      airbudsData.push({
-        profileUserId: friend.id,
-        profileImage:
-          spotifyFriend.images?.[0]?.url ??
-          `https://avatar.iran.liara.run/public/${idHash(friend.id)}`,
-        profileName: friend.name ?? '',
-        profileTime: 'Now',
-        albumImage: itemToUse.album.images?.[0].url,
-        songTitle: itemToUse.name,
-        songArtist: itemToUse.artists?.[0].name,
-        songLink: `https://open.spotify.com/track/${itemToUse.id}`,
-      });
+      const itemsToUse = [];
+      if (friendCurrentTrack.item) {
+        itemsToUse.push(friendCurrentTrack.item);
+      }
+      for (
+        let i = 0;
+        i < 10 || i < friendRecentlyPlayedTracks.items?.length;
+        i++
+      ) {
+        itemsToUse.push(friendRecentlyPlayedTracks.items[i].track);
+      }
+      for (const itemToUse of itemsToUse) {
+        airbudsData.push({
+          profileUserId: friend.id,
+          profileImage:
+            spotifyFriend.images?.[0]?.url ??
+            `https://avatar.iran.liara.run/public/${idHash(friend.id)}`,
+          profileName: friend.name ?? '',
+          profileTime: 'Now',
+          albumImage: itemToUse.album.images?.[0].url,
+          songTitle: itemToUse.name,
+          songArtist: itemToUse.artists?.[0].name,
+          songLink: `https://open.spotify.com/track/${itemToUse.id}`,
+        });
+      }
     } catch (e) {
       console.error(e);
     }
