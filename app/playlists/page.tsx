@@ -5,12 +5,10 @@ import { ListofPlaylistsLayout } from '@/components/ui/playlists/playlists-list-
 import Component from '@/components/playlists_ui/playlist_ui';
 import React, { FC, Suspense } from 'react';
 import { getSession } from '@auth0/nextjs-auth0';
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/prisma';
 import { SkeletonLoader } from '@/components/skeleton_loader';
 import { getCommentsFromDb } from '@/components/data_functions/commentsFunctions';
 import { DateTime } from 'luxon';
-
-const prisma = new PrismaClient();
 
 interface PlaylistItem {
   id: string;

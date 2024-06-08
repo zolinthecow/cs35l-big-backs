@@ -13,8 +13,7 @@ import {
   submitNote,
 } from '@/components/data_functions/note_playlists';
 import { getSession } from '@auth0/nextjs-auth0';
-
-const prisma = new PrismaClient();
+import prisma from '@/prisma';
 
 type SongItemLayoutProps = {
   id: string;

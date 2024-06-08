@@ -1,7 +1,5 @@
 'use server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '@/prisma';
 
 interface FriendProps {
   key: string;
@@ -39,7 +37,7 @@ export const getFriendsFromDb = async (
       key: friend.id,
       profileName: friend.name || '',
       songArtist: friend.nickname || '',
-      profileImage: "/favicon.ico",
+      profileImage: '/favicon.ico',
       songLink: friend.nickname || '',
     }));
 
