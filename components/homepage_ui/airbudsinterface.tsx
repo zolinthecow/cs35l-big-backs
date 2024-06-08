@@ -102,7 +102,6 @@ const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
 
   const emojis = ['🔥', '❤️', '🙌', '😍'];
 
-  console.log('YOOOO');
   return (
     <div className="flex flex-col items-center justify-between h-full w-full p-4 snap-center">
       <div className="flex flex-col items-center mt-4">
@@ -131,13 +130,6 @@ const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
         <p className="text-sm text-gray-400">{songArtist}</p>
       </div>
       <div className="flex items-center space-x-4 justify-center">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-gray-400 hover:text-white"
-        >
-          <IconMute color="black" size={24} />
-        </Button>
         <Link href={songLink}>
           <Button
             variant="default"
@@ -153,20 +145,7 @@ const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
             <span className="ml-2">Play on Spotify</span>
           </Button>
         </Link>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-gray-400 hover:text-white"
-        >
-          <IconAdd color="black" size={24} />
-        </Button>
       </div>
-      <div className="flex justify-around w-full mt-6 px-8">
-        {emojis.map((emoji) => (
-          <EmojiButton key={emoji} emoji={emoji} />
-        ))}
-      </div>
-      <Reply sendReply={sendReply} />
     </div>
   );
 };
