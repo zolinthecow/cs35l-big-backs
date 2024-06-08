@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { IconMute, IconAdd, IconSend } from '@/components/ui/icons';
 import Link from 'next/link';
+import sendSBMessage from '@/actions/sendSBMessage';
 
 interface ReplyInputProps {
   value: string;
@@ -37,20 +38,20 @@ const SendButton: FC<SendButtonProps> = ({ onClick }) => (
   </Button>
 );
 
-const Reply = () => {
+const Reply = ({
+  sendReply,
+}: {
+  sendReply: (reply: string) => Promise<void>;
+}) => {
   const [reply, setReply] = useState('');
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      sendReply();
       event.preventDefault(); // Prevent form submission
+      handleSendReply();
     }
   };
-
-  const sendReply = () => {
-    console.log(reply);
-    setReply('');
-  };
+  const handleSendReply = () => sendReply(reply).then(() => setReply(''));
 
   return (
     <div className="w-full flex items-center mt-4">
@@ -59,12 +60,13 @@ const Reply = () => {
         onChange={(e) => setReply(e.target.value)}
         onKeyDown={handleKeyDown}
       />
-      <SendButton onClick={sendReply} />
+      <SendButton onClick={handleSendReply} />
     </div>
   );
 };
 
 interface AirbudsInterfaceProps {
+  profileUserId: string;
   profileImage: string;
   profileName: string;
   profileTime: string;
@@ -75,6 +77,7 @@ interface AirbudsInterfaceProps {
 }
 
 const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
+  profileUserId,
   profileImage,
   profileName,
   profileTime,
@@ -83,6 +86,10 @@ const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
   songArtist,
   songLink,
 }) => {
+  const sendReply = async (reply: string) => {
+    console.log(reply);
+    await sendSBMessage(profileUserId, reply);
+  };
   return (
     <div className="flex flex-col items-center justify-between h-full w-full p-4 snap-center">
       <div className="flex flex-col items-center mt-4">
@@ -146,6 +153,7 @@ const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
           variant="ghost"
           size="sm"
           className="text-gray-400 hover:text-white"
+          formAction={() => sendReply('🔥')}
         >
           <span style={{ fontSize: '24px' }}>🔥</span>
         </Button>
@@ -153,6 +161,7 @@ const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
           variant="ghost"
           size="sm"
           className="text-gray-400 hover:text-white"
+          formAction={() => sendReply('❤️')}
         >
           <span style={{ fontSize: '24px' }}>❤️</span>
         </Button>
@@ -160,6 +169,7 @@ const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
           variant="ghost"
           size="sm"
           className="text-gray-400 hover:text-white"
+          formAction={() => sendReply('🙌')}
         >
           <span style={{ fontSize: '24px' }}>🙌</span>
         </Button>
@@ -167,17 +177,18 @@ const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
           variant="ghost"
           size="sm"
           className="text-gray-400 hover:text-white"
+          formAction={() => sendReply('😍')}
         >
           <span style={{ fontSize: '24px' }}>😍</span>
         </Button>
       </div>
-      <Reply />
+      <Reply sendReply={sendReply} />
     </div>
   );
 };
 
 interface DataProps {
-  key: string;
+  profileUserId: string;
   profileImage: string;
   profileName: string;
   profileTime: string;
@@ -198,7 +209,8 @@ const SnappingScrollContainer: React.FC<SnappingScrollContainerProps> = ({
     <div className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide border border-gray-100 rounded-md">
       {airbudsData.map((airbudsData) => (
         <AirbudsInterface
-          key={airbudsData.key}
+          key={airbudsData.profileUserId}
+          profileUserId={airbudsData.profileUserId}
           profileImage={airbudsData.profileImage}
           profileName={airbudsData.profileName}
           profileTime={airbudsData.profileTime}

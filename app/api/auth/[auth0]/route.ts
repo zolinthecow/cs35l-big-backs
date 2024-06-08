@@ -16,6 +16,7 @@ const scopes = [
   'user-top-read',
   'user-read-recently-played',
   'playlist-read-private',
+  'user-read-currently-playing',
 ];
 
 const afterCallback: AfterCallbackAppRoute = async (req, session, state) => {
@@ -24,15 +25,10 @@ const afterCallback: AfterCallbackAppRoute = async (req, session, state) => {
   if (user) {
     console.log(user);
 
-    console.log('A');
     await createUserIfNotExisting(session);
-    console.log('B');
-    await getSpotifyAccessTokenFromSession(session);
-    console.log('C');
+    await getSpotifyAccessTokenFromSession(user.sub);
     await createSendbirdUserIfNotExisting(session);
-    console.log('D');
     await populateDBUserWithSpotifyData(session);
-    console.log('E');
   }
 
   return session;
