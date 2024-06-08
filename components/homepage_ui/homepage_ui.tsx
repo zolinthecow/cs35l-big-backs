@@ -26,6 +26,7 @@ import {
   getPinnedPlaylists,
   getPinnedSong,
 } from '@/components/data_functions/pinningFunctions';
+import { getAirbudsData } from '@/components/data_functions/airBudsFunctions';
 
 const prisma = new PrismaClient();
 
@@ -71,92 +72,24 @@ export default async function HomePage({
   );
 }
 
+interface AirbudsData {
+  profileUserId: string;
+  profileImage: string;
+  profileName: string;
+  profileTime: string;
+  albumImage: string;
+  songTitle: string;
+  songArtist: string;
+  songLink: string;
+}
+
 //Each of these functions renders the elements client side so that way people can interact with them
-const AirbudsComponents = async (): Promise<JSX.Element> => {
-  const session = await getSession();
-  if (!session?.user?.sub) {
-    console.error('NO SESSION');
-    return <div></div>;
-  }
+const AirbudsComponents: React.FC = () => {
+  const [airbudsData, setAirbudsData] = useState<AirbudsData[]>([]);
 
-  const prismaUser = await prisma.user.findUnique({
-    where: {
-      id: session.user.sub,
-    },
-    include: {
-      friends: true,
-    },
-  });
-  if (!prismaUser) {
-    console.error('NO PRISMA USER');
-    return <div></div>;
-  }
-  const friends = [...prismaUser.friends, prismaUser];
-  const airbudsData: {
-    profileUserId: string;
-    profileImage: string;
-    profileName: string;
-    profileTime: string;
-    albumImage: string;
-    songTitle: string;
-    songArtist: string;
-    songLink: string;
-  }[] = [];
-
-  function idHash(str: string) {
-    let hash = 0;
-
-    // Sum ASCII values of each character in the string
-    for (let i = 0; i < str.length; i++) {
-      hash += str.charCodeAt(i);
-    }
-
-    // Use modulus to get a result from 0 to 49, then add 1 to change the range to 1 to 50
-    return (hash % 50) + 1;
-  }
-
-  for (const friend of friends) {
-    try {
-      const friendSpotifyClient = await getSpotifyClient({
-        userId: friend.id,
-        user: session.user,
-      });
-      const friendSpotifyUserResp = await friendSpotifyClient.get(`/me`);
-      const friendCurrentTrackResp = await friendSpotifyClient.get(
-        `/me/player/currently-playing`,
-      );
-      const friendRecentlyPlayedResp = await friendSpotifyClient.get(
-        `/me/player/recently-played`,
-      );
-      if (
-        !friendSpotifyUserResp.data ||
-        !friendCurrentTrackResp.data ||
-        !friendRecentlyPlayedResp.data
-      ) {
-        console.error(`NO SPOTIFY USER DATA FOR ${friend.id}`);
-        continue;
-      }
-      const spotifyFriend = friendSpotifyUserResp.data;
-      const friendCurrentTrack = friendCurrentTrackResp.data;
-      const friendRecentlyPlayedTracks = friendRecentlyPlayedResp.data;
-      const itemToUse =
-        friendCurrentTrack.item ?? friendRecentlyPlayedTracks.items[0];
-      airbudsData.push({
-        profileUserId: friend.id,
-        profileImage:
-          spotifyFriend.images?.[0]?.url ??
-          `https://avatar.iran.liara.run/public/${idHash(friend.id)}`,
-        profileName: friend.name ?? '',
-        profileTime: 'Now',
-        albumImage: itemToUse.album.images?.[0].url,
-        songTitle: itemToUse.name,
-        songArtist: itemToUse.artists?.[0].name,
-        songLink: `https://open.spotify.com/track/${itemToUse.id}`,
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  }
+  useEffect(() => {
+    getAirbudsData().then((data) => setAirbudsData(data));
+  }, []);
 
   const props: SnappingScrollContainerProps = {
     airbudsData,
