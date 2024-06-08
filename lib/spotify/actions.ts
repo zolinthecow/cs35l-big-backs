@@ -6,11 +6,11 @@ import { Auth0ManagementService } from '../auth0';
 import axios from 'axios';
 
 export async function getSpotifyAccessTokenFromSession(
-  session: Session,
+  userId: string,
 ): Promise<string> {
   const apiToken = await Auth0ManagementService.getAccessToken();
   const auth0Url = new URL(
-    session.user.sub,
+    userId,
     `${process.env['AUTH0_ISSUER_BASE_URL']}/api/v2/users/`,
   ).href;
   const auth0Options = {
@@ -32,7 +32,7 @@ export async function getSpotifyAccessTokenFromSession(
 
   await prisma.user.update({
     where: {
-      id: session.user.sub,
+      id: userId,
     },
     data: {
       spotifyAccessToken,
@@ -44,11 +44,11 @@ export async function getSpotifyAccessTokenFromSession(
 }
 
 async function getSpotifyAccessTokenFromDB(
-  session: Session,
+  userId: string,
 ): Promise<string | 'NONE'> {
   const userResp = await prisma.user.findUnique({
     where: {
-      id: session.user.sub,
+      id: userId,
     },
   });
 
@@ -59,17 +59,21 @@ async function getSpotifyAccessTokenFromDB(
   return userResp.spotifyAccessToken;
 }
 
-export async function refreshSpotifyToken(): Promise<
-  string | 'REAUTHENTICATE'
-> {
-  const session = await getSession();
-  if (!session) {
+export async function refreshSpotifyToken(
+  userId?: string,
+): Promise<string | 'REAUTHENTICATE'> {
+  let _userId = userId;
+  if (!_userId) {
+    const session = await getSession();
+    _userId = session?.user?.sub;
+  }
+  if (!_userId) {
     return 'REAUTHENTICATE';
   }
 
   const userResp = await prisma.user.findUnique({
     where: {
-      id: session.user.sub,
+      id: _userId,
     },
   });
   if (!userResp?.spotifyRefreshToken) {
@@ -101,7 +105,7 @@ export async function refreshSpotifyToken(): Promise<
 
   await prisma.user.update({
     where: {
-      id: session.user.sub,
+      id: _userId,
     },
     data: {
       spotifyRefreshToken: newRefreshToken,
@@ -112,19 +116,10 @@ export async function refreshSpotifyToken(): Promise<
   return newAccessToken;
 }
 
-export async function getSpotifyAccessToken(session?: Session) {
-  let _session: Session | null | undefined = session;
-  if (!session) {
-    _session = await getSession();
-  }
-
-  if (!_session) {
-    throw new Error('NO SESSION');
-  }
-
-  let accessToken = await getSpotifyAccessTokenFromDB(_session);
+export async function getSpotifyAccessToken(userId: string) {
+  let accessToken = await getSpotifyAccessTokenFromDB(userId);
   if (accessToken === 'NONE') {
-    accessToken = await getSpotifyAccessTokenFromSession(_session);
+    accessToken = await getSpotifyAccessTokenFromSession(userId);
   }
   return accessToken;
 }
