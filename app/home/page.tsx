@@ -3,9 +3,7 @@ import React, { FC, Suspense } from 'react';
 import { getSession } from '@auth0/nextjs-auth0';
 import { NavBar } from '@/components/navbar';
 import {
-  LeftSideBarComponent,
   AirbudsComponents,
-  RightSideBarComponent,
   getTopTracks,
   getTopArtists,
   getRecentlyPlayed,
