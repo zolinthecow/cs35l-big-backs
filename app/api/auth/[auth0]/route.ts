@@ -16,6 +16,7 @@ const scopes = [
   'user-top-read',
   'user-read-recently-played',
   'playlist-read-private',
+  'user-read-currently-playing',
 ];
 
 const afterCallback: AfterCallbackAppRoute = async (req, session, state) => {
