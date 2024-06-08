@@ -1,235 +1,208 @@
-'use client';
+'use server';
 
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { AvatarImage, AvatarFallback, Avatar } from '@/components/ui/avatar';
-import { Input } from '@/components/ui/input';
-import { NavBar } from '@/components/navbar';
-import { useState } from 'react';
-import { mockPlaylistData } from '@/components/mock_data/playlist_data';
-import { PlaylistLayout } from '@/components/ui/playlists/playlist-layout';
-import { mockSongData } from '@/components/mock_data/song_data';
-import { SongLayout } from '@/components/ui/playlists/song-layout';
+import getSpotifyClient from '@/lib/spotify';
+import { ListofPlaylistsLayout } from '@/components/ui/playlists/playlists-list-layout';
+import Component from '@/components/playlists_ui/playlist_ui';
+import React, { FC, Suspense } from 'react';
+import { getSession } from '@auth0/nextjs-auth0';
+import { PrismaClient } from '@prisma/client';
+import { SkeletonLoader } from '@/components/skeleton_loader';
+import { getCommentsFromDb } from '@/components/data_functions/commentsFunctions';
+import { DateTime } from 'luxon';
 
-import {
-  ClapperboardIcon,
-  DownloadIcon,
-  FrownIcon,
-  HomeIcon,
-  ImageIcon,
-  MusicIcon,
-  NotebookIcon,
-  PaperclipIcon,
-  PlayIcon,
-  SearchIcon,
-  SendIcon,
-  ShuffleIcon,
-  SmileIcon,
-  StarIcon,
-  ThumbsDownIcon,
-  ThumbsUpIcon,
-  IconWithCounter,
-  StarRating,
-} from '@/components/ui/playlisticons';
+const prisma = new PrismaClient();
 
-export default function Component() {
-  const [commentsCollapsed, setCommentsCollapsed] = useState(false);
+interface PlaylistItem {
+  id: string;
+  name: string;
+  images: {
+    url: string;
+  }[];
+}
+
+interface SongItem {
+  track: {
+    id: string;
+    name: string;
+    artists: Artist[];
+    duration_ms: string;
+    album: {
+      name: string;
+      images: {
+        url: string;
+      }[];
+    };
+    external_urls: {
+      spotify: string;
+    };
+  };
+}
+
+interface Artist {
+  name: string;
+}
+
+interface TitleLayoutProps {
+  name: string;
+  images: {
+    url: string;
+  }[];
+  description: string;
+}
+
+interface PlaylistResponse {
+  items: PlaylistItem[];
+}
+
+interface SongResponse {
+  items: SongItem[];
+}
+
+async function fetchData2(endpoint: string) {
+  const spotifyClient = await getSpotifyClient();
+  const resp = await spotifyClient.get(endpoint);
+  return resp.data.items;
+}
+
+async function fetchData3(endpoint: string) {
+  const spotifyClient = await getSpotifyClient();
+  const resp = await spotifyClient.get(endpoint);
+  return resp.data;
+}
+
+async function getPlaylists(): Promise<PlaylistItem[]> {
+  // Endpoint reference: https://developer.spotify.com/documentation/web-api/reference/get-current-users-profile
+  const response = await fetchData2('/me/playlists?limit=20&offset=0');
+  return response;
+}
+
+async function getSongs(playlistID: string): Promise<SongItem[]> {
+  // Endpoint reference: https://developer.spotify.com/documentation/web-api/reference/get-track
+  const response = await fetchData2(`/playlists/${playlistID}/tracks`);
+  return response;
+}
+
+async function getTitle(playlistID: string): Promise<TitleLayoutProps> {
+  // Endpoint reference: https://developer.spotify.com/documentation/web-api/reference/get-playlist
+  const response = await fetchData3(`/playlists/${playlistID}`);
+  console.log('title', response);
+  return response;
+}
+async function getPlaylistReactions(playlistID: string): Promise<number[]> {
+  const numbersArray = [0, 0, 0, 0, 0]; // Initialize array with 4 zeros
+
+  for (let i = 0; i < 5; i++) {
+    const reactionCount = await prisma.playlistReactions.findMany({
+      where: {
+        playlistID: playlistID,
+        reaction: i,
+      },
+    });
+    numbersArray[i] = reactionCount[0]?.count || 0;
+  }
+  return numbersArray;
+}
+
+async function getUserIDReactions(
+  userID: string,
+  playlistID: string,
+): Promise<boolean[]> {
+  const booleanArray = [false, false, false, false, false]; // Initialize array with 5 falses
+
+  try {
+    const reactions = await prisma.userPlaylistReactions.findMany({
+      where: {
+        playlistID: playlistID,
+        userID: userID,
+      },
+      select: {
+        reaction: true,
+      },
+    });
+
+    reactions.forEach(({ reaction }: { reaction: number }) => {
+      if (reaction >= 0 && reaction < 5) {
+        booleanArray[reaction] = true;
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching reactions:', error);
+  }
+  return booleanArray;
+}
+async function getAverageRating(playlistID: string): Promise<number> {
+  'use client';
+  const reactions = await prisma.playlistRating.findMany({
+    where: {
+      playlistID: playlistID,
+    },
+  });
+
+  if (reactions.length === 0) {
+    return -1; // Return 0 or some other value indicating no ratings
+  }
+
+  const totalStars = reactions.reduce(
+    (acc: number, curr: { stars: number }) => acc + curr.stars,
+    0,
+  );
+  const totalUsers = reactions.length;
+  console.log('AVERAGE RATING', totalStars / totalUsers);
+
+  return totalStars / totalUsers;
+}
+async function getUserIDRating(
+  userID: string,
+  playlistID: string,
+): Promise<number> {
+  'use client';
+  const rating = await prisma.playlistRating.findMany({
+    where: {
+      playlistID: playlistID,
+      userID: userID,
+    },
+  });
+
+  if (rating.length > 0) {
+    return rating[0].stars; // Return true if a rating from that user exists
+  }
+
+  return -1; // Return false if no rating exists
+}
+
+const Page: FC = async () => {
+  const listOfPlaylists = await getPlaylists();
+  const playlistID = listOfPlaylists[0].id;
+  const title = await getTitle(playlistID);
+  const commentsFromDb = await getCommentsFromDb(playlistID);
+  const listOfSongs = await getSongs(playlistID);
+  const initialCount = await getPlaylistReactions(playlistID);
+  const averageRating = await getAverageRating(playlistID);
+  const session = await getSession();
+  const userID = session?.user?.sub;
+  const initialUserReaction = await getUserIDReactions(userID, playlistID);
+  const userRating = await getUserIDRating(userID, playlistID);
 
   return (
-    <div className="grid grid-rows-[auto_1fr] h-screen w-full">
-      <NavBar />
-      <div className="grid grid-cols-[240px_1fr]">
-        <div className="custom-bg-cream text-gray-700 p-6 overflow-y-auto">
-          <nav className="space-y-4">
-            <div className="space-y-1">
-              <h3 className="text-sm font-medium text-gray-600">Playlists</h3>
-              <div className="grid gap-5">
-                {mockPlaylistData.map((playlist) => (
-                  <PlaylistLayout
-                    key={playlist.id}
-                    id={playlist.id}
-                    title={playlist.title}
-                    playlist_url={playlist.playlist_url}
-                    album_url={playlist.album_url}
-                    rating={playlist.rating}
-                  />
-                ))}
-              </div>
-            </div>
-          </nav>
-        </div>
-        <div className="bg-white text-gray-700 overflow-y-auto">
-          <div className="p-6 overflow-y-auto">
-            <div className="flex gap-6">
-              <img
-                alt="Playlist Cover"
-                className="rounded-md"
-                height={200}
-                src="/playlisttestimg.webp"
-                style={{
-                  aspectRatio: '200/200',
-                  objectFit: 'cover',
-                }}
-                width={200}
-              />
-              <div className="flex-1 space-y-2">
-                <div className="flex items-center gap-2.5">
-                  <h1 className="text-2xl font-bold text-gray-900">
-                    Chill Vibes
-                  </h1>
-                  <div className="flex items-center gap-1 text-yellow-500">
-                    <StarRating />
-                  </div>
-                </div>
-                <p className="text-gray-600">
-                  A carefully curated playlist of soothing and relaxing music to
-                  help you unwind and de-stress.
-                </p>
-                <div className="flex items-center gap-4">
-                  <Button size="icon" variant="ghost">
-                    <PlayIcon className="w-6 h-6" />
-                    <span className="sr-only">Play</span>
-                  </Button>
-                  <Button size="icon" variant="ghost">
-                    <ShuffleIcon className="w-6 h-6" />
-                    <span className="sr-only">Shuffle</span>
-                  </Button>
-                  <Button size="icon" variant="ghost">
-                    <DownloadIcon className="w-6 h-6" />
-                    <span className="sr-only">Download</span>
-                  </Button>
-                  <Button size="icon" variant="ghost">
-                    <SearchIcon className="w-6 h-6" />
-                    <span className="sr-only">Search</span>
-                  </Button>
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-2">
-                      {/* Replace initialCount with initial count value from server */}
-                      <IconWithCounter
-                        icon={ThumbsUpIcon}
-                        initialCount={0}
-                        className="text-gray-400"
-                      />{' '}
-                      <IconWithCounter
-                        icon={ThumbsDownIcon}
-                        initialCount={0}
-                        className="text-gray-400"
-                      />
-                      <IconWithCounter
-                        icon={ClapperboardIcon}
-                        initialCount={0}
-                        className="text-gray-400"
-                      />
-                      <IconWithCounter
-                        icon={SmileIcon}
-                        initialCount={0}
-                        className="text-gray-400"
-                      />
-                      <IconWithCounter
-                        icon={FrownIcon}
-                        initialCount={0}
-                        className="text-gray-400"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              className={`mt-8 space-y-4 overflow-y-auto ${commentsCollapsed ? 'max-h-none' : 'max-h-48'}`}
-            >
-              {mockSongData.map((song) => (
-                <SongLayout
-                  key={song.id}
-                  id={song.id}
-                  title={song.title}
-                  artist={song.artist}
-                  album={song.album}
-                  album_url={song.album_url}
-                  song_url={song.song_url}
-                  song_length={song.song_length}
-                />
-              ))}
-            </div>
-          </div>
-          <div className="mt-8 border-t border-gray-300 pt-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Comments</h2>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => setCommentsCollapsed(!commentsCollapsed)}
-              >
-                {commentsCollapsed ? 'Show Comments' : 'Hide Comments'}
-              </Button>
-            </div>
-            {!commentsCollapsed && (
-              <div className="space-y-4 overflow-y-auto max-h-48">
-                {/* Comment input section */}
-                <div className="flex gap-4">
-                  <div className="border-t px-4 py-3 border-gray-300 flex-1">
-                    <div className="flex items-center gap-2">
-                      <Input
-                        className="flex-1"
-                        placeholder="Type your message..."
-                      />
-                      <Button size="icon" variant="ghost">
-                        <PaperclipIcon className="h-5 w-5 text-gray-500" />
-                        <span className="sr-only">Attach file</span>
-                      </Button>
-                      <Button size="icon" variant="ghost">
-                        <SmileIcon className="h-5 w-5 text-gray-500" />
-                        <span className="sr-only">Add emoji</span>
-                      </Button>
-                      <Button size="icon" variant="ghost">
-                        <SendIcon className="h-5 w-5 text-gray-500" />
-                        <span className="sr-only">Send message</span>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Comments */}
-                <div className="flex gap-4">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage alt="@shadcn" src="/placeholder-avatar.jpg" />
-                    <AvatarFallback>JP</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium text-gray-900">John Doe</div>
-                      <div className="text-sm text-gray-600">2 days ago</div>
-                    </div>
-                    <p className="text-gray-600">
-                      This playlist is perfect for my morning commute. The chill
-                      vibes really help me start the day on the right note.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage alt="@shadcn" src="/placeholder-avatar.jpg" />
-                    <AvatarFallback>JP</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium text-gray-900">
-                        Jane Smith
-                      </div>
-                      <div className="text-sm text-gray-600">1 week ago</div>
-                    </div>
-                    <p className="text-gray-600">
-                      Ive been listening to this playlist on repeat all week.
-                      Its the perfect background music for when Im working or
-                      studying.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+    <div className="h-100vh overflow-y-hidden fixed w-full">
+      <div className="h-screen overflow-hidden">
+        <Suspense>
+          <Component
+            listOfPlaylists={listOfPlaylists}
+            listOfSongs={listOfSongs}
+            title={title}
+            initialCount={initialCount}
+            booleanArray={initialUserReaction}
+            averageRating={averageRating}
+            userIDStar={userRating}
+            commentsFromDb={commentsFromDb}
+            userID={userID}
+            playlistID={playlistID}
+          />
+        </Suspense>
       </div>
     </div>
   );
-}
+};
+
+export default Page;

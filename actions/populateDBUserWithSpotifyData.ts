@@ -3,7 +3,7 @@ import { Session } from '@auth0/nextjs-auth0';
 import prisma from '@/prisma';
 
 export default async function populateDBUserWithSpotifyData(session: Session) {
-  const spotifyClient = await getSpotifyClient();
+  const spotifyClient = await getSpotifyClient(session);
   const spotifyUserResp = await spotifyClient.get(`/me`);
   const spotifyUserData = spotifyUserResp.data;
   if (!spotifyUserData) {

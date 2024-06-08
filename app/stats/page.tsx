@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import { NavBar } from '@/components/navbar';
@@ -22,8 +22,12 @@ const LinkButtons: React.FC = () => {
       <NavBar />
       <div className="flex flex-1 justify-center items-center flex-col space-y-8">
         <div className="text-center">
-          <h1 className="text-5xl font-extrabold text-gray-800">Spotify Stats</h1>
-          <p className="text-xl text-gray-500 mt-2">Check out your top tracks, artists, and recently played songs :D</p>
+          <h1 className="text-5xl font-extrabold text-gray-800">
+            Spotify Stats
+          </h1>
+          <p className="text-xl text-gray-500 mt-2">
+            Check out your top tracks, artists, and recently played songs :D
+          </p>
         </div>
         <div className="flex flex-col items-center space-y-6 mt-10 w-full">
           <LinkButton text="Top Tracks" link="/stats/toptracks" />
@@ -33,6 +37,6 @@ const LinkButtons: React.FC = () => {
       </div>
     </div>
   );
-}
+};
 
 export default LinkButtons;
