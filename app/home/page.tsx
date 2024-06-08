@@ -110,6 +110,7 @@ async function AirbudsComponentWrapper() {
       ) {
         itemsToUse.push(friendRecentlyPlayedTracks.items[i].track);
       }
+      itemsToUse.sort((a, b) => (a.id < b.id ? -1 : 1));
       for (const itemToUse of itemsToUse) {
         airbudsData.push({
           profileUserId: friend.id,
