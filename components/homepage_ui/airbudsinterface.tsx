@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { IconMute, IconAdd, IconSend } from '@/components/ui/icons';
 import Link from 'next/link';
+import sendSBMessage from '@/actions/sendSBMessage';
 
 interface ReplyInputProps {
   value: string;
@@ -37,19 +38,16 @@ const SendButton: FC<SendButtonProps> = ({ onClick }) => (
   </Button>
 );
 
-const Reply = () => {
+const Reply: FC<{ sendReply: (reply: string) => Promise<void> }> = ({
+  sendReply,
+}) => {
   const [reply, setReply] = useState('');
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      sendReply();
       event.preventDefault(); // Prevent form submission
+      sendReply(reply);
     }
-  };
-
-  const sendReply = () => {
-    console.log(reply);
-    setReply('');
   };
 
   return (
@@ -59,7 +57,7 @@ const Reply = () => {
         onChange={(e) => setReply(e.target.value)}
         onKeyDown={handleKeyDown}
       />
-      <SendButton onClick={sendReply} />
+      <SendButton onClick={() => sendReply(reply)} />
     </div>
   );
 };
@@ -85,6 +83,25 @@ const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
   songArtist,
   songLink,
 }) => {
+  const sendReply = async (reply: string) => {
+    await sendSBMessage(profileUserId, reply);
+  };
+
+  const EmojiButton: FC<{ emoji: string }> = ({ emoji }) => {
+    return (
+      <Button
+        variant="ghost"
+        size="sm"
+        className="text-gray-400 hover:text-white"
+        formAction={() => sendReply(emoji)}
+      >
+        <span style={{ fontSize: '24px' }}>{emoji}</span>
+      </Button>
+    );
+  };
+
+  const emojis = ['🔥', '❤️', '🙌', '😍'];
+
   return (
     <div className="flex flex-col items-center justify-between h-full w-full p-4 snap-center">
       <div className="flex flex-col items-center mt-4">
@@ -144,36 +161,11 @@ const AirbudsInterface: FC<AirbudsInterfaceProps> = ({
         </Button>
       </div>
       <div className="flex justify-around w-full mt-6 px-8">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-gray-400 hover:text-white"
-        >
-          <span style={{ fontSize: '24px' }}>🔥</span>
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-gray-400 hover:text-white"
-        >
-          <span style={{ fontSize: '24px' }}>❤️</span>
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-gray-400 hover:text-white"
-        >
-          <span style={{ fontSize: '24px' }}>🙌</span>
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-gray-400 hover:text-white"
-        >
-          <span style={{ fontSize: '24px' }}>😍</span>
-        </Button>
+        {emojis.map((emoji) => (
+          <EmojiButton key={emoji} emoji={emoji} />
+        ))}
       </div>
-      <Reply />
+      <Reply sendReply={sendReply} />
     </div>
   );
 };
