@@ -8,7 +8,6 @@ import LeftSidebar, {
 } from '@/components/homepage_ui/leftsidebar';
 import SnappingScrollContainer, {
   AirbudsElement,
-  SnappingScrollContainerProps,
 } from '@/components/homepage_ui/airbudsinterface';
 import {
   LeftSidebarSkeleton,
